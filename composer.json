@@ -3,7 +3,8 @@
         "slim/slim": "4.*",
         "nyholm/psr7": "^1.5",
         "nyholm/psr7-server": "^1.0",
-        "php-di/php-di": "^7.0"
+        "php-di/php-di": "^7.0",
+        "slim/php-view": "^3.2"
     },
     "autoload": {
         "psr-4": {

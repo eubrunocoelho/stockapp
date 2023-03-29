@@ -1,9 +1,15 @@
 <?php
 
-use DI\ContainerBuilder;
-use Slim\App;
+use DI\{
+    ContainerBuilder
+};
+
+use Slim\{
+    App
+};
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/app/functions.php';
 
 $containerBuilder = new ContainerBuilder();
 
@@ -20,7 +26,7 @@ $app = $container->get(App::class);
 $app->setBasePath('/stockapp');
 
 // Registra as rotas
-(require __DIR__ . '/routes/web.php')($app);
+(require __DIR__ . '/app/routes.php')($app);
 
 // Registra os middlewares
 (require __DIR__ . '/app/middleware.php')($app);

@@ -1,6 +1,8 @@
 <?php
 
-use Slim\App;
+use Slim\{
+    App
+};
 
 return function (App $app) {
     // Analisa dados JSON, formulários e XML
