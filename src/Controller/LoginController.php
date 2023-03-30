@@ -16,6 +16,9 @@ use App\{
     Helper\Input
 };
 
+/**
+ * Responsável por gerenciar o fluxo entre a camada `Model` e a camada `View`
+ */
 class LoginController
 {
     private
@@ -34,7 +37,7 @@ class LoginController
      */
     public function login(Request $request, Response $response, array $args): Response
     {
-        // Obtém requisição de formulário
+        // Obtém as requisições de formulário
         $formRequest = (array)$request->getParsedBody();
 
         // Obtém valores para persistir no formulário
