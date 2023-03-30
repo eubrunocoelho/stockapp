@@ -15,4 +15,6 @@ use App\Controller\{
 
 return function (App $app) {
     $app->get('/', [LoginController::class, 'login']);
+    $app->get('/login', [LoginController::class, 'login']);
+    $app->post('/login', [LoginController::class, 'login']);
 };

@@ -12,9 +12,14 @@ use Slim\{
     Views\PhpRenderer
 };
 
+use App\{
+    Helper\Input
+};
+
 class LoginController
 {
-    private $app, $container, $renderer;
+    private
+        $app, $container, $renderer;
 
     public function __construct(App $app)
     {
@@ -25,6 +30,16 @@ class LoginController
 
     public function login(Request $request, Response $response, array $args): Response
     {
-        return $this->renderer->render($response, 'login/login.php');
+        // Obtém requisição de formulário
+        $formRequest = (array)$request->getParsedBody();
+
+        // Obtém valores para persistir no formulário
+        $inputValues = Input::getPersistValues($formRequest);
+
+        $templateVariables = [
+            'inputValues' => $inputValues
+        ];
+
+        return $this->renderer->render($response, 'login/login.php', $templateVariables);
     }
 }

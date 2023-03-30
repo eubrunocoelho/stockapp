@@ -1,0 +1,203 @@
+/**
+ * =================================================================================
+ * VARIABLES
+ * =================================================================================
+ */
+
+:root {
+    --background-color: #fafafa;
+    --border-default-color: #d3d3d3;
+    --border-default-radius: 6px;
+    --primary-color: #0879ac;
+    --font-titillium-web: 'Titillium Web', sans-serif;
+    --font-rajdhani: 'Rajdhani', sans-serif;
+    --text-primary-color: #272a2d;
+    --text-secondary-color: #717c86;
+    --bg-element-color: #fff;
+    --alert-text-danger-color: #9d1c24;
+    --alert-bg-danger-color: #f8d7da;
+    --alert-border-danger-color: 1px solid #f5c6cb;
+}
+
+/**
+ * =================================================================================
+ * MODIFIERS
+ * =================================================================================
+ */
+
+.mt--20 {
+    margin-top: 20px !important;
+}
+
+.alert--danger {
+    background: var(--alert-bg-danger-color) !important;
+    border: var(--alert-border-danger-color) !important;
+    color: var(--alert-text-danger-color) !important;
+}
+
+/**
+ * =================================================================================
+ * COMPONENTS
+ * =================================================================================
+ */
+
+.btn {
+    background: var(--primary-color);
+    border: none;
+    border-radius: var(--border-default-radius);
+    color: var(--bg-element-color);
+    cursor: pointer;
+    font-family: var(--font-rajdhani);
+    font-size: 16px;
+    font-weight: 500;
+    height: 40px;
+    line-height: 0;
+    margin: 10px 0 0 0;
+    padding: 0 15px 0 15px;
+    width: 100%;
+}
+
+/**
+ * =================================================================================
+ * BASE
+ * =================================================================================
+ */
+
+*,
+*::before,
+::after {
+    box-sizing: border-box !important;
+    text-rendering: optimizeLegibility !important;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .004) !important;
+}
+
+html {
+    height: 100%;
+    min-height: 100%;
+}
+
+body {
+    background: var(--background-color);
+    min-height: 100%;
+}
+
+/**
+ * =================================================================================
+ * CONTAINER
+ * =================================================================================
+ */
+
+.container {
+    height: 100%;
+    margin: 0 auto;
+    width: 1200px;
+}
+
+/**
+ * =================================================================================
+ * MAIN
+ * =================================================================================
+ */
+
+.main {
+    display: flex;
+    justify-content: center;
+    min-width: 1200px;
+    padding: 80px 0 130px 0;
+    width: 100%;
+}
+
+/**
+ * =================================================================================
+ * LOGIN BOX
+ * =================================================================================
+ */
+
+.login {
+    background: var(--bg-element-color);
+    border: 1px solid var(--border-default-color);
+    padding: 0 20px 20px 20px;
+    width: 336px;
+}
+
+.login-heading {
+    align-items: center;
+    border-bottom: 1px solid var(--border-default-color);
+    display: flex;
+    flex-direction: column;
+    height: 68px;
+    justify-content: center;
+    margin: 0 0 20px 0;
+    width: 100%;
+}
+
+.login-heading__title {
+    color: var(--primary-color);
+    font-family: var(--font-rajdhani);
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.login-heading__description {
+    color: var(--text-secondary-color);
+    font-family: var(--font-titillium-web);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/**
+ * =================================================================================
+ * LOGIN FORM
+ * =================================================================================
+ */
+
+.form {
+    width: 100%;
+}
+
+.form__group {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0 0 0;
+    width: 100%;
+}
+
+.form__label {
+    color: var(--text-primary-color);
+    font-family: var(--font-rajdhani);
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+}
+
+.form__input {
+    border-radius: var(--border-default-radius);
+    border: 1px solid var(--border-default-color);
+    color: var(--text-secondary-color);
+    font-family: var(--font-titillium-web);
+    font-size: 16px;
+    font-weight: 400;
+    height: 40px;
+    margin: 0 0 10px 0;
+    outline: none;
+    padding: 0 18px 0 18px;
+}
+
+/**
+ * =================================================================================
+ * ALERT BOX
+ * =================================================================================
+ */
+
+.alert-box {
+    border-radius: var(--border-default-radius);
+    padding: 14px 18px 14px 18px;
+    width: 100%;
+}
+
+.alert-box__text {
+    font-family: var(--font-titillium-web);
+    font-size: 16px;
+    font-weight: 400;
+}
