@@ -2,6 +2,9 @@
 
 namespace App\Validator;
 
+/**
+ * Responsável por fazer validações do formulário
+ */
 class Validator extends DataValidator
 {
     private
@@ -12,27 +15,42 @@ class Validator extends DataValidator
         $this->container = $container;
     }
 
+    /**
+     * Define os campos que devem existir no formulário
+     */
     public function setFields($fields)
     {
         $this->fields = $fields;
     }
 
+    /**
+     * Define os dados recebidos do formulário
+     */
     public function setData($data)
     {
         $this->data = $data;
     }
 
+    /**
+     * Define as regras do formulário
+     */
     public function setRules($rules)
     {
         $this->rules = $rules;
     }
 
+    /**
+     * Responsável por iniciar a validação
+     */
     public function validation()
     {
         if ($this->fieldsExists()) $this->validate();
         else $this->addError('Houve um erro inesperado.');
     }
 
+    /**
+     * Verifica se os campos do formulário condizem com os dados recebidos no formulário
+     */
     private function fieldsExists()
     {
         foreach ($this->fields as $field)
@@ -41,13 +59,20 @@ class Validator extends DataValidator
         return true;
     }
 
+    /**
+     * Responsável por fazer a validação e gerar erros
+     */
     private function validate()
     {
+        // Percorre as regras e faz a validação do formulário
         foreach ($this->rules as $item => $rules)
             foreach ($rules as $rule => $ruleValue) {
+                // Define o valor recebido do formulário
                 $value = $this->data[$item];
+                // Define o nome `label` do item a ser validado
                 $label = $rules['label'] ?? $item;
 
+                // Aplica as regras
                 if ($rule == 'required') {
                     if ($ruleValue && !$this->required($value))
                         $this->addError('O campo "' . $label . '" é obrigatório.');
@@ -55,16 +80,25 @@ class Validator extends DataValidator
             }
     }
 
+    /**
+     * Adiciona errors que ocorreram durante a validação
+     */
     private function addError($message)
     {
         $this->errors[] = $message;
     }
-
+    
+    /**
+     * Obtem erros que ocorreram durante a validação
+     */
     public function errors()
     {
         return $this->errors;
     }
 
+    /**
+     * Verifica se validação foi concluída sem erros
+     */
     public function passed()
     {
         return (empty($this->errors)) ? true : false;

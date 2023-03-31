@@ -52,8 +52,8 @@
             </form>
             <?php
                 if (
-                    !empty($errors) &&
-                    isset($errors)
+                    isset($errors) &&
+                    !empty($errors)
                 ) {
                     foreach ($errors as $error) {
             ?>
