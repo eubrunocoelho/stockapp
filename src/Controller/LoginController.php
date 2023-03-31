@@ -52,7 +52,7 @@ class LoginController
             ],
             'password' => [
                 'label' => 'Senha',
-                'required' => false
+                'required' => true
             ]
         ];
 
@@ -62,13 +62,15 @@ class LoginController
             $this->validator->setRules($rules);
             $this->validator->validation();
 
-            if ($this->validator->passed()) {
-            } else dd($this->validator->errors());
+            if (!$this->validator->passed()) $errors = (array)$this->validator->errors();
         }
+
+        $errors = $errors ?? '';
 
         // Define as variáveis da `view`
         $templateVariables = [
-            'inputValues' => $inputValues
+            'inputValues' => $inputValues,
+            'errors' => $errors
         ];
 
         // Retorna a view de login

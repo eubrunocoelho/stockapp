@@ -23,36 +23,47 @@
                 <div class="form__group">
                     <label class="form__label" for="user">Usuário:</label>
                     <input type="text" class="form__input" id="user" name="user"<?php
-                    if (
-                        !empty($inputValues) &&
-                        isset($inputValues['user']) &&
-                        !is_null($inputValues['user'])
-                    ) {
-                        echo ' value="' . $inputValues['user'] . '"';
-                    } else {
-                        echo ' placeholder="Usuário"';
-                    }
+                        if (
+                            !empty($inputValues) &&
+                            isset($inputValues['user']) &&
+                            !is_null($inputValues['user'])
+                        ) {
+                            echo ' value="' . $inputValues['user'] . '"';
+                        } else {
+                            echo ' placeholder="Usuário"';
+                        }
                     ?>>
                 </div>
                 <div class="form__group">
                     <label class="form__label" for="password">Senha:</label>
                     <input type="text" class="form__input" id="password" name="password"<?php
-                    if (
-                        !empty($inputValues) &&
-                        isset($inputValues['password']) &&
-                        !is_null($inputValues['password'])
-                    ) {
-                        echo ' value="' . $inputValues['password'] . '"';
-                    } else {
-                        echo ' placeholder="Senha"';
-                    }
+                        if (
+                            !empty($inputValues) &&
+                            isset($inputValues['password']) &&
+                            !is_null($inputValues['password'])
+                        ) {
+                            echo ' value="' . $inputValues['password'] . '"';
+                        } else {
+                            echo ' placeholder="Senha"';
+                        }
                     ?>>
                 </div>
                 <button class="btn">Entrar</button>
             </form>
+            <?php
+                if (
+                    !empty($errors) &&
+                    isset($errors)
+                ) {
+                    foreach ($errors as $error) {
+            ?>
             <div class="alert-box alert--danger mt--20">
-                <p class="alert-box__text">Mensagem de erro.</p>
+                <p class="alert-box__text"><?=$error?></p>
             </div>
+            <?php
+                    }
+                }
+            ?>
         </section>
     </main>
 </body>

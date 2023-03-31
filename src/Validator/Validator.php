@@ -43,23 +43,21 @@ class Validator extends DataValidator
 
     private function validate()
     {
-        foreach ($this->rules as $item => $rules) {
+        foreach ($this->rules as $item => $rules)
             foreach ($rules as $rule => $ruleValue) {
                 $value = $this->data[$item];
                 $label = $rules['label'] ?? $item;
 
                 if ($rule == 'required') {
-                    if ($ruleValue && !$this->required($value)) {
+                    if ($ruleValue && !$this->required($value))
                         $this->addError('O campo "' . $label . '" é obrigatório.');
-                    }
                 }
             }
-        }
     }
 
     private function addError($message)
     {
-        (array)$this->errors = $message;
+        $this->errors[] = $message;
     }
 
     public function errors()
