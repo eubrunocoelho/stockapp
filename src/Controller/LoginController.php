@@ -26,7 +26,7 @@ class LoginController
 
     public function __construct(App $app)
     {
-        // Seta os atributos de depêndencias
+        // Define os atributos de depêndencia
         $this->app = $app;
         $this->container = $this->app->getContainer();
         $this->renderer = $this->container->get(PhpRenderer::class);
