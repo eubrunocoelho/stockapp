@@ -13,7 +13,8 @@ use Slim\{
 };
 
 use App\{
-    Helper\Input
+    Helper\Input,
+    Validator\Validator
 };
 
 /**
@@ -22,7 +23,7 @@ use App\{
 class LoginController
 {
     private
-        $app, $container, $renderer;
+        $app, $container, $renderer, $validator;
 
     public function __construct(App $app)
     {
@@ -30,6 +31,7 @@ class LoginController
         $this->app = $app;
         $this->container = $this->app->getContainer();
         $this->renderer = $this->container->get(PhpRenderer::class);
+        $this->validator = $this->container->get(Validator::class);
     }
 
     /**
@@ -43,7 +45,28 @@ class LoginController
         // Obtém valores para persistir no formulário
         $inputValues = Input::getPersistValues($formRequest);
 
-        // Variáveis da view
+        $rules = [
+            'user' => [
+                'label' => 'Usuário',
+                'required' => true
+            ],
+            'password' => [
+                'label' => 'Senha',
+                'required' => false
+            ]
+        ];
+
+        if (!empty($formRequest)) {
+            $this->validator->setFields(['user', 'password']);
+            $this->validator->setData($formRequest);
+            $this->validator->setRules($rules);
+            $this->validator->validation();
+
+            if ($this->validator->passed()) {
+            } else dd($this->validator->errors());
+        }
+
+        // Define as variáveis da `view`
         $templateVariables = [
             'inputValues' => $inputValues
         ];

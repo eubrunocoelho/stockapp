@@ -5,7 +5,12 @@ namespace App\Validator;
 class Validator extends DataValidator
 {
     private
-        $fields, $data, $rules, $errors;
+        $container, $fields, $data, $rules, $errors;
+
+    public function __construct($container)
+    {
+        $this->container = $container;
+    }
 
     public function setFields($fields)
     {
@@ -22,18 +27,18 @@ class Validator extends DataValidator
         $this->rules = $rules;
     }
 
+    public function validation()
+    {
+        if ($this->fieldsExists()) $this->validate();
+        else $this->addError('Houve um erro inesperado.');
+    }
+
     private function fieldsExists()
     {
         foreach ($this->fields as $field)
             if (!array_key_exists($field, $this->data)) return false;
 
         return true;
-    }
-
-    public function validation()
-    {
-        if ($this->fieldsExists()) $this->validate();
-        else $this->addError('Houve um erro inesperado.');
     }
 
     private function validate()

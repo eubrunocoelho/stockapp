@@ -10,6 +10,10 @@ use Slim\{
     Views\PhpRenderer
 };
 
+use App\{
+    Validator\Validator
+};
+
 return [
     'settings' => function () {
         return require __DIR__ . '/settings.php';
@@ -23,5 +27,9 @@ return [
 
     PhpRenderer::class => function (ContainerInterface $container) {
         return new PhpRenderer($container->get('settings')['views']['path']);
+    },
+
+    Validator::class => function (ContainerInterface $container) {
+        return new Validator($container);
     }
 ];
