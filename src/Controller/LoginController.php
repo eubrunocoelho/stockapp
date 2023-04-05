@@ -15,6 +15,7 @@ use Slim\{
 use App\{
     lib\Database,
     Helper\Input,
+    Helper\Session,
     Validator\Validator
 };
 
@@ -92,7 +93,16 @@ class LoginController
                 $this->gestor->setUsuario($formRequest['user']);
                 $this->gestor->setSenha($formRequest['password']);
 
-                if ($this->gestorDAO->checkGestorByCredentials($this->gestor) !== []) {} $errors = (array)'Usuário ou senha inválidos.';
+                if (($gestor = $this->gestorDAO->checkGestorByCredentials($this->gestor)) !== []) {
+                    $gestor = $gestor[0];
+                    
+                    Session::create('gestorID', $gestor['ID']);
+                    Session::create('authenticated', true);
+
+                    dd($_SESSION);
+                } else {
+                    $errors = (array)'Usuário ou senha inválidos.';
+                }
             } else {
                 // Obtem os erros que ocorreram durante a validação do formulário
                 $errors = $this->validator->errors();
