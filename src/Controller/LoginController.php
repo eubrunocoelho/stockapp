@@ -13,10 +13,17 @@ use Slim\{
 };
 
 use App\{
-    Application\Connection,
+    lib\Database,
     Helper\Input,
     Validator\Validator
 };
+
+use App\{
+    Model\Gestor,
+    Model\GestorDAO
+};
+
+use PDO;
 
 /**
  * Responsável por gerenciar o fluxo entre a camada `Model` e a camada `View`
@@ -24,16 +31,23 @@ use App\{
 class LoginController
 {
     private
-        $app, $container, $connection, $renderer, $validator;
+        $app, $container, $database, $renderer, $validator;
+
+    private
+        $gestor, $gestorDAO;
 
     public function __construct(App $app)
     {
         // Injeção de depêndencia
         $this->app = $app;
         $this->container = $this->app->getContainer();
-        $this->connection = $this->container->get(Connection::class);
+        $this->database = $this->container->get(PDO::class);
         $this->renderer = $this->container->get(PhpRenderer::class);
         $this->validator = $this->container->get(Validator::class);
+
+        // Conexão com o banco de dados
+        $this->gestor = new Gestor();
+        $this->gestorDAO = new GestorDAO($this->database);
     }
 
     /**
@@ -75,6 +89,10 @@ class LoginController
 
             // Verifica se todos os dados recebidos da requisição condizem com as regras do formulário
             if ($this->validator->passed()) {
+                $this->gestor->setUsuario($formRequest['user']);
+                $this->gestor->setSenha($formRequest['password']);
+
+                if ($this->gestorDAO->checkGestorByCredentials($this->gestor) !== []) {} $errors = (array)'Usuário ou senha inválidos.';
             } else {
                 // Obtem os erros que ocorreram durante a validação do formulário
                 $errors = $this->validator->errors();

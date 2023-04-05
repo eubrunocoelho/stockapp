@@ -11,7 +11,6 @@ use Slim\{
 };
 
 use App\{
-    lib\Database,
     Validator\Validator
 };
 
@@ -33,8 +32,12 @@ return [
     Validator::class => function (ContainerInterface $container) {
         return new Validator($container);
     },
+    
+    PDO::class => function (ContainerInterface $container) {
+        $settings = $container->get('settings')['database'];
 
-    Database::class => function (ContainerInterface $container) {
-        return new Database($container);
+        $dsn = $settings['driver'] . ':host=' . $settings['host'] . ';port=' . $settings['port'] . ';dbname=' . $settings['database'];
+
+        return new PDO($dsn, $settings['username'], $settings['password']);
     }
 ];

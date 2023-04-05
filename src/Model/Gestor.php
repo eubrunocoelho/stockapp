@@ -5,16 +5,27 @@ namespace App\Model;
 class Gestor
 {
     private
-        $ID, $nome, $email, $cpf, $senha, $telefone, $endereco, $cargo, $genero, $status, $img_url;
+        $ID, $usuario, $nome, $email, $cpf, $senha, $telefone, $endereco, $cargo, $genero, $status, $img_url;
 
 
     public function setID($ID)
     {
         $this->ID = $ID;
     }
+
     public function getID()
     {
         return $this->ID;
+    }
+
+    public function setUsuario($usuario)
+    {
+        $this->usuario = $usuario;
+    }
+
+    public function getUsuario()
+    {
+        return $this->usuario;
     }
 
     public function setNome($nome)
