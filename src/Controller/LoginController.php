@@ -13,6 +13,7 @@ use Slim\{
 };
 
 use App\{
+    Application\Connection,
     Helper\Input,
     Validator\Validator
 };
@@ -23,13 +24,14 @@ use App\{
 class LoginController
 {
     private
-        $app, $container, $renderer, $validator;
+        $app, $container, $connection, $renderer, $validator;
 
     public function __construct(App $app)
     {
-        // Define os atributos de depêndencia
+        // Injeção de depêndencia
         $this->app = $app;
         $this->container = $this->app->getContainer();
+        $this->connection = $this->container->get(Connection::class);
         $this->renderer = $this->container->get(PhpRenderer::class);
         $this->validator = $this->container->get(Validator::class);
     }
@@ -72,9 +74,11 @@ class LoginController
             $this->validator->validation();
 
             // Verifica se todos os dados recebidos da requisição condizem com as regras do formulário
-            if (!$this->validator->passed())
+            if ($this->validator->passed()) {
+            } else {
                 // Obtem os erros que ocorreram durante a validação do formulário
-                $errors = (array)$this->validator->errors();
+                $errors = $this->validator->errors();
+            }
         }
 
         // Inicia a variável `$errors` com seu valor, se não existir retorna um `array` vazio

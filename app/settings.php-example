@@ -10,6 +10,15 @@ $settings = [
 
     'views' => [
         'path' => __DIR__ . '/../views/'
+    ],
+    
+    'database' => [
+        'driver' => 'mysql',
+        'host' => '127.0.0.1',
+        'port' => '3306',
+        'database' => 'stockapp',
+        'username' => 'root',
+        'password' => ''
     ]
 ];
 

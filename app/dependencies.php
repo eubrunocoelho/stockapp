@@ -11,6 +11,7 @@ use Slim\{
 };
 
 use App\{
+    Application\Connection,
     Validator\Validator
 };
 
@@ -31,5 +32,9 @@ return [
 
     Validator::class => function (ContainerInterface $container) {
         return new Validator($container);
+    },
+
+    Connection::class => function (ContainerInterface $container) {
+        return new Connection($container);
     }
 ];
