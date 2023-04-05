@@ -8,4 +8,9 @@ class Session
     {
         $_SESSION[$index] = $value;
     }
+
+    public static function exists($index)
+    {
+        return (isset($_SESSION[$index])) ? true : false;
+    }
 }
