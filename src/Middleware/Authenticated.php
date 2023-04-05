@@ -18,7 +18,11 @@ class Authenticated
 {
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
-        if (true) {
+        if (
+            Session::exists('authenticated') &&
+            Session::exists('gestorID') &&
+            Session::isTrue('authenticated')
+        ) {
             $response = new Response();
 
             $url = RouteContext::fromRequest($request)
