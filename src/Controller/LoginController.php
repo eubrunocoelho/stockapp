@@ -9,7 +9,8 @@ use Psr\{
 
 use Slim\{
     App,
-    Views\PhpRenderer
+    Views\PhpRenderer,
+    Routing\RouteContext
 };
 
 use App\{
@@ -95,14 +96,18 @@ class LoginController
 
                 if (($gestor = $this->gestorDAO->checkGestorByCredentials($this->gestor)) !== []) {
                     $gestor = $gestor[0];
-                    
+
                     Session::create('gestorID', $gestor['ID']);
                     Session::create('authenticated', true);
 
-                    dd($_SESSION);
-                } else {
-                    $errors = (array)'Usuário ou senha inválidos.';
-                }
+                    $url = RouteContext::fromRequest($request)
+                        ->getRouteParser()
+                        ->urlFor('dashboard');
+
+                    return $response
+                        ->withHeader('Location', $url)
+                        ->withStatus(302);
+                } else $errors = (array)'Usuário ou senha inválidos.';
             } else {
                 // Obtem os erros que ocorreram durante a validação do formulário
                 $errors = $this->validator->errors();
