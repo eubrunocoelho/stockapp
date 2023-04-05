@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Application;
+namespace App\lib;
 
 use PDO;
 
-class Connection
+class Database
 {
     private
         $container, $settings;

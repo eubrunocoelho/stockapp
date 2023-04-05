@@ -11,7 +11,7 @@ use Slim\{
 };
 
 use App\{
-    Application\Connection,
+    lib\Database,
     Validator\Validator
 };
 
@@ -34,7 +34,7 @@ return [
         return new Validator($container);
     },
 
-    Connection::class => function (ContainerInterface $container) {
-        return new Connection($container);
+    Database::class => function (ContainerInterface $container) {
+        return new Database($container);
     }
 ];
