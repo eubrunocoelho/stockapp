@@ -1,0 +1,31 @@
+<header class="header">
+    <div class="header-navigation container">
+        <div class="header-navigation__stick">
+            <div class="header-navigation__menu-button" id="openMenu">
+                <span><i class="fa-solid fa-bars menu-button__icon"></i></span>
+            </div>
+            <a href="./index.html" class="header-navigation__logo">StockApp</a>
+        </div>
+        <div class="header-navigation__user-area">
+            <div class="user-area__ellipse" id="clickUserMenu"></div>
+            <div class="user-area__dropdown-menu d--none" id="userMenu">
+                <div class="dropdown-menu__heading">
+                    <h6 class="dropdown-menu__title">Bruno Coelho</h6>
+                    <p class="dropdown-menu__description">Administrador</p>
+                </div>
+                <nav class="dropdown-menu__nav">
+                    <ul class="dropdown-menu__list">
+                        <li class="dropdown-menu__item">
+                            <span class="dropdown-menu__icon-box"><i class="fa-solid fa-user dropdown-menu__icon"></i></span>
+                            <a href="./perfil.html" class="dropdown-menu__link">Perfil</a>
+                        </li>
+                        <li class="dropdown-menu__item">
+                            <span class="dropdown-menu__icon-box"><i class="fa-solid fa-circle-exclamation dropdown-menu__icon"></i></span>
+                            <a href="./login.html" class="dropdown-menu__link">Sair</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>

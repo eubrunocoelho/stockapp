@@ -5,10 +5,12 @@ namespace App\Middleware;
 use App\{
     Helper\Session
 };
+
 use Psr\{
     Http\Message\ServerRequestInterface as Request,
     Http\Server\RequestHandlerInterface as RequestHandler
 };
+
 use Slim\{
     Psr7\Response,
     Routing\RouteContext
@@ -20,18 +22,21 @@ class Authenticated
     {
         if (
             Session::exists('authenticated') &&
-            Session::exists('gestorID') &&
-            Session::isTrue('authenticated')
+            Session::exists('gestorID')
         ) {
-            $response = new Response();
+            if (
+                Session::get('authenticated')
+            ) {
+                $response = new Response();
 
-            $url = RouteContext::fromRequest($request)
-                ->getRouteParser()
-                ->urlFor('dashboard');
+                $url = RouteContext::fromRequest($request)
+                    ->getRouteParser()
+                    ->urlFor('dashboard');
 
-            return $response
-                ->withHeader('Location', $url)
-                ->withStatus(302);
+                return $response
+                    ->withHeader('Location', $url)
+                    ->withStatus(302);
+            }
         }
 
         $response = $handler->handle($request);

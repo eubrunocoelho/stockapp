@@ -1,0 +1,1 @@
+<script src="<?= $basePath ?>/assets/js/scripts.js"></script>

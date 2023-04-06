@@ -14,7 +14,6 @@ use Slim\{
 };
 
 use App\{
-    lib\Database,
     Helper\Input,
     Helper\Session,
     Validator\Validator

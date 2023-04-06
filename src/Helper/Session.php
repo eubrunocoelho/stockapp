@@ -9,13 +9,18 @@ class Session
         $_SESSION[$name] = $value;
     }
 
+    public static function get($name)
+    {
+        return $_SESSION[$name];
+    }
+
     public static function exists($name)
     {
         return (isset($_SESSION[$name])) ? true : false;
     }
 
-    public static function isTrue($name)
+    public static function destroy()
     {
-        return ($_SESSION[$name] === true) ? true : false;
+        session_destroy();
     }
 }

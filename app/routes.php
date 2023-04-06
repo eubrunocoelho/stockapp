@@ -11,7 +11,8 @@ use App\Controller\{
 };
 
 use App\Middleware\{
-    Authenticated
+    Authenticated,
+    Unauthenticated
 };
 
 return function (App $app) {
@@ -23,5 +24,6 @@ return function (App $app) {
 
     $app->group('/dashboard', function (RouteCollectorProxy $group) {
         $group->get('', [DashboardController::class, 'index'])->setName('dashboard');
-    });
+        $group->get('/logout', [DashboardController::class, 'logout'])->setName('logout');
+    })->add(Unauthenticated::class);
 };
