@@ -43,6 +43,60 @@ abstract class BaseController
         $this->gestor->setID($ID);
         $gestor = $this->gestorDAO->getGestorByID($this->gestor)[0] ?? [];
 
+        if ($gestor !== []) {
+            $gestor['cargo'] = self::getCargo($gestor['cargo']);
+            $gestor['genero'] = self::getGenero($gestor['genero']);
+            $gestor['status'] = self::getStatus($gestor['status']);
+        }
+
         return $gestor;
+    }
+
+    protected function getCargo($cargo)
+    {
+        switch ($cargo) {
+            case 1:
+                $cargo = 'Administrador';
+                break;
+            case 2:
+                $cargo = 'Gestor';
+                break;
+            default:
+                $cargo = 'Indefinido';
+        }
+
+        return $cargo;
+    }
+
+    protected function getGenero($genero)
+    {
+        switch ($genero) {
+            case 1:
+                $genero = 'Masculino';
+                break;
+            case 2:
+                $genero = 'Feminino';
+                break;
+            default:
+                $genero = 'Indefinido';
+        }
+
+        return $genero;
+    }
+
+    protected function getStatus($status)
+    {
+        switch ($status) {
+            case 1:
+                $status = 'Ativo';
+                break;
+            case 2:
+                $status = 'Inativo';
+                break;
+            default:
+                $status = 'Indefinido';
+        }
+
+        return $status;
     }
 }

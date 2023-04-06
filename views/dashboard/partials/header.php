@@ -10,8 +10,8 @@
             <div class="user-area__ellipse" id="clickUserMenu"></div>
             <div class="user-area__dropdown-menu d--none" id="userMenu">
                 <div class="dropdown-menu__heading">
-                    <h6 class="dropdown-menu__title">Bruno Coelho</h6>
-                    <p class="dropdown-menu__description">Administrador</p>
+                    <h6 class="dropdown-menu__title"><?=$gestor['nome']?></h6>
+                    <p class="dropdown-menu__description"><?=$gestor['cargo']?></p>
                 </div>
                 <nav class="dropdown-menu__nav">
                     <ul class="dropdown-menu__list">
@@ -21,7 +21,7 @@
                         </li>
                         <li class="dropdown-menu__item">
                             <span class="dropdown-menu__icon-box"><i class="fa-solid fa-circle-exclamation dropdown-menu__icon"></i></span>
-                            <a href="./login.html" class="dropdown-menu__link">Sair</a>
+                            <a href="<?=$basePath?>/dashboard/logout" class="dropdown-menu__link">Sair</a>
                         </li>
                     </ul>
                 </nav>
