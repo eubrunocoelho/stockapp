@@ -34,9 +34,23 @@ class DashboardController extends BaseController
     public function index(Request $request, Response $response, array $args): Response
     {
         $basePath = $this->container->get('settings')['api']['path'];
+        $gestor = parent::getGestor();
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
 
         $templateVariables = [
-            'basePath' => $basePath
+            'basePath' => $basePath,
+            'gestor' => $gestor
         ];
 
         return $this->renderer->render($response, 'dashboard/index.php', $templateVariables);
