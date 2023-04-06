@@ -17,7 +17,7 @@ use App\{
     Helper\Session
 };
 
-class DashboardController
+class DashboardController extends BaseController
 {
     private
         $app, $container, $renderer;
@@ -27,6 +27,8 @@ class DashboardController
         $this->app = $app;
         $this->container = $this->app->getContainer();
         $this->renderer = $this->container->get(PhpRenderer::class);
+
+        parent::__construct($this->app);
     }
 
     public function index(Request $request, Response $response, array $args): Response
