@@ -52,7 +52,7 @@ abstract class GestorController
         return $gestor;
     }
 
-    protected function getCargo($cargo)
+    private function getCargo($cargo)
     {
         switch ($cargo) {
             case 1:
@@ -68,7 +68,7 @@ abstract class GestorController
         return $cargo;
     }
 
-    protected function getGenero($genero)
+    private function getGenero($genero)
     {
         switch ($genero) {
             case 1:
@@ -84,7 +84,7 @@ abstract class GestorController
         return $genero;
     }
 
-    protected function getStatus($status)
+    private function getStatus($status)
     {
         switch ($status) {
             case 1:

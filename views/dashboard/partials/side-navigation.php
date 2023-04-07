@@ -1,6 +1,6 @@
 <aside class="side-navigation">
     <div class="side-navigation__heading">
-        <a href="./index.html" class="side-navigation__logo">StockApp</a>
+        <a href="<?=$basePath?>/dashboard" class="side-navigation__logo">StockApp</a>
         <div class="side-navigation__close-button" id="closeMenu">
             <span><i class="fa-solid fa-xmark close-button__icon"></i></span>
         </div>
@@ -9,7 +9,7 @@
         <ul class="side-navigation__menu-list">
             <li class="side-navigation__menu-item">
                 <span class="menu-item__icon-box"><i class="fa-solid fa-display menu-item__icon"></i></span>
-                <a href="./index.html" class="side-navigation__menu-link">Dashboard</a>
+                <a href="<?=$basePath?>/dashboard" class="side-navigation__menu-link">Dashboard</a>
             </li>
         </ul>
         <div class="side-navigation__group-heading">

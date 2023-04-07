@@ -2,22 +2,22 @@
 <html lang="pt-BR">
 <head>
     <?php
-    require __DIR__ . '/partials/head.php';
+    require __DIR__ . '/../partials/head.php';
     ?>
 </head>
 <body>
     <div class="window-overlay">
         <?php
-        require __DIR__ . '/partials/side-navigation.php';
+        require __DIR__ . '/../partials/side-navigation.php';
         ?>
     </div>
     <?php
-    require __DIR__ . '/partials/header.php';
+    require __DIR__ . '/../partials/header.php';
     ?>
     <main class="main">
         <div class="main-heading container">
             <h1 class="main-heading__title">Bruno Coelho</h1>
-            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="./perfil.html">Bruno Coelho</a> / <a class="breadcrumbs__link" href="./gestores.html">Gestores</a> / <a class="breadcrumbs__link" href="./index.html">Dashboard</a></span>
+            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/profile/show/<?=$gestor['ID']?>">Bruno Coelho</a> / <a class="breadcrumbs__link" href="./gestores.html">Gestores</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container">
             <div class="box">
@@ -76,10 +76,10 @@
         </section>
     </main>
     <?php
-    require __DIR__ . '/partials/footer.php';
+    require __DIR__ . '/../partials/footer.php';
     ?>
     <?php
-    require __DIR__ . '/partials/scripts.php';
+    require __DIR__ . '/../partials/scripts.php';
     ?>
 </body>
 </html>

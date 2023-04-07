@@ -31,7 +31,7 @@ class Authenticated
 
                 $url = RouteContext::fromRequest($request)
                     ->getRouteParser()
-                    ->urlFor('dashboard');
+                    ->urlFor('dashboard.index');
 
                 return $response
                     ->withHeader('Location', $url)
