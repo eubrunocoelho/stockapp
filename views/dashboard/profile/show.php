@@ -16,7 +16,7 @@
     ?>
     <main class="main">
         <div class="main-heading container">
-            <h1 class="main-heading__title">Bruno Coelho</h1>
+            <h1 class="main-heading__title"><?=$gestorProfile['nome']?></h1>
             <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/profile/show/<?=$gestor['ID']?>">Bruno Coelho</a> / <a class="breadcrumbs__link" href="./gestores.html">Gestores</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container">
@@ -61,6 +61,14 @@
                         </tr>
                         <?php
                         }
+                        if (isset($gestorProfile['endereco'])) {
+                        ?>
+                        <tr class="table__tr">
+                            <th class="table__cell tc--w210">Endereço</th>
+                            <td class="table__cell fg--1"><?=$gestorProfile['endereco']?></td>
+                        </tr>
+                        <?php
+                        }
                         ?>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Gênero</th>
@@ -88,7 +96,7 @@
                 ) {
                 ?>
                 <div class="operation-group">
-                    <button class="btn bg--warning" onclick="window.location.href='./editar-perfil.html';">Editar informações</button>
+                    <button class="btn bg--warning" onclick="window.location.href='<?=$basePath?>/profile/update/<?=$gestorProfile['ID']?>';">Editar informações</button>
                 </div>
                 <?php
                 }

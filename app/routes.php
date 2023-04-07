@@ -29,6 +29,7 @@ return function (App $app) {
     })->add(Unauthenticated::class);
 
     $app->group('/profile', function (RouteCollectorProxy $group) {
-        $group->get('/show/{ID}', [ProfileController::class, 'show'])->setName('dashboard.profile');
+        $group->get('/show/{ID}', [ProfileController::class, 'show'])->setName('profile.show');
+        $group->get('/update/{ID}', [ProfileController::class, 'update'])->setName('profile.update');
     })->add(Unauthenticated::class);
 };

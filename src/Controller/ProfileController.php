@@ -109,4 +109,46 @@ class ProfileController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/profile/show.php', $templateVariables);
     }
+
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        $ID = $request->getAttribute('ID');
+        $basePath = $this->container->get('settings')['api']['path'];
+        $gestor = parent::getGestor();
+        $gestor = parent::applyGestorData($gestor);
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $this->gestor->setID($ID);
+        if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('dashboard.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        } else {
+            $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
+            $gestorProfile = parent::applyGestorData($gestorProfile);
+        }
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor,
+            'gestorProfile' => $gestorProfile
+        ];
+
+        return $this->renderer->render($response, 'dashboard/profile/update.php', $templateVariables);
+    }
 }

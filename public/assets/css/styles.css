@@ -847,6 +847,7 @@ body {
 
 .form__select {
     appearance: none;
+    background: var(--bg-element-color);
     border: 1px solid var(--border-default-color);
     border-radius: var(--border-default-radius);
     color: var(--text-secondary-color);
