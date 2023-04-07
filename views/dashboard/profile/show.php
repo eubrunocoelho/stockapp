@@ -72,12 +72,27 @@
                         </tr>
                     </tbody>
                 </table>
+                <?php
+                if ($authorize['status'] === true) {
+                ?>
                 <div class="operation-group mb--20">
                     <button class="btn bg--danger" onclick="window.location.href='./gerenciar-status-gestor.html';">Inativar</button>
                 </div>
+                <?php
+                }
+                ?>
+                <?php
+                if (
+                    ($authorize['update']['current'] === true) ||
+                    ($authorize['update']['admin'] === true)
+                ) {
+                ?>
                 <div class="operation-group">
                     <button class="btn bg--warning" onclick="window.location.href='./editar-perfil.html';">Editar informações</button>
                 </div>
+                <?php
+                }
+                ?>
             </div>
         </section>
     </main>

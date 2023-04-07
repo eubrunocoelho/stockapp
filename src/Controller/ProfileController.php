@@ -85,14 +85,26 @@ class ProfileController extends GestorController
         if (
             ($gestor['ID'] !== $gestorProfile['ID']) &&
             ($privilege === true)
-        ) $authorize = true;
-        else $authorize = false;
+        ) $authorize['status'] = true;
+        else $authorize['status'] = false;
 
+        if (
+            ($gestor['ID'] == $gestorProfile['ID'])
+        ) $authorize['update']['current'] = true;
+        else $authorize['update']['current'] = false;
+
+        if (
+            ($gestor['ID'] !== $gestorProfile['ID']) &&
+            ($privilege === true)
+        ) $authorize['update']['admin'] = true;
+        else $authorize['update']['admin'] = false;
 
         $templateVariables = [
             'basePath' => $basePath,
             'gestor' => $gestor,
-            'gestorProfile' => $gestorProfile
+            'gestorProfile' => $gestorProfile,
+            'authorize' => $authorize
+
         ];
 
         return $this->renderer->render($response, 'dashboard/profile/show.php', $templateVariables);
