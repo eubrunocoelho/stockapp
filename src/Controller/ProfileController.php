@@ -113,9 +113,16 @@ class ProfileController extends GestorController
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
+
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
+
+        dd(Session::get('update.ID')); // ... in working
+
+        if ($_POST) {
+            Session::create('update.ID', $ID);
+        }
 
         if ($gestor === []) {
             Session::destroy();

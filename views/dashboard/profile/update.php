@@ -77,7 +77,7 @@
                 <div class="box-heading">
                     <h1 class="box-heading__title">Editar Perfil</h1>
                 </div>
-                <form class="form" action="<?=$basePath?>/update/<?=$gestorProfile['ID']?>" method="POST">
+                <form class="form" action="<?=$basePath?>/profile/update/<?=$gestorProfile['ID']?>" method="POST">
                     <div class="form__group">
                         <label class="form__label">Foto de Perfil:</label>
                         <input type="file" id="upload" hidden>

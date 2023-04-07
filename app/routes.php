@@ -31,5 +31,6 @@ return function (App $app) {
     $app->group('/profile', function (RouteCollectorProxy $group) {
         $group->get('/show/{ID}', [ProfileController::class, 'show'])->setName('profile.show');
         $group->get('/update/{ID}', [ProfileController::class, 'update'])->setName('profile.update');
+        $group->post('/update/{ID}', [ProfileController::class, 'update']);
     })->add(Unauthenticated::class);
 };
