@@ -51,6 +51,11 @@ class ProfileController extends GestorController
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
 
+        if ($gestor['cargo'] === 1) $privilege = true;
+        else $privilege = false;
+
+        $gestor = parent::applyGestorData($gestor);
+
         if ($gestor === []) {
             Session::destroy();
 
@@ -77,7 +82,12 @@ class ProfileController extends GestorController
             $gestorProfile = parent::applyGestorData($gestorProfile);
         }
 
-        dd($gestorProfile, true);
+        if (
+            ($gestor['ID'] !== $gestorProfile['ID']) &&
+            ($privilege === true)
+        ) $authorize = true;
+        else $authorize = false;
+
 
         $templateVariables = [
             'basePath' => $basePath,

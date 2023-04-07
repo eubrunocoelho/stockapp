@@ -52,17 +52,23 @@
                             <th class="table__cell tc--w210">Função</th>
                             <td class="table__cell fg--1"><?=$gestorProfile['nome']?></td>
                         </tr>
+                        <?php
+                        if (isset($gestorProfile['telefone'])) {
+                        ?>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Telefone</th>
-                            <td class="table__cell fg--1">(66) 4002-8922</td>
+                            <td class="table__cell fg--1"><?=$gestorProfile['telefone']?></td>
                         </tr>
+                        <?php
+                        }
+                        ?>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Gênero</th>
-                            <td class="table__cell fg--1">Mascúlino</td>
+                            <td class="table__cell fg--1"><?=$gestorProfile['genero']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Status</th>
-                            <td class="table__cell fg--1">Ativo</td>
+                            <td class="table__cell fg--1"><?=$gestorProfile['status']?></td>
                         </tr>
                     </tbody>
                 </table>

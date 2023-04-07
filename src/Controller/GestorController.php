@@ -43,10 +43,6 @@ abstract class GestorController
         $this->gestor->setID($ID);
         $gestor = $this->gestorDAO->getGestorByID($this->gestor)[0] ?? [];
 
-        if ($gestor !== []) {
-            $gestor = self::applyGestorData($gestor);
-        }
-
         return $gestor;
     }
 

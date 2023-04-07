@@ -35,6 +35,7 @@ class DashboardController extends GestorController
     {
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
+        $gestor = parent::applyGestorData($gestor);
 
         if ($gestor === []) {
             Session::destroy();
