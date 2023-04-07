@@ -64,7 +64,7 @@ class ProfileController extends GestorController
         }
 
         $this->gestor->setID($ID);
-        if (($gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)) == []) {
+        if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
                 ->urlFor('dashboard.index');
@@ -72,11 +72,17 @@ class ProfileController extends GestorController
             return $response
                 ->withHeader('Location', $url)
                 ->withStatus(302);
+        } else {
+            $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
+            $gestorProfile = parent::applyGestorData($gestorProfile);
         }
+
+        dd($gestorProfile, true);
 
         $templateVariables = [
             'basePath' => $basePath,
-            'gestor' => $gestor
+            'gestor' => $gestor,
+            'gestorProfile' => $gestorProfile
         ];
 
         return $this->renderer->render($response, 'dashboard/profile/show.php', $templateVariables);

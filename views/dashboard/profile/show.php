@@ -22,13 +22,13 @@
         <section class="section container">
             <div class="box">
                 <div class="box-heading">
-                    <h1 class="box-heading__title">Bruno Coelho</h1>
+                    <h1 class="box-heading__title"><?=$gestorProfile['nome']?></h1>
                 </div>
                 <div class="profile mb--20">
                     <div class="profile__avatar"></div>
                     <div class="profile__description">
-                        <h1 class="description__name">Bruno Coelho</h1>
-                        <span class="description__email">eu.brunocoelho94@gmail.com</span>
+                        <h1 class="description__name"><?=$gestorProfile['nome']?></h1>
+                        <span class="description__email"><?=$gestorProfile['email']?></span>
                     </div>
                 </div>
                 <div class="box-heading">
@@ -38,19 +38,19 @@
                     <tbody>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Nome</th>
-                            <td class="table__cell fg--1">Bruno Coelho</td>
+                            <td class="table__cell fg--1"><?=$gestorProfile['nome']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">CPF</th>
-                            <td class="table__cell fg--1">000.000.000-00</td>
+                            <td class="table__cell fg--1"><?=$gestorProfile['cpf']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">E-mail</th>
-                            <td class="table__cell fg--1">eu.brunocoelho94@gmail.com</td>
+                            <td class="table__cell fg--1"><?=$gestorProfile['email']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Função</th>
-                            <td class="table__cell fg--1">Administrador</td>
+                            <td class="table__cell fg--1"><?=$gestorProfile['nome']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Telefone</th>

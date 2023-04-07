@@ -44,10 +44,17 @@ abstract class GestorController
         $gestor = $this->gestorDAO->getGestorByID($this->gestor)[0] ?? [];
 
         if ($gestor !== []) {
-            $gestor['cargo'] = self::getCargo($gestor['cargo']);
-            $gestor['genero'] = self::getGenero($gestor['genero']);
-            $gestor['status'] = self::getStatus($gestor['status']);
+            $gestor = self::applyGestorData($gestor);
         }
+
+        return $gestor;
+    }
+
+    protected function applyGestorData($gestor)
+    {
+        $gestor['cargo'] = self::getCargo($gestor['cargo']);
+        $gestor['genero'] = self::getGenero($gestor['genero']);
+        $gestor['status'] = self::getStatus($gestor['status']);
 
         return $gestor;
     }
