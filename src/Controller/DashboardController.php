@@ -17,7 +17,7 @@ use App\{
     Helper\Session
 };
 
-class DashboardController extends BaseController
+class DashboardController extends GestorController
 {
     private
         $app, $container, $renderer;

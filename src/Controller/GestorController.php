@@ -17,7 +17,7 @@ use App\{
 
 use PDO;
 
-abstract class BaseController
+abstract class GestorController
 {
     private
         $app, $container, $database;
