@@ -132,6 +132,10 @@ class GestoresController extends GestorController
 
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
+
+        if ($gestor['cargo'] === 1) $privilege = true;
+        else $privilege = false;
+
         $gestor = parent::applyGestorData($gestor);
 
         if ($gestor === []) {
@@ -158,6 +162,24 @@ class GestoresController extends GestorController
         } else {
             $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
             $gestorProfile = parent::applyGestorData($gestorProfile);
+        }
+
+        if (
+            ($gestor['ID'] == $gestorProfile['ID'])
+        ) $authorize['update']['current'] = true;
+        else $authorize['update']['current'] = false;
+
+        if (
+            ($gestor['ID'] !== $gestorProfile['ID']) &&
+            ($privilege === true)
+        ) $authorize['update']['admin'] = true;
+        else $authorize['update']['admin'] = false;
+
+        if (
+            !(($authorize['update']['current']) ||
+                ($authorize['update']['admin']))
+        ) {
+            dd('Not authorize');
         }
 
         $templateVariables = [

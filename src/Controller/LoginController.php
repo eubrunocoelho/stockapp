@@ -56,6 +56,8 @@ class LoginController
      */
     public function login(Request $request, Response $response, array $args): Response
     {
+        $basePath = $this->container->get('settings')['api']['path'];
+
         if ($request->getMethod() == 'POST') {
             // Obtém as requisições de formulário
             $formRequest = (array)$request->getParsedBody();
@@ -71,7 +73,7 @@ class LoginController
                     'required' => true
                 ]
             ];
-            
+
             // Verifica se existe requisições do formulário
             if (!empty($formRequest)) {
                 // Define campos que devem existir no formulário
@@ -122,6 +124,7 @@ class LoginController
 
         // Define as variáveis a serem usadas na `view`
         $templateVariables = [
+            'basePath' => $basePath,
             'inputValues' => $inputValues,
             'errors' => $errors
         ];
