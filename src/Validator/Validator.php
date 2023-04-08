@@ -14,4 +14,19 @@ abstract class Validator
     {
         return (strlen(trim($value)) > 0) ? true : false;
     }
+
+    protected function min($value, $ruleValue)
+    {
+        return (!(strlen(trim($value)) < $ruleValue)) ? true : false;
+    }
+
+    protected function max($value, $ruleValue)
+    {
+        return (!(strlen(trim($value)) > $ruleValue)) ? true : false;
+    }
+
+    protected function regex($value, $ruleValue)
+    {
+        return (preg_match($ruleValue, trim($value))) ? true : false;
+    }
 }

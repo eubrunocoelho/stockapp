@@ -143,7 +143,9 @@ class GestoresController extends GestorController
                     'max' => 128,
                     'regex' => $regex['name']
                 ],
-                'email' => [],
+                'email' => [
+                    
+                ],
                 'cpf' => [],
                 'telefone' => [],
                 'endereco' => [],

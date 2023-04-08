@@ -74,8 +74,21 @@ class Validate extends Validator
 
                 // Aplica as regras
                 if ($rule == 'required') {
-                    if ($ruleValue && !$this->required($value))
+                    if ($ruleValue && !parent::required($value))
                         $this->addError('O campo "' . $label . '" é obrigatório.');
+                } elseif (parent::required($value)) switch ($rule) {
+                    case 'min':
+                        if (!parent::min($value, $ruleValue))
+                            $this->addError('O campo "' . $label . '" deve conter no mínimo ' . $ruleValue . ' caracteres.');
+                        break;
+                    case 'max':
+                        if (!parent::max($value, $ruleValue))
+                            $this->addError('O campo "' . $label . '" deve conter no máximo ' . $ruleValue . ' caracteres.');
+                        break;
+                    case 'regex':
+                        if (!parent::regex($value, $ruleValue))
+                            $this->addError('O campo "' . $label . '" está inválido.');
+                        break;
                 }
             }
     }
@@ -87,7 +100,7 @@ class Validate extends Validator
     {
         $this->errors[] = $message;
     }
-    
+
     /**
      * Obtem erros que ocorreram durante a validação
      */
