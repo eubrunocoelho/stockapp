@@ -179,7 +179,13 @@ class GestoresController extends GestorController
             !(($authorize['update']['current']) ||
                 ($authorize['update']['admin']))
         ) {
-            dd('Not authorize');
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('dashboard.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
         }
 
         $templateVariables = [
