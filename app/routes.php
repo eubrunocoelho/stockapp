@@ -8,7 +8,7 @@ use Slim\{
 use App\Controller\{
     LoginController,
     DashboardController,
-    ProfileController
+    GestoresController
 };
 
 use App\Middleware\{
@@ -28,9 +28,9 @@ return function (App $app) {
         $group->get('/logout', [DashboardController::class, 'logout'])->setName('dashboard.logout');
     })->add(Unauthenticated::class);
 
-    $app->group('/profile', function (RouteCollectorProxy $group) {
-        $group->get('/show/{ID}', [ProfileController::class, 'show'])->setName('profile.show');
-        $group->get('/update/{ID}', [ProfileController::class, 'update'])->setName('profile.update');
-        $group->post('/update/{ID}', [ProfileController::class, 'update']);
+    $app->group('/gestores', function (RouteCollectorProxy $group) {
+        $group->get('/show/{ID}', [GestoresController::class, 'show'])->setName('gestores.show');
+        $group->get('/update/{ID}', [GestoresController::class, 'update'])->setName('gestores.update');
+        $group->post('/update/{ID}', [GestoresController::class, 'update']);
     })->add(Unauthenticated::class);
 };

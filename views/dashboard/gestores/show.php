@@ -17,7 +17,7 @@
     <main class="main">
         <div class="main-heading container">
             <h1 class="main-heading__title"><?=$gestorProfile['nome']?></h1>
-            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/profile/show/<?=$gestor['ID']?>">Bruno Coelho</a> / <a class="breadcrumbs__link" href="./gestores.html">Gestores</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
+            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/gestores/show/<?=$gestor['ID']?>">Bruno Coelho</a> / <a class="breadcrumbs__link" href="./gestores.html">Gestores</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container">
             <div class="box">
@@ -96,7 +96,7 @@
                 ) {
                 ?>
                 <div class="operation-group">
-                    <button class="btn bg--warning" onclick="window.location.href='<?=$basePath?>/profile/update/<?=$gestorProfile['ID']?>';">Editar informações</button>
+                    <button class="btn bg--warning" onclick="window.location.href='<?=$basePath?>/gestores/update/<?=$gestorProfile['ID']?>';">Editar informações</button>
                 </div>
                 <?php
                 }

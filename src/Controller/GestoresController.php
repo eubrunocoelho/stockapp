@@ -24,7 +24,7 @@ use App\{
 
 use PDO;
 
-class ProfileController extends GestorController
+class GestoresController extends GestorController
 {
     private
         $app, $container, $database, $renderer;
@@ -107,18 +107,26 @@ class ProfileController extends GestorController
 
         ];
 
-        return $this->renderer->render($response, 'dashboard/profile/show.php', $templateVariables);
+        return $this->renderer->render($response, 'dashboard/gestores/show.php', $templateVariables);
     }
 
     public function update(Request $request, Response $response, array $args): Response
     {
+        $ID = $request->getAttribute('ID');
+
         if ($request->getMethod() == 'POST') {
-            dd(Session::get('update.ID'));
-            dd($request->getAttribute('ID'));
+            if ($ID !== Session::get('update.ID')) {
+                $url = RouteContext::fromRequest($request)
+                    ->getRouteParser()
+                    ->urlFor('gestores.update', ['ID' => Session::get('update.ID')]);
+
+                return $response
+                    ->withHeader('Location', $url)
+                    ->withStatus(302);
+            }
+
             Session::delete('update.ID');
         }
-
-        $ID = $request->getAttribute('ID');
 
         Session::create('update.ID', $ID);
 
@@ -158,6 +166,6 @@ class ProfileController extends GestorController
             'gestorProfile' => $gestorProfile
         ];
 
-        return $this->renderer->render($response, 'dashboard/profile/update.php', $templateVariables);
+        return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
     }
 }

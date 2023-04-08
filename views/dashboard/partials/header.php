@@ -17,7 +17,7 @@
                     <ul class="dropdown-menu__list">
                         <li class="dropdown-menu__item">
                             <span class="dropdown-menu__icon-box"><i class="fa-solid fa-user dropdown-menu__icon"></i></span>
-                            <a href="<?=$basePath?>/profile/show/<?=$gestor['ID']?>" class="dropdown-menu__link">Perfil</a>
+                            <a href="<?=$basePath?>/gestores/show/<?=$gestor['ID']?>" class="dropdown-menu__link">Perfil</a>
                         </li>
                         <li class="dropdown-menu__item">
                             <span class="dropdown-menu__icon-box"><i class="fa-solid fa-circle-exclamation dropdown-menu__icon"></i></span>
