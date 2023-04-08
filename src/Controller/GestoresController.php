@@ -14,7 +14,8 @@ use Slim\{
 };
 
 use App\{
-    Helper\Session
+    Helper\Session,
+    Validator\Validate
 };
 
 use App\{
@@ -27,7 +28,7 @@ use PDO;
 class GestoresController extends GestorController
 {
     private
-        $app, $container, $database, $renderer;
+        $app, $container, $database, $renderer, $validate;
 
     private
         $gestor, $gestorDAO;
@@ -38,6 +39,7 @@ class GestoresController extends GestorController
         $this->container = $this->app->getContainer();
         $this->database = $this->container->get(PDO::class);
         $this->renderer = $this->container->get(PhpRenderer::class);
+        $this->validate = $this->container->get(Validate::class);
 
         $this->gestor = new Gestor();
         $this->gestorDAO = new GestorDAO($this->database);
@@ -126,7 +128,52 @@ class GestoresController extends GestorController
             }
 
             Session::delete('update.ID');
+
+            $formRequest = (array)$request->getParsedBody();
+
+            $regex = [
+                'name' => '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/' // super sweet unicode
+            ];
+
+            $rules = [
+                'nome' => [
+                    'label' => 'Nome',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 128,
+                    'regex' => $regex['name']
+                ],
+                'email' => [],
+                'cpf' => [],
+                'telefone' => [],
+                'endereco' => [],
+                'cargo' => [],
+                'genero' => [],
+                'status' => []
+            ];
+
+            if (!empty($formRequest)) {
+                $this->validate->setFields(
+                    [
+                        'nome',
+                        'email',
+                        'cpf',
+                        'telefone',
+                        'endereco',
+                        'cargo',
+                        'genero',
+                        'status'
+                    ]
+                );
+                $this->validate->setData($formRequest);
+                $this->validate->setRules($rules);
+                $this->validate->validation();
+
+                if (!$this->validate->passed()) $errors = $this->validate->errors();
+            }
         }
+
+        $errors = $errors ?? [];
 
         Session::create('update.ID', $ID);
 
@@ -191,7 +238,8 @@ class GestoresController extends GestorController
         $templateVariables = [
             'basePath' => $basePath,
             'gestor' => $gestor,
-            'gestorProfile' => $gestorProfile
+            'gestorProfile' => $gestorProfile,
+            'errors' => $errors
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);

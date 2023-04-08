@@ -22,6 +22,9 @@
     --bg-warning-color: #ffc107;
     --bg-danger-color: #dc3545;
     --bg-overlay-color: rgba(48, 51, 54, .5);
+    --alert-text-danger-color: #9d1c24;
+    --alert-bg-danger-color: #f8d7da;
+    --alert-border-danger-color: 1px solid #f5c6cb;
 }
 
 /**
@@ -104,6 +107,12 @@
 
 .d--block {
     display: block !important;
+}
+
+.alert--danger {
+    background: var(--alert-bg-danger-color) !important;
+    border: var(--alert-border-danger-color) !important;
+    color: var(--alert-text-danger-color) !important;
 }
 
 /**
@@ -858,6 +867,24 @@ body {
     outline: none;
     padding: 0 18px 0 18px;
     width: 100%;
+}
+
+/**
+ * =================================================================================
+ * ALERT BOX
+ * =================================================================================
+ */
+
+.alert-box {
+    border-radius: var(--border-default-radius);
+    padding: 14px 18px 14px 18px;
+    width: 100%;
+}
+
+.alert-box__text {
+    font-family: var(--font-titillium-web);
+    font-size: 16px;
+    font-weight: 400;
 }
 
 /**

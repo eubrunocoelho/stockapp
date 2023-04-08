@@ -16,7 +16,7 @@ use Slim\{
 use App\{
     Helper\Input,
     Helper\Session,
-    Validator\Validator
+    Validator\Validate
 };
 
 use App\{
@@ -32,7 +32,7 @@ use PDO;
 class LoginController
 {
     private
-        $app, $container, $database, $renderer, $validator;
+        $app, $container, $database, $renderer, $validate;
 
     private
         $gestor, $gestorDAO;
@@ -44,7 +44,7 @@ class LoginController
         $this->container = $this->app->getContainer();
         $this->database = $this->container->get(PDO::class);
         $this->renderer = $this->container->get(PhpRenderer::class);
-        $this->validator = $this->container->get(Validator::class);
+        $this->validate = $this->container->get(Validate::class);
 
         // Conexão com o banco de dados
         $this->gestor = new Gestor();
@@ -77,19 +77,19 @@ class LoginController
             // Verifica se existe requisições do formulário
             if (!empty($formRequest)) {
                 // Define campos que devem existir no formulário
-                $this->validator->setFields(['user', 'password']);
+                $this->validate->setFields(['user', 'password']);
 
                 // Define os valores do formulário
-                $this->validator->setData($formRequest);
+                $this->validate->setData($formRequest);
 
                 // Define as regras do formulário
-                $this->validator->setRules($rules);
+                $this->validate->setRules($rules);
 
                 // Inicia a validação
-                $this->validator->validation();
+                $this->validate->validation();
 
                 // Verifica se todos os dados recebidos da requisição condizem com as regras do formulário
-                if ($this->validator->passed()) {
+                if ($this->validate->passed()) {
                     $this->gestor->setUsuario($formRequest['user']);
                     $this->gestor->setSenha($formRequest['password']);
 
@@ -109,7 +109,7 @@ class LoginController
                     } else $errors = (array)'Usuário ou senha inválidos.';
                 } else {
                     // Obtem os erros que ocorreram durante a validação do formulário
-                    $errors = $this->validator->errors();
+                    $errors = $this->validate->errors();
                 }
             }
         }
