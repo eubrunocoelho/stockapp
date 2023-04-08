@@ -56,62 +56,66 @@ class LoginController
      */
     public function login(Request $request, Response $response, array $args): Response
     {
-        // Obtém as requisições de formulário
-        $formRequest = (array)$request->getParsedBody();
+        if ($request->getMethod() == 'POST') {
+            // Obtém as requisições de formulário
+            $formRequest = (array)$request->getParsedBody();
+
+            // Aplica regras das requisições do formulário
+            $rules = [
+                'user' => [
+                    'label' => 'Usuário',
+                    'required' => true
+                ],
+                'password' => [
+                    'label' => 'Senha',
+                    'required' => true
+                ]
+            ];
+            
+            // Verifica se existe requisições do formulário
+            if (!empty($formRequest)) {
+                // Define campos que devem existir no formulário
+                $this->validator->setFields(['user', 'password']);
+
+                // Define os valores do formulário
+                $this->validator->setData($formRequest);
+
+                // Define as regras do formulário
+                $this->validator->setRules($rules);
+
+                // Inicia a validação
+                $this->validator->validation();
+
+                // Verifica se todos os dados recebidos da requisição condizem com as regras do formulário
+                if ($this->validator->passed()) {
+                    $this->gestor->setUsuario($formRequest['user']);
+                    $this->gestor->setSenha($formRequest['password']);
+
+                    if (($gestor = $this->gestorDAO->checkGestorByCredentials($this->gestor)) !== []) {
+                        $gestor = $gestor[0];
+
+                        Session::create('gestorID', $gestor['ID']);
+                        Session::create('authenticated', true);
+
+                        $url = RouteContext::fromRequest($request)
+                            ->getRouteParser()
+                            ->urlFor('dashboard.index');
+
+                        return $response
+                            ->withHeader('Location', $url)
+                            ->withStatus(302);
+                    } else $errors = (array)'Usuário ou senha inválidos.';
+                } else {
+                    // Obtem os erros que ocorreram durante a validação do formulário
+                    $errors = $this->validator->errors();
+                }
+            }
+        }
+
+        $formRequest = $formRequest ?? [];
 
         // Obtém valores para persistir no formulário
         $inputValues = Input::getPersistValues($formRequest);
-
-        // Aplica regras das requisições do formulário
-        $rules = [
-            'user' => [
-                'label' => 'Usuário',
-                'required' => true
-            ],
-            'password' => [
-                'label' => 'Senha',
-                'required' => true
-            ]
-        ];
-
-        // Verifica se existe requisições do formulário
-        if (!empty($formRequest)) {
-            // Define campos que devem existir no formulário
-            $this->validator->setFields(['user', 'password']);
-
-            // Define os valores do formulário
-            $this->validator->setData($formRequest);
-
-            // Define as regras do formulário
-            $this->validator->setRules($rules);
-
-            // Inicia a validação
-            $this->validator->validation();
-
-            // Verifica se todos os dados recebidos da requisição condizem com as regras do formulário
-            if ($this->validator->passed()) {
-                $this->gestor->setUsuario($formRequest['user']);
-                $this->gestor->setSenha($formRequest['password']);
-
-                if (($gestor = $this->gestorDAO->checkGestorByCredentials($this->gestor)) !== []) {
-                    $gestor = $gestor[0];
-
-                    Session::create('gestorID', $gestor['ID']);
-                    Session::create('authenticated', true);
-
-                    $url = RouteContext::fromRequest($request)
-                        ->getRouteParser()
-                        ->urlFor('dashboard.index');
-
-                    return $response
-                        ->withHeader('Location', $url)
-                        ->withStatus(302);
-                } else $errors = (array)'Usuário ou senha inválidos.';
-            } else {
-                // Obtem os erros que ocorreram durante a validação do formulário
-                $errors = $this->validator->errors();
-            }
-        }
 
         // Inicia a variável `$errors` com seu valor, se não existir retorna um `array` vazio
         $errors = $errors ?? [];
