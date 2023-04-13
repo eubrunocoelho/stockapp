@@ -116,6 +116,18 @@ class GestoresController extends GestorController
     {
         $ID = $request->getAttribute('ID');
 
+        $this->gestor->setID($ID);
+        if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('dashboard.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        } else $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
+
+
         if ($request->getMethod() == 'POST') {
             if ($ID !== Session::get('update.ID')) {
                 $url = RouteContext::fromRequest($request)
@@ -186,6 +198,8 @@ class GestoresController extends GestorController
             ];
 
             if (!empty($formRequest)) {
+                $persistUpdateValues = $this->getPersistUpdateValues($formRequest, $gestorProfile);
+
                 $this->validate->setFields(
                     [
                         'nome',
@@ -207,6 +221,8 @@ class GestoresController extends GestorController
         }
 
         $errors = $errors ?? [];
+        $persistUpdateValues = $persistUpdateValues ?? $gestorProfile;
+        $gestorProfile = parent::applyGestorData($gestorProfile);
 
         Session::create('update.ID', $ID);
 
@@ -228,20 +244,6 @@ class GestoresController extends GestorController
             return $response
                 ->withHeader('Location', $url)
                 ->withStatus(302);
-        }
-
-        $this->gestor->setID($ID);
-        if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
-            $url = RouteContext::fromRequest($request)
-                ->getRouteParser()
-                ->urlFor('dashboard.index');
-
-            return $response
-                ->withHeader('Location', $url)
-                ->withStatus(302);
-        } else {
-            $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
-            $gestorProfile = parent::applyGestorData($gestorProfile);
         }
 
         if (
@@ -272,9 +274,22 @@ class GestoresController extends GestorController
             'basePath' => $basePath,
             'gestor' => $gestor,
             'gestorProfile' => $gestorProfile,
+            'persistUpdateValues' => $persistUpdateValues,
             'errors' => $errors
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
+    }
+
+    public static function getPersistUpdateValues($request, $data)
+    {
+        unset($data['ID'], $data['senha'], $data['img_url']);
+
+        foreach ($data as $key => $value) {
+            if ($data[$key] != $request[$key]) $request[$key] = $request[$key];
+            else $request[$key] = $data[$key];
+        }
+
+        return $request;
     }
 }

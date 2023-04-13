@@ -17,8 +17,4 @@ class Input
 
         return $values;
     }
-
-    public static function getPersistUpdateValues($request, $data)
-    {
-    }
 }
