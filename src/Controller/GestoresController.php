@@ -132,7 +132,10 @@ class GestoresController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'name' => '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/' // super sweet unicode
+                'name' => '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/', // super sweet unicode
+                'cargo' => '/^[1-2]{1}$/',
+                'genero' => '/^[1-2]{1}$/',
+                'status' => '/^[1-2]{1}$/'
             ];
 
             $rules = [
@@ -144,14 +147,43 @@ class GestoresController extends GestorController
                     'regex' => $regex['name']
                 ],
                 'email' => [
-                    
+                    'label' => 'Email',
+                    'required' => true,
+                    'max' => 128,
+                    'email' => true
                 ],
-                'cpf' => [],
-                'telefone' => [],
-                'endereco' => [],
-                'cargo' => [],
-                'genero' => [],
-                'status' => []
+                'cpf' => [
+                    'label' => 'CPF',
+                    'required' => true,
+                    'cpf' => true
+                ],
+                'telefone' => [
+                    'label' => 'telefone',
+                    'required' => false,
+                    'min' => 10,
+                    'max' => 11
+                ],
+                'endereco' => [
+                    'label' => 'Endereço',
+                    'required' => false,
+                    'min' => 6,
+                    'max' => 255
+                ],
+                'cargo' => [
+                    'label' => 'Cargo',
+                    'required' => true,
+                    'regex' => $regex['cargo']
+                ],
+                'genero' => [
+                    'label' => 'Gênero',
+                    'required' => true,
+                    'regex' => $regex['genero']
+                ],
+                'status' => [
+                    'label' => 'Status',
+                    'required' => true,
+                    'regex' => $regex['status']
+                ]
             ];
 
             if (!empty($formRequest)) {

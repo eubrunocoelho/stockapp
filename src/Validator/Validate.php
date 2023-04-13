@@ -89,6 +89,14 @@ class Validate extends Validator
                         if (!parent::regex($value, $ruleValue))
                             $this->addError('O campo "' . $label . '" está inválido.');
                         break;
+                    case 'email':
+                        if (!parent::email($value))
+                            $this->addError('O campo "' . $label .  '" está inválido.');
+                        break;
+                    case 'cpf':
+                        if (!parent::cpf($value))
+                            $this->addError('O campo "' . $label . '" esta inválido.');
+                        break;
                 }
             }
     }

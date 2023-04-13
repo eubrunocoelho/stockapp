@@ -32,7 +32,7 @@
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">E-mail</th>
-                            <td class="table__cell fg--1">eu.brunocoelho94@gmail.com</td>
+                            <td class="table__cell fg--1"><?=$gestorProfile['email']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">CPF</th>
@@ -89,7 +89,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="email">Email:</label>
-                        <input type="text" class="form__input" id="email" name="email" value="Bruno Coelho">
+                        <input type="text" class="form__input" id="email" name="email" value="eu.brunocoelho94@gmail.com">
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="cpf">CPF:</label>
@@ -97,7 +97,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="telefone">Telefone:</label>
-                        <input type="text" class="form__input" id="telefone" name="telefone" value="eu.brunocoelho94@gmail.com">
+                        <input type="text" class="form__input" id="telefone" name="telefone" value="(41) 98738-9397">
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="endereco">Endereço:</label>
