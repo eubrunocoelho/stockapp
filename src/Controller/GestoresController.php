@@ -158,10 +158,9 @@ class GestoresController extends GestorController
                     'cpf' => true
                 ],
                 'telefone' => [
-                    'label' => 'telefone',
+                    'label' => 'Telefone',
                     'required' => false,
-                    'min' => 10,
-                    'max' => 11
+                    'telephone' => true
                 ],
                 'endereco' => [
                     'label' => 'Endereço',

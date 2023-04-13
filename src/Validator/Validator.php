@@ -60,4 +60,16 @@ abstract class Validator
 
         return true;
     }
+
+    protected function telephone($value)
+    {
+        $telephone = preg_replace('/[^0-9]/is', '', $value);
+
+        if (
+            (strlen($telephone) != 11) &&
+            (strlen($telephone) != 10)
+        ) return false;
+
+        return true;
+    }
 }

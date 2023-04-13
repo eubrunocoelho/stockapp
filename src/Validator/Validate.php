@@ -97,6 +97,10 @@ class Validate extends Validator
                         if (!parent::cpf($value))
                             $this->addError('O campo "' . $label . '" esta inválido.');
                         break;
+                    case 'telephone':
+                        if (!parent::telephone($value))
+                            $this->addError('O campo "' . $label . '" está inválido.');
+                        break;
                 }
             }
     }
