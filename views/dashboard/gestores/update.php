@@ -163,6 +163,9 @@
                             ?>>Feminino</option>
                         </select>
                     </div>
+                    <?php
+                    if ($authorize['update']['status']) {
+                    ?>
                     <div class="form__group">
                         <label class="form__label" for="status">Status:</label>
                         <select class="form__select" id="status" name="status">
@@ -178,6 +181,9 @@
                             ?>>Inativo</option>
                         </select>
                     </div>
+                    <?php
+                    }
+                    ?>
                     <button type="submit" class="btn mt--20">Salvar Informações</button>
                 </form>
                 <?php

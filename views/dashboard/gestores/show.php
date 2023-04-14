@@ -81,11 +81,17 @@
                     </tbody>
                 </table>
                 <?php
-                if ($authorize['update']['profile']) {
+                if ($authorize['update']['status']) {
                 ?>
                 <div class="operation-group mb--20">
                     <button class="btn bg--danger" onclick="window.location.href='./gerenciar-status-gestor.html';">Inativar</button>
                 </div>
+                <?php
+                }
+                ?>
+                <?php
+                if ($authorize['update']['profile']) {
+                ?>
                 <div class="operation-group">
                     <button class="btn bg--warning" onclick="window.location.href='<?=$basePath?>/gestores/update/<?=$gestorProfile['ID']?>';">Editar informações</button>
                 </div>

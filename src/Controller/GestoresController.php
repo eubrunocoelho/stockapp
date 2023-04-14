@@ -88,8 +88,6 @@ class GestoresController extends GestorController
             $gestorProfile = parent::applyGestorData($gestorProfile);
         }
 
-        dd($status);
-
         if (
             ($status['active'] === 'administrador') &&
             ($status['profile'] === 'administrador')
@@ -112,8 +110,6 @@ class GestoresController extends GestorController
             $authorize['update']['status'] = false;
         }
 
-        dd($authorize);
-
         $templateVariables = [
             'basePath' => $basePath,
             'gestor' => $gestor,
@@ -128,6 +124,7 @@ class GestoresController extends GestorController
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
+        $gestor = parent::getGestor();
 
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
@@ -138,8 +135,37 @@ class GestoresController extends GestorController
             return $response
                 ->withHeader('Location', $url)
                 ->withStatus(302);
-        } else $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
+        } else {
+            $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
 
+            if ($gestor['cargo'] === 1) $status['active'] = 'administrador';
+            else $status['active'] = 'gestor';
+        }
+
+        if ($gestorProfile['cargo'] === 1) $status['profile'] = 'administrador';
+        else $status['profile'] = 'gestor';
+
+        if (
+            ($status['active'] === 'administrador') &&
+            ($status['profile'] === 'administrador')
+        ) {
+            $authorize['update']['profile'] = false;
+            $authorize['update']['status'] = false;
+        }
+
+        if (
+            ($status['active'] === 'administrador') &&
+            ($status['profile'] === 'gestor') &&
+            ($gestor['ID'] !== $gestorProfile['ID'])
+        ) {
+            $authorize['update']['profile'] = true;
+            $authorize['update']['status'] = true;
+        }
+
+        if ($gestor['ID'] === $gestorProfile['ID']) {
+            $authorize['update']['profile'] = true;
+            $authorize['update']['status'] = false;
+        }
 
         if ($request->getMethod() == 'POST') {
             if ($ID !== Session::get('update.ID')) {
@@ -202,48 +228,50 @@ class GestoresController extends GestorController
                     'label' => 'Gênero',
                     'required' => true,
                     'regex' => $regex['genero']
-                ],
-                'status' => [
-                    'label' => 'Status',
-                    'required' => true,
-                    'regex' => $regex['status']
                 ]
             ];
 
-            if (!empty($formRequest)) {
-                $persistUpdateValues = $this->getPersistUpdateValues($formRequest, $gestorProfile);
+            if ($authorize['update']['status']) {
+                $rules['status'] = [
+                    'label' => 'Status',
+                    'required' => true,
+                    'regex' => $regex['status']
+                ];
+            }
 
-                $this->validate->setFields(
-                    [
-                        'nome',
-                        'email',
-                        'cpf',
-                        'telefone',
-                        'endereco',
-                        'cargo',
-                        'genero',
-                        'status'
-                    ]
-                );
+            if (!empty($formRequest)) {
+                $fields = [
+                    'nome',
+                    'email',
+                    'cpf',
+                    'telefone',
+                    'endereco',
+                    'cargo',
+                    'genero'
+                ];
+
+                if ($authorize['update']['status']) {
+                    $fields[] = 'status';
+                }
+
+                $this->validate->setFields($fields);
                 $this->validate->setData($formRequest);
                 $this->validate->setRules($rules);
                 $this->validate->validation();
 
-                if (!$this->validate->passed()) $errors = $this->validate->errors();
+                if (!$this->validate->passed()) {
+                    $errors = $this->validate->errors();
+                }
             }
         }
 
         $errors = $errors ?? [];
-        $persistUpdateValues = $persistUpdateValues ?? $gestorProfile;
+
         $gestorProfile = parent::applyGestorData($gestorProfile);
 
         Session::create('update.ID', $ID);
 
         $basePath = $this->container->get('settings')['api']['path'];
-        $gestor = parent::getGestor();
-
-        if ($gestor['cargo'] === 1) $privilege = true;
-        else $privilege = false;
 
         $gestor = parent::applyGestorData($gestor);
 
@@ -260,19 +288,8 @@ class GestoresController extends GestorController
         }
 
         if (
-            ($gestor['ID'] == $gestorProfile['ID'])
-        ) $authorize['update']['current'] = true;
-        else $authorize['update']['current'] = false;
-
-        if (
-            ($gestor['ID'] !== $gestorProfile['ID']) &&
-            ($privilege === true)
-        ) $authorize['update']['admin'] = true;
-        else $authorize['update']['admin'] = false;
-
-        if (
-            !(($authorize['update']['current']) ||
-                ($authorize['update']['admin']))
+            !($authorize['update']['status']) &&
+            !($authorize['update']['profile'])
         ) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -287,22 +304,22 @@ class GestoresController extends GestorController
             'basePath' => $basePath,
             'gestor' => $gestor,
             'gestorProfile' => $gestorProfile,
-            'persistUpdateValues' => $persistUpdateValues,
+            'authorize' => $authorize,
             'errors' => $errors
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
     }
 
-    public static function getPersistUpdateValues($request, $data)
-    {
-        unset($data['ID'], $data['senha'], $data['img_url']);
+    // public static function getPersistUpdateValues($request, $data)
+    // {
+    //     unset($data['ID'], $data['senha'], $data['img_url']);
 
-        foreach ($data as $key => $value) {
-            if ($data[$key] != $request[$key]) $request[$key] = $request[$key];
-            else $request[$key] = $data[$key];
-        }
+    //     foreach ($data as $key => $value) {
+    //         if ($data[$key] != $request[$key]) $request[$key] = $request[$key];
+    //         else $request[$key] = $data[$key];
+    //     }
 
-        return $request;
-    }
+    //     return $request;
+    // }
 }
