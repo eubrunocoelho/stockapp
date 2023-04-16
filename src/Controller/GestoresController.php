@@ -97,9 +97,10 @@ class GestoresController extends GestorController
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
-        $gestor = parent::getGestor();
 
+        $gestor = parent::getGestor();
         $this->gestor->setID($ID);
+
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -108,10 +109,10 @@ class GestoresController extends GestorController
             return $response
                 ->withHeader('Location', $url)
                 ->withStatus(302);
-        } else {
-            $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
-            $authorize = self::authorize($gestor, $gestorProfile);
         }
+
+        $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
+        $authorize = self::authorize($gestor, $gestorProfile);
 
         if ($request->getMethod() == 'POST') {
             if ($ID !== Session::get('update.ID')) {
@@ -129,9 +130,9 @@ class GestoresController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
+                // super sweet unicode
                 'name' =>
-                    // super sweet unicode
-                    '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
+                '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
                 'cargo' => '/^[1-2]{1}$/',
                 'genero' => '/^[1-2]{1}$/',
                 'status' => '/^[1-2]{1}$/'

@@ -93,6 +93,7 @@
                         ) {
                             echo ' value="' . $persistUpdateValues['nome'] . '"';
                         } elseif (
+                            isset($persistUpdateValues['nome']) &&
                             $persistUpdateValues['nome'] === null
                         ) {
                             echo ' placeholder="Nome Completo"';
@@ -109,6 +110,7 @@
                         ) {
                             echo ' value="' . $persistUpdateValues['email'] . '"';
                         } elseif (
+                            isset($persistUpdateValues['email']) &&
                             $persistUpdateValues['email'] === null
                         ) {
                             echo ' placeholder="Endereço de E-mail"';
@@ -125,6 +127,7 @@
                         ) {
                             echo ' value="' . $persistUpdateValues['cpf'] . '"';
                         } elseif (
+                            isset($persistUpdateValues['cpf']) &&
                             $persistUpdateValues['cpf'] === null
                         ) {
                             echo ' placeholder="Ex.: 000.000.000-00"';
@@ -141,6 +144,7 @@
                         ) {
                             echo ' value="' . $persistUpdateValues['telefone'] . '"';
                         } elseif (
+                            isset($persistUpdateValues['telefone']) &&
                             $persistUpdateValues['telefone'] === null
                         ) {
                             echo ' placeholder="Ex.: (00) 0000-0000"';
@@ -157,6 +161,7 @@
                         ) {
                             echo ' value="' . $persistUpdateValues['endereco'] . '"';
                         } elseif (
+                            isset($persistUpdateValues['endereco']) &&
                             $persistUpdateValues['endereco'] === null
                         ) {
                             echo ' placeholder="Ex.: Rua XV de Dezembro, 777"';
