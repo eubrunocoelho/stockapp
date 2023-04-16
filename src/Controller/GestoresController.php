@@ -77,7 +77,7 @@ class GestoresController extends GestorController
         } else {
             $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
             $authorize = self::authorize($gestor, $gestorProfile);
-            
+
             $gestor = parent::applyGestorData($gestor);
 
             $gestorProfile = parent::applyGestorData($gestorProfile);
@@ -129,7 +129,9 @@ class GestoresController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'name' => '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/', // super sweet unicode
+                'name' =>
+                // super sweet unicode
+                    '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
                 'cargo' => '/^[1-2]{1}$/',
                 'genero' => '/^[1-2]{1}$/',
                 'status' => '/^[1-2]{1}$/'
