@@ -253,6 +253,8 @@ class GestoresController extends GestorController
                 if ($authorize['update']['status']) {
                     $fields[] = 'status';
                 }
+                
+                $persistUpdateValues = self::getPersistUpdateValues($gestorProfile, $formRequest);
 
                 $this->validate->setFields($fields);
                 $this->validate->setData($formRequest);
@@ -264,6 +266,10 @@ class GestoresController extends GestorController
                 }
             }
         }
+
+        $persistUpdateValues = $persistUpdateValues ?? $gestorProfile;
+
+        dd($persistUpdateValues);
 
         $errors = $errors ?? [];
 
@@ -311,15 +317,17 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
     }
 
-    // public static function getPersistUpdateValues($request, $data)
-    // {
-    //     unset($data['ID'], $data['senha'], $data['img_url']);
+    private static function getPersistUpdateValues($data, $request)
+    {
+        foreach ($request as $key => $value) {
+            if (
+                (isset($data[$key])) &&
+                ($data[$key] !== '')
+            ) {
+                $data[$key] = $request[$key];
+            }
+        }
 
-    //     foreach ($data as $key => $value) {
-    //         if ($data[$key] != $request[$key]) $request[$key] = $request[$key];
-    //         else $request[$key] = $data[$key];
-    //     }
-
-    //     return $request;
-    // }
+        return $request;
+    }
 }

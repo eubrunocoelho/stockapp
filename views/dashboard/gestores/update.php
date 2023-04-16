@@ -85,82 +85,36 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="nome">Nome:</label>
-                        <input type="text" class="form__input" id="nome" name="nome"<?php
-                            if ($persistUpdateValues['nome'] != '' && $persistUpdateValues['nome'] != null) {
-                                echo ' value="' . $persistUpdateValues['nome'] . '"';
-                            } else {
-                                echo ' placeholder="Nome Completo"';
-                            }
-                        ?>>
+                        <input type="text" class="form__input" id="nome" name="nome">
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="email">Email:</label>
-                        <input type="text" class="form__input" id="email" name="email"<?php
-                            if ($persistUpdateValues['email'] != '' && $persistUpdateValues['email'] != null) {
-                                echo ' value="' . $persistUpdateValues['email'] . '"';
-                            } else {
-                                echo ' placeholder="email@example.com"';
-                            }
-                        ?>>
+                        <input type="text" class="form__input" id="email" name="email">
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="cpf">CPF:</label>
-                        <input type="text" class="form__input" id="cpf" name="cpf"<?php
-                            if ($persistUpdateValues['cpf'] != '' && $persistUpdateValues['cpf'] != null) {
-                                echo ' value="' . $persistUpdateValues['cpf'] . '"';
-                            } else {
-                                echo ' placeholder="000.000.000-00"';
-                            }
-                        ?>>
+                        <input type="text" class="form__input" id="cpf" name="cpf">
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="telefone">Telefone:</label>
-                        <input type="text" class="form__input" id="telefone" name="telefone"<?php
-                            if ($persistUpdateValues['telefone'] != '' && $persistUpdateValues['telefone'] != null) {
-                                echo ' value="' . $persistUpdateValues['telefone'] . '"';
-                            } else {
-                                echo '(00) 0000-0000';
-                            }
-                        ?>>
+                        <input type="text" class="form__input" id="telefone" name="telefone">
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="endereco">Endereço:</label>
-                        <input type="text" class="form__input" id="endereco" name="endereco"<?php
-                            if ($persistUpdateValues['endereco'] != '' && $persistUpdateValues['endereco'] != null) {
-                                echo ' value="' . $persistUpdateValues['endereco'] . '"';
-                            } else {
-                                echo ' placeholder="Rua Exemplo, 666"';
-                            }
-                        ?>>
+                        <input type="text" class="form__input" id="endereco" name="endereco">
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="cargo">Cargo:</label>
                         <select class="form__select" id="cargo" name="cargo">
-                            <option value="1"<?php
-                                if ($persistUpdateValues['cargo'] == 1) {
-                                    echo ' selected';
-                                }
-                            ?>>Administrador</option>
-                            <option value="2"<?php
-                                if ($persistUpdateValues['cargo'] == 2) {
-                                    echo ' selected';
-                                }
-                            ?>>Gestor</option>
+                            <option value="1">Administrador</option>
+                            <option value="2">Gestor</option>
                         </select>
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="genero">Gênero:</label>
                         <select class="form__select" id="genero" name="genero">
-                            <option value="1"<?php
-                                if ($persistUpdateValues['genero'] == 1) {
-                                    echo ' selected';
-                                }
-                            ?>>Masculino</option>
-                            <option value="2"<?php
-                                if ($persistUpdateValues['genero'] == 2) {
-                                    echo ' selected';
-                                }
-                            ?>>Feminino</option>
+                            <option value="1">Masculino</option>
+                            <option value="2">Feminino</option>
                         </select>
                     </div>
                     <?php
@@ -169,16 +123,8 @@
                     <div class="form__group">
                         <label class="form__label" for="status">Status:</label>
                         <select class="form__select" id="status" name="status">
-                            <option value="1"<?php
-                                if ($persistUpdateValues['status'] == 1) {
-                                    echo ' selected';
-                                }
-                            ?>>Ativo</option>
-                            <option value="2"<?php
-                                if ($persistUpdateValues['status'] == 2) {
-                                    echo ' selected';
-                                } 
-                            ?>>Inativo</option>
+                            <option value="1">Ativo</option>
+                            <option value="2">Inativo</option>
                         </select>
                     </div>
                     <?php
