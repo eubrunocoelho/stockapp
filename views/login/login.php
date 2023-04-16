@@ -37,32 +37,32 @@
                 <div class="form__group">
                     <label class="form__label" for="password">Senha:</label>
                     <input type="text" class="form__input" id="password" name="password"<?php
-                        if (
-                            !empty($inputValues) &&
-                            isset($inputValues['password']) &&
-                            !is_null($inputValues['password'])
-                        ) {
-                            echo ' value="' . $inputValues['password'] . '"';
-                        } else {
-                            echo ' placeholder="Senha"';
-                        }
+                    if (
+                        !empty($inputValues) &&
+                        isset($inputValues['password']) &&
+                        !is_null($inputValues['password'])
+                    ) {
+                        echo ' value="' . $inputValues['password'] . '"';
+                    } else {
+                        echo ' placeholder="Senha"';
+                    }
                     ?>>
                 </div>
                 <button class="btn">Entrar</button>
             </form>
             <?php
-                if (
-                    isset($errors) &&
-                    !empty($errors)
-                ) {
-                    foreach ($errors as $error) {
+            if (
+                isset($errors) &&
+                !empty($errors)
+            ) {
+                foreach ($errors as $error) {
             ?>
             <div class="alert-box alert--danger mt--20">
                 <p class="alert-box__text"><?=$error?></p>
             </div>
             <?php
-                    }
                 }
+            }
             ?>
         </section>
     </main>

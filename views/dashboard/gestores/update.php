@@ -84,47 +84,155 @@
                         <label for="upload" class="form__custom-upload">Escolher arquivo...</label>
                     </div>
                     <div class="form__group">
-                        <label class="form__label" for="nome">Nome:</label>
-                        <input type="text" class="form__input" id="nome" name="nome">
+                        <label class="form__label" for="nome">Nome: <span class="text--danger">(*)</span></label>
+                        <input type="text" class="form__input" id="nome" name="nome"<?php
+                        if (
+                            !empty($persistUpdateValues) &&
+                            isset($persistUpdateValues['nome']) &&
+                            $persistUpdateValues['nome'] != ''
+                        ) {
+                            echo ' value="' . $persistUpdateValues['nome'] . '"';
+                        } elseif (
+                            $persistUpdateValues['nome'] === null
+                        ) {
+                            echo ' placeholder="Nome Completo"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
-                        <label class="form__label" for="email">Email:</label>
-                        <input type="text" class="form__input" id="email" name="email">
+                        <label class="form__label" for="email">E-mail: <span class="text--danger">(*)</span></label>
+                        <input type="text" class="form__input" id="email" name="email"<?php
+                        if (
+                            !empty($persistUpdateValues) &&
+                            isset($persistUpdateValues['email']) &&
+                            $persistUpdateValues['email'] != ''
+                        ) {
+                            echo ' value="' . $persistUpdateValues['email'] . '"';
+                        } elseif (
+                            $persistUpdateValues['email'] === null
+                        ) {
+                            echo ' placeholder="Endereço de E-mail"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
-                        <label class="form__label" for="cpf">CPF:</label>
-                        <input type="text" class="form__input" id="cpf" name="cpf">
+                        <label class="form__label" for="cpf">CPF: <span class="text--danger">(*)</span></label>
+                        <input type="text" class="form__input" id="cpf" name="cpf"<?php
+                        if (
+                            !empty($persistUpdateValues) &&
+                            isset($persistUpdateValues['cpf']) &&
+                            $persistUpdateValues['cpf'] != ''
+                        ) {
+                            echo ' value="' . $persistUpdateValues['cpf'] . '"';
+                        } elseif (
+                            $persistUpdateValues['cpf'] === null
+                        ) {
+                            echo ' placeholder="Ex.: 000.000.000-00"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="telefone">Telefone:</label>
-                        <input type="text" class="form__input" id="telefone" name="telefone">
+                        <input type="text" class="form__input" id="telefone" name="telefone"<?php
+                        if (
+                            !empty($persistUpdateValues) &&
+                            isset($persistUpdateValues['telefone']) &&
+                            $persistUpdateValues['telefone'] != ''
+                        ) {
+                            echo ' value="' . $persistUpdateValues['telefone'] . '"';
+                        } elseif (
+                            $persistUpdateValues['telefone'] === null
+                        ) {
+                            echo ' placeholder="Ex.: (00) 0000-0000"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="endereco">Endereço:</label>
-                        <input type="text" class="form__input" id="endereco" name="endereco">
+                        <input type="text" class="form__input" id="endereco" name="endereco"<?php
+                        if (
+                            !empty($persistUpdateValues) &&
+                            isset($persistUpdateValues['endereco']) &&
+                            $persistUpdateValues['endereco'] != ''
+                        ) {
+                            echo ' value="' . $persistUpdateValues['endereco'] . '"';
+                        } elseif (
+                            $persistUpdateValues['telefone'] === null
+                        ) {
+                            echo ' placeholder="Ex.: Rua XV de Dezembro, 777"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
-                        <label class="form__label" for="cargo">Cargo:</label>
+                        <label class="form__label" for="cargo">Cargo: <span class="text--danger">(*)</span></label>
                         <select class="form__select" id="cargo" name="cargo">
-                            <option value="1">Administrador</option>
-                            <option value="2">Gestor</option>
+                            <option value="1"<?php
+                            if (
+                                !empty($persistUpdateValues) &&
+                                isset($persistUpdateValues['cargo']) &&
+                                $persistUpdateValues['cargo'] == 1
+                            ) {
+                                echo ' selected';
+                            }
+                            ?>>Administrador</option>
+                            <option value="2"<?php
+                            if (
+                                !empty($persistUpdateValues) &&
+                                isset($persistUpdateValues['cargo']) &&
+                                $persistUpdateValues['cargo'] == 2
+                            ) {
+                                echo ' selected';
+                            }
+                            ?>>Gestor</option>
                         </select>
                     </div>
                     <div class="form__group">
-                        <label class="form__label" for="genero">Gênero:</label>
+                        <label class="form__label" for="genero">Gênero: <span class="text--danger">(*)</span></label>
                         <select class="form__select" id="genero" name="genero">
-                            <option value="1">Masculino</option>
-                            <option value="2">Feminino</option>
+                            <option value="1"<?php
+                            if (
+                                !empty($persistUpdateValues) &&
+                                isset($persistUpdateValues['genero']) &&
+                                $persistUpdateValues['genero'] == 1
+                            ) {
+                                echo ' selected';
+                            }
+                            ?>>Masculino</option>
+                            <option value="2"<?php
+                            if (
+                                !empty($persistUpdateValues) &&
+                                isset($persistUpdateValues['genero']) &&
+                                $persistUpdateValues['genero'] == 2
+                            ) {
+                                echo ' selected';
+                            }
+                            ?>>Feminino</option>
                         </select>
                     </div>
                     <?php
                     if ($authorize['update']['status']) {
                     ?>
                     <div class="form__group">
-                        <label class="form__label" for="status">Status:</label>
+                        <label class="form__label" for="status">Status: <span class="text--danger">(*)</span></label>
                         <select class="form__select" id="status" name="status">
-                            <option value="1">Ativo</option>
-                            <option value="2">Inativo</option>
+                            <option value="1"<?php
+                            if (
+                                !empty($persistUpdateValues) &&
+                                isset($persistUpdateValues['status']) &&
+                                $persistUpdateValues['status'] == 1
+                            ) {
+                                echo ' selected';
+                            }
+                            ?>>Ativo</option>
+                            <option value="2"<?php
+                            if (
+                                !empty($persistUpdateValues) &&
+                                isset($persistUpdateValues['status']) &&
+                                $persistUpdateValues['status'] == 2
+                            ) {
+                                echo ' selected';
+                            }
+                            ?>>Inativo</option>
                         </select>
                     </div>
                     <?php

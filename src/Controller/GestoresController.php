@@ -269,7 +269,7 @@ class GestoresController extends GestorController
 
         $persistUpdateValues = $persistUpdateValues ?? $gestorProfile;
 
-        dd($persistUpdateValues);
+        // dd($persistUpdateValues, true);
 
         $errors = $errors ?? [];
 
@@ -311,7 +311,8 @@ class GestoresController extends GestorController
             'gestor' => $gestor,
             'gestorProfile' => $gestorProfile,
             'authorize' => $authorize,
-            'errors' => $errors
+            'errors' => $errors,
+            'persistUpdateValues' => $persistUpdateValues
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
@@ -325,6 +326,10 @@ class GestoresController extends GestorController
                 ($data[$key] !== '')
             ) {
                 $data[$key] = $request[$key];
+            }
+
+            if ($request[$key] == '') {
+                $request[$key] = null;
             }
         }
 
