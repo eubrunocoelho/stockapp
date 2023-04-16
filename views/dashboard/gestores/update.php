@@ -157,7 +157,7 @@
                         ) {
                             echo ' value="' . $persistUpdateValues['endereco'] . '"';
                         } elseif (
-                            $persistUpdateValues['telefone'] === null
+                            $persistUpdateValues['endereco'] === null
                         ) {
                             echo ' placeholder="Ex.: Rua XV de Dezembro, 777"';
                         }
