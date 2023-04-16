@@ -138,20 +138,28 @@ class GestoresController extends GestorController
         } else {
             $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
 
-            if ($gestor['cargo'] === 1) $status['active'] = 'administrador';
-            else $status['active'] = 'gestor';
+            // if ($gestor['cargo'] === 1) $status['active'] = 'administrador';
+            // else $status['active'] = 'gestor';
+
+            if ($gestor['cargo'] === 1) $status['active'] = 1;
+            else $status['active'] = 2;
         }
 
-        if ($gestorProfile['cargo'] === 1) $status['profile'] = 'administrador';
-        else $status['profile'] = 'gestor';
+        // if ($gestorProfile['cargo'] === 1) $status['profile'] = 'administrador';
+        // else $status['profile'] = 'gestor';
 
-        if (
-            ($status['active'] === 'administrador') &&
-            ($status['profile'] === 'administrador')
-        ) {
-            $authorize['update']['profile'] = false;
-            $authorize['update']['status'] = false;
-        }
+        if ($gestorProfile['cargo'] === 1) $status['profile'] = 1;
+        else $status['profile'] = 2;
+
+        $authorize = self::authorize($gestor, $gestorProfile, $status);
+
+        // if (
+        //     ($status['active'] === 'administrador') &&
+        //     ($status['profile'] === 'administrador')
+        // ) {
+        //     $authorize['update']['profile'] = false;
+        //     $authorize['update']['status'] = false;
+        // }
 
         if (
             ($status['active'] === 'administrador') &&
@@ -253,7 +261,7 @@ class GestoresController extends GestorController
                 if ($authorize['update']['status']) {
                     $fields[] = 'status';
                 }
-                
+
                 $persistUpdateValues = self::getPersistUpdateValues($gestorProfile, $formRequest);
 
                 $this->validate->setFields($fields);
@@ -334,5 +342,44 @@ class GestoresController extends GestorController
         }
 
         return $request;
+    }
+
+    private static function authorize($gestor, $gestorProfile, $status)
+    {
+        $userAdminProfileAdmin =
+            ($status['active'] === 1) &&
+            ($status['profile'] === 1) &&
+            ($gestor['ID'] !== $gestorProfile['ID']);
+
+        $userAdminProfileGestor =
+            ($status['active'] === 1) &&
+            ($status['profile'] === 2) &&
+            ($gestor['ID'] !== $gestorProfile['ID']);
+
+        $currentProfile =
+            ($gestor['ID'] === $gestorProfile['ID']);
+
+        switch ($status) {
+            case ($userAdminProfileAdmin): {
+                    $authorize['update']['profile'] = false;
+                    $authorize['update']['status'] = false;
+                }
+
+                break;
+            case ($userAdminProfileGestor): {
+                    $authorize['update']['profile'] = true;
+                    $authorize['update']['status'] = true;
+                }
+
+                break;
+            case ($currentProfile): {
+                    $authorize['update']['profile'] = true;
+                    $authorize['update']['status'] = false;
+                }
+
+                break;
+        }
+
+        return $authorize;
     }
 }
