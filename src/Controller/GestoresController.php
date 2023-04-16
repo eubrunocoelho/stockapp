@@ -53,11 +53,6 @@ class GestoresController extends GestorController
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
 
-        if ($gestor['cargo'] === 1) $status['active'] = 'administrador';
-        else $status['active'] = 'gestor';
-
-        $gestor = parent::applyGestorData($gestor);
-
         if ($gestor === []) {
             Session::destroy();
 
@@ -81,33 +76,11 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         } else {
             $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
-
-            if ($gestorProfile['cargo'] === 1) $status['profile'] = 'administrador';
-            else $status['profile'] = 'gestor';
+            $authorize = self::authorize($gestor, $gestorProfile);
+            
+            $gestor = parent::applyGestorData($gestor);
 
             $gestorProfile = parent::applyGestorData($gestorProfile);
-        }
-
-        if (
-            ($status['active'] === 'administrador') &&
-            ($status['profile'] === 'administrador')
-        ) {
-            $authorize['update']['profile'] = false;
-            $authorize['update']['status'] = false;
-        }
-
-        if (
-            ($status['active'] === 'administrador') &&
-            ($status['profile'] === 'gestor') &&
-            ($gestor['ID'] !== $gestorProfile['ID'])
-        ) {
-            $authorize['update']['profile'] = true;
-            $authorize['update']['status'] = true;
-        }
-
-        if ($gestor['ID'] === $gestorProfile['ID']) {
-            $authorize['update']['profile'] = true;
-            $authorize['update']['status'] = false;
         }
 
         $templateVariables = [
@@ -137,42 +110,7 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         } else {
             $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
-
-            // if ($gestor['cargo'] === 1) $status['active'] = 'administrador';
-            // else $status['active'] = 'gestor';
-
-            if ($gestor['cargo'] === 1) $status['active'] = 1;
-            else $status['active'] = 2;
-        }
-
-        // if ($gestorProfile['cargo'] === 1) $status['profile'] = 'administrador';
-        // else $status['profile'] = 'gestor';
-
-        if ($gestorProfile['cargo'] === 1) $status['profile'] = 1;
-        else $status['profile'] = 2;
-
-        $authorize = self::authorize($gestor, $gestorProfile, $status);
-
-        // if (
-        //     ($status['active'] === 'administrador') &&
-        //     ($status['profile'] === 'administrador')
-        // ) {
-        //     $authorize['update']['profile'] = false;
-        //     $authorize['update']['status'] = false;
-        // }
-
-        if (
-            ($status['active'] === 'administrador') &&
-            ($status['profile'] === 'gestor') &&
-            ($gestor['ID'] !== $gestorProfile['ID'])
-        ) {
-            $authorize['update']['profile'] = true;
-            $authorize['update']['status'] = true;
-        }
-
-        if ($gestor['ID'] === $gestorProfile['ID']) {
-            $authorize['update']['profile'] = true;
-            $authorize['update']['status'] = false;
+            $authorize = self::authorize($gestor, $gestorProfile);
         }
 
         if ($request->getMethod() == 'POST') {
@@ -277,8 +215,6 @@ class GestoresController extends GestorController
 
         $persistUpdateValues = $persistUpdateValues ?? $gestorProfile;
 
-        // dd($persistUpdateValues, true);
-
         $errors = $errors ?? [];
 
         $gestorProfile = parent::applyGestorData($gestorProfile);
@@ -332,20 +268,19 @@ class GestoresController extends GestorController
             if (
                 (isset($data[$key])) &&
                 ($data[$key] !== '')
-            ) {
-                $data[$key] = $request[$key];
-            }
+            ) $data[$key] = $request[$key];
 
-            if ($request[$key] == '') {
-                $request[$key] = null;
-            }
+            if ($request[$key] == '') $request[$key] = null;
         }
 
         return $request;
     }
 
-    private static function authorize($gestor, $gestorProfile, $status)
+    private static function authorize($gestor, $gestorProfile)
     {
+        $status['active'] = ($gestor['cargo'] === 1) ? 1 : 2;
+        $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
+
         $userAdminProfileAdmin =
             ($status['active'] === 1) &&
             ($status['profile'] === 1) &&
