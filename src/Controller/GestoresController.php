@@ -363,17 +363,14 @@ class GestoresController extends GestorController
             case ($userAdminProfileAdmin):
                 $authorize['update']['profile'] = false;
                 $authorize['update']['status'] = false;
-
                 break;
             case ($userAdminProfileGestor):
                 $authorize['update']['profile'] = true;
                 $authorize['update']['status'] = true;
-
                 break;
             case ($currentProfile):
                 $authorize['update']['profile'] = true;
                 $authorize['update']['status'] = false;
-
                 break;
         }
 
