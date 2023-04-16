@@ -360,22 +360,19 @@ class GestoresController extends GestorController
             ($gestor['ID'] === $gestorProfile['ID']);
 
         switch ($status) {
-            case ($userAdminProfileAdmin): {
-                    $authorize['update']['profile'] = false;
-                    $authorize['update']['status'] = false;
-                }
+            case ($userAdminProfileAdmin):
+                $authorize['update']['profile'] = false;
+                $authorize['update']['status'] = false;
 
                 break;
-            case ($userAdminProfileGestor): {
-                    $authorize['update']['profile'] = true;
-                    $authorize['update']['status'] = true;
-                }
+            case ($userAdminProfileGestor):
+                $authorize['update']['profile'] = true;
+                $authorize['update']['status'] = true;
 
                 break;
-            case ($currentProfile): {
-                    $authorize['update']['profile'] = true;
-                    $authorize['update']['status'] = false;
-                }
+            case ($currentProfile):
+                $authorize['update']['profile'] = true;
+                $authorize['update']['status'] = false;
 
                 break;
         }
