@@ -130,7 +130,7 @@ class GestoresController extends GestorController
 
             $regex = [
                 'name' =>
-                // super sweet unicode
+                    // super sweet unicode
                     '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
                 'cargo' => '/^[1-2]{1}$/',
                 'genero' => '/^[1-2]{1}$/',
