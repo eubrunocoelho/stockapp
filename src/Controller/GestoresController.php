@@ -140,23 +140,26 @@ class GestoresController extends GestorController
             Session::delete('update.ID');
 
             $formRequest = (array)$request->getParsedBody();
-            
+
             $uploadedFiles = $request->getUploadedFiles();
             $uploadedFile = $uploadedFiles['img_url'];
-            
-            $fileName = $uploadedFile->getClientFilename();
-            $fileMediaType = $uploadedFile->getClientMediaType();
-            $fileExtension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-            $fileSize = $uploadedFile->getSize();
 
-            dd(
-                [
-                    'fileName' => $fileName,
-                    'fileMediaType' => $fileMediaType,
-                    'fileExtension' => $fileExtension,
-                    'fileSize' => $fileSize
-                ], true
-            );
+            // $fileName = $uploadedFile->getClientFilename();
+            // $fileMediaType = $uploadedFile->getClientMediaType();
+            // $fileExtension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
+            // $fileSize = $uploadedFile->getSize();
+
+            // dd(
+            //     [
+            //         'fileName' => $fileName,
+            //         'fileMediaType' => $fileMediaType,
+            //         'fileExtension' => $fileExtension,
+            //         'fileSize' => $fileSize
+            //     ],
+            //     true
+            // );
+
+            self::imgUpload($uploadedFile);
 
             $regex = [
                 'name' =>
@@ -309,6 +312,43 @@ class GestoresController extends GestorController
         }
 
         return $authorize;
+    }
+
+    private static function imgUpload($uploadedFile)
+    {
+        $fileName = $uploadedFile->getClientFilename();
+        $fileMediaType = $uploadedFile->getClientMediaType();
+        $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+        $fileSize = $uploadedFile->getSize();
+
+        $uploadFile = [
+            'fileName' => $fileName,
+            'fileMediaType' => $fileMediaType,
+            'fileExtension' => $fileExtension,
+            'fileSize' => $fileSize
+        ];
+
+        $uploadRules = [
+            'mimeTypes' => [
+                'image/gif',
+                'image/jpeg',
+                'image/png'
+            ],
+            'maxSize' => 2097152
+        ];
+
+        dd(self::uploadValidator($uploadFile, $uploadRules));
+    }
+
+    private static function uploadValidator($uploadFile, $uploadRules)
+    {
+        if (!in_array($uploadFile['fileMediaType'], $uploadRules['mimeTypes']))
+            return false;
+
+        if ($uploadFile['fileSize'] > $uploadRules['maxSize'])
+            return false;
+
+        return true;
     }
 
     private static function getPersistUpdateValues($data, $request)
