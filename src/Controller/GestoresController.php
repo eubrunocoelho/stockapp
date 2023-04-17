@@ -140,6 +140,23 @@ class GestoresController extends GestorController
             Session::delete('update.ID');
 
             $formRequest = (array)$request->getParsedBody();
+            
+            $uploadedFiles = $request->getUploadedFiles();
+            $uploadedFile = $uploadedFiles['img_url'];
+            
+            $fileName = $uploadedFile->getClientFilename();
+            $fileMediaType = $uploadedFile->getClientMediaType();
+            $fileExtension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
+            $fileSize = $uploadedFile->getSize();
+
+            dd(
+                [
+                    'fileName' => $fileName,
+                    'fileMediaType' => $fileMediaType,
+                    'fileExtension' => $fileExtension,
+                    'fileSize' => $fileSize
+                ], true
+            );
 
             $regex = [
                 'name' =>
