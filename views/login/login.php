@@ -29,8 +29,6 @@
                             !is_null($inputValues['user'])
                         ) {
                             echo ' value="' . $inputValues['user'] . '"';
-                        } else {
-                            echo ' placeholder="Usuário"';
                         }
                     ?>>
                 </div>
@@ -43,8 +41,6 @@
                         !is_null($inputValues['password'])
                     ) {
                         echo ' value="' . $inputValues['password'] . '"';
-                    } else {
-                        echo ' placeholder="Senha"';
                     }
                     ?>>
                 </div>

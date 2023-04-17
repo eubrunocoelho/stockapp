@@ -1,3 +1,6 @@
+<?php
+// dd($persistUpdateValues, true);
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -85,86 +88,61 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="nome">Nome: <span class="text--danger">(*)</span></label>
-                        <input type="text" class="form__input" id="nome" name="nome"<?php
+                        <input type="text" class="form__input" id="nome" name="nome" placeholder="Ex.: João da Silva"<?php
                         if (
-                            !empty($persistUpdateValues) &&
-                            isset($persistUpdateValues['nome']) &&
-                            $persistUpdateValues['nome'] != ''
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['nome'])) &&
+                            ($persistUpdateValues['nome'] !== null)
                         ) {
                             echo ' value="' . $persistUpdateValues['nome'] . '"';
-                        } elseif (
-                            isset($persistUpdateValues['nome']) &&
-                            $persistUpdateValues['nome'] === null
-                        ) {
-                            echo ' placeholder="Nome Completo"';
                         }
                         ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="email">E-mail: <span class="text--danger">(*)</span></label>
-                        <input type="text" class="form__input" id="email" name="email"<?php
+                        <input type="text" class="form__input" id="email" name="email" placeholder="Ex.: joao@example.com"<?php
                         if (
-                            !empty($persistUpdateValues) &&
-                            isset($persistUpdateValues['email']) &&
-                            $persistUpdateValues['email'] != ''
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['email'])) &&
+                            ($persistUpdateValues['email'] !== null)
                         ) {
                             echo ' value="' . $persistUpdateValues['email'] . '"';
-                        } elseif (
-                            isset($persistUpdateValues['email']) &&
-                            $persistUpdateValues['email'] === null
-                        ) {
-                            echo ' placeholder="Endereço de E-mail"';
                         }
                         ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="cpf">CPF: <span class="text--danger">(*)</span></label>
-                        <input type="text" class="form__input" id="cpf" name="cpf"<?php
+                        <input type="text" class="form__input" id="cpf" name="cpf" placeholder="Ex.: 000.000.000-00"<?php
                         if (
-                            !empty($persistUpdateValues) &&
-                            isset($persistUpdateValues['cpf']) &&
-                            $persistUpdateValues['cpf'] != ''
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['cpf'])) &&
+                            ($persistUpdateValues['cpf'] !== null)
                         ) {
                             echo ' value="' . $persistUpdateValues['cpf'] . '"';
-                        } elseif (
-                            isset($persistUpdateValues['cpf']) &&
-                            $persistUpdateValues['cpf'] === null
-                        ) {
-                            echo ' placeholder="Ex.: 000.000.000-00"';
                         }
                         ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="telefone">Telefone:</label>
-                        <input type="text" class="form__input" id="telefone" name="telefone"<?php
+                        <input type="text" class="form__input" id="telefone" name="telefone" placeholder="Ex.: (00) 0000-0000"<?php
                         if (
-                            !empty($persistUpdateValues) &&
-                            isset($persistUpdateValues['telefone']) &&
-                            $persistUpdateValues['telefone'] != ''
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['telefone'])) &&
+                           ( $persistUpdateValues['telefone'] !== null)
                         ) {
                             echo ' value="' . $persistUpdateValues['telefone'] . '"';
-                        } elseif (
-                            isset($persistUpdateValues['telefone']) &&
-                            $persistUpdateValues['telefone'] === null
-                        ) {
-                            echo ' placeholder="Ex.: (00) 0000-0000"';
                         }
                         ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="endereco">Endereço:</label>
-                        <input type="text" class="form__input" id="endereco" name="endereco"<?php
+                        <input type="text" class="form__input" id="endereco" name="endereco" placeholder="Ex.: Rua XV de Dezembro, 666"<?php
                         if (
-                            !empty($persistUpdateValues) &&
-                            isset($persistUpdateValues['endereco']) &&
-                            $persistUpdateValues['endereco'] != ''
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['endereco'])) &&
+                            ($persistUpdateValues['endereco'] !== null)
                         ) {
                             echo ' value="' . $persistUpdateValues['endereco'] . '"';
-                        } elseif (
-                            isset($persistUpdateValues['endereco']) &&
-                            $persistUpdateValues['endereco'] === null
-                        ) {
-                            echo ' placeholder="Ex.: Rua XV de Dezembro, 777"';
                         }
                         ?>>
                     </div>
@@ -173,18 +151,18 @@
                         <select class="form__select" id="cargo" name="cargo">
                             <option value="1"<?php
                             if (
-                                !empty($persistUpdateValues) &&
-                                isset($persistUpdateValues['cargo']) &&
-                                $persistUpdateValues['cargo'] == 1
+                                !(empty($persistUpdateValues)) &&
+                                (isset($persistUpdateValues['cargo'])) &&
+                                ($persistUpdateValues['cargo'] == 1)
                             ) {
                                 echo ' selected';
                             }
                             ?>>Administrador</option>
                             <option value="2"<?php
                             if (
-                                !empty($persistUpdateValues) &&
-                                isset($persistUpdateValues['cargo']) &&
-                                $persistUpdateValues['cargo'] == 2
+                                !(empty($persistUpdateValues)) &&
+                                (isset($persistUpdateValues['cargo'])) &&
+                                ($persistUpdateValues['cargo'] == 2)
                             ) {
                                 echo ' selected';
                             }
@@ -196,18 +174,18 @@
                         <select class="form__select" id="genero" name="genero">
                             <option value="1"<?php
                             if (
-                                !empty($persistUpdateValues) &&
-                                isset($persistUpdateValues['genero']) &&
-                                $persistUpdateValues['genero'] == 1
+                                !(empty($persistUpdateValues)) &&
+                                (isset($persistUpdateValues['genero'])) &&
+                                ($persistUpdateValues['genero'] == 1)
                             ) {
                                 echo ' selected';
                             }
                             ?>>Masculino</option>
                             <option value="2"<?php
                             if (
-                                !empty($persistUpdateValues) &&
-                                isset($persistUpdateValues['genero']) &&
-                                $persistUpdateValues['genero'] == 2
+                                !(empty($persistUpdateValues)) &&
+                                (isset($persistUpdateValues['genero'])) &&
+                                ($persistUpdateValues['genero'] == 2)
                             ) {
                                 echo ' selected';
                             }
@@ -222,18 +200,18 @@
                         <select class="form__select" id="status" name="status">
                             <option value="1"<?php
                             if (
-                                !empty($persistUpdateValues) &&
-                                isset($persistUpdateValues['status']) &&
-                                $persistUpdateValues['status'] == 1
+                                !(empty($persistUpdateValues)) &&
+                                (isset($persistUpdateValues['status'])) &&
+                                ($persistUpdateValues['status'] == 1)
                             ) {
                                 echo ' selected';
                             }
                             ?>>Ativo</option>
                             <option value="2"<?php
                             if (
-                                !empty($persistUpdateValues) &&
-                                isset($persistUpdateValues['status']) &&
-                                $persistUpdateValues['status'] == 2
+                                !(empty($persistUpdateValues)) &&
+                                (isset($persistUpdateValues['status'])) &&
+                                ($persistUpdateValues['status'] == 2)
                             ) {
                                 echo ' selected';
                             }
@@ -247,8 +225,8 @@
                 </form>
                 <?php
                     if (
-                        isset($errors) &&
-                        !empty($errors)
+                        (isset($errors)) &&
+                        !(empty($errors))
                     ) {
                         foreach ($errors as $error) {
                 ?>

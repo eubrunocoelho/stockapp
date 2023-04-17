@@ -15,7 +15,7 @@ use Slim\{
 
 use App\{
     Helper\Session,
-    Validator\Validate
+    Validator\Validator
 };
 
 use App\{
@@ -28,7 +28,7 @@ use PDO;
 class GestoresController extends GestorController
 {
     private
-        $app, $container, $database, $renderer, $validate;
+        $app, $container, $database, $renderer, $validator;
 
     private
         $gestor, $gestorDAO;
@@ -39,7 +39,7 @@ class GestoresController extends GestorController
         $this->container = $this->app->getContainer();
         $this->database = $this->container->get(PDO::class);
         $this->renderer = $this->container->get(PhpRenderer::class);
-        $this->validate = $this->container->get(Validate::class);
+        $this->validator = $this->container->get(Validator::class);
 
         $this->gestor = new Gestor();
         $this->gestorDAO = new GestorDAO($this->database);
@@ -74,14 +74,13 @@ class GestoresController extends GestorController
             return $response
                 ->withHeader('Location', $url)
                 ->withStatus(302);
-        } else {
-            $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
-            $authorize = self::authorize($gestor, $gestorProfile);
-
-            $gestor = parent::applyGestorData($gestor);
-
-            $gestorProfile = parent::applyGestorData($gestorProfile);
         }
+
+        $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
+        $authorize = self::authorize($gestor, $gestorProfile);
+        $gestor = parent::applyGestorData($gestor);
+        $gestorProfile = parent::applyGestorData($gestorProfile);
+
 
         $templateVariables = [
             'basePath' => $basePath,
@@ -97,10 +96,23 @@ class GestoresController extends GestorController
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
+        $basePath = $this->container->get('settings')['api']['path'];
 
         $gestor = parent::getGestor();
-        $this->gestor->setID($ID);
 
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -130,8 +142,8 @@ class GestoresController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                // super sweet unicode
                 'name' =>
+                // super sweet unicode
                 '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
                 'cargo' => '/^[1-2]{1}$/',
                 'genero' => '/^[1-2]{1}$/',
@@ -199,46 +211,27 @@ class GestoresController extends GestorController
                     'genero'
                 ];
 
-                if ($authorize['update']['status']) {
-                    $fields[] = 'status';
-                }
+                if ($authorize['update']['status']) $fields[] = 'status';
 
                 $persistUpdateValues = self::getPersistUpdateValues($gestorProfile, $formRequest);
 
-                $this->validate->setFields($fields);
-                $this->validate->setData($formRequest);
-                $this->validate->setRules($rules);
-                $this->validate->validation();
+                $this->validator->setFields($fields);
+                $this->validator->setData($formRequest);
+                $this->validator->setRules($rules);
+                $this->validator->validation();
 
-                if (!$this->validate->passed()) {
-                    $errors = $this->validate->errors();
+                if (!$this->validator->passed()) {
+                    $errors = $this->validator->errors();
                 }
             }
         }
 
-        $persistUpdateValues = $persistUpdateValues ?? $gestorProfile;
-
-        $errors = $errors ?? [];
-
-        $gestorProfile = parent::applyGestorData($gestorProfile);
-
         Session::create('update.ID', $ID);
 
-        $basePath = $this->container->get('settings')['api']['path'];
-
         $gestor = parent::applyGestorData($gestor);
-
-        if ($gestor === []) {
-            Session::destroy();
-
-            $url = RouteContext::fromRequest($request)
-                ->getRouteParser()
-                ->urlFor('login');
-
-            return $response
-                ->withHeader('Location', $url)
-                ->withStatus(302);
-        }
+        $persistUpdateValues = $persistUpdateValues ?? $gestorProfile;
+        $gestorProfile = parent::applyGestorData($gestorProfile);
+        $errors = $errors ?? [];
 
         if (
             !($authorize['update']['status']) &&
@@ -258,25 +251,11 @@ class GestoresController extends GestorController
             'gestor' => $gestor,
             'gestorProfile' => $gestorProfile,
             'authorize' => $authorize,
-            'errors' => $errors,
-            'persistUpdateValues' => $persistUpdateValues
+            'persistUpdateValues' => $persistUpdateValues,
+            'errors' => $errors
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
-    }
-
-    private static function getPersistUpdateValues($data, $request)
-    {
-        foreach ($request as $key => $value) {
-            if (
-                (isset($data[$key])) &&
-                ($data[$key] !== '')
-            ) $data[$key] = $request[$key];
-
-            if ($request[$key] == '') $request[$key] = null;
-        }
-
-        return $request;
     }
 
     private static function authorize($gestor, $gestorProfile)
@@ -313,5 +292,19 @@ class GestoresController extends GestorController
         }
 
         return $authorize;
+    }
+
+    private static function getPersistUpdateValues($data, $request)
+    {
+        foreach ($request as $key => $value) {
+            if (
+                (isset($data[$key])) &&
+                ($data[$key] !== '')
+            ) $data[$key] = $request[$key];
+
+            if ($request[$key] == '') $request[$key] = null;
+        }
+
+        return $request;
     }
 }

@@ -11,7 +11,7 @@ use Slim\{
 };
 
 use App\{
-    Validator\Validate
+    Validator\Validator
 };
 
 return [
@@ -29,8 +29,8 @@ return [
         return new PhpRenderer($container->get('settings')['views']['path']);
     },
 
-    Validate::class => function (ContainerInterface $container) {
-        return new Validate($container);
+    Validator::class => function (ContainerInterface $container) {
+        return new Validator($container);
     },
     
     PDO::class => function (ContainerInterface $container) {

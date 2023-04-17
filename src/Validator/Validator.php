@@ -3,73 +3,129 @@
 namespace App\Validator;
 
 /**
- * Responsável por validação de formato de dados
+ * Responsável por fazer validações do formulário
  */
-abstract class Validator
+class Validator extends Validators
 {
+    private
+        $container, $fields, $data, $rules, $errors;
+
+    public function __construct($container)
+    {
+        $this->container = $container;
+    }
+
     /**
-     * Verifica se o valor não está vazio
+     * Define os campos que devem existir no formulário
      */
-    protected function required($value)
+    public function setFields($fields)
     {
-        return (strlen(trim($value)) > 0) ? true : false;
+        $this->fields = $fields;
     }
 
-    protected function min($value, $ruleValue)
+    /**
+     * Define os dados recebidos do formulário
+     */
+    public function setData($data)
     {
-        return (!(strlen(trim($value)) < $ruleValue)) ? true : false;
+        $this->data = $data;
     }
 
-    protected function max($value, $ruleValue)
+    /**
+     * Define as regras do formulário
+     */
+    public function setRules($rules)
     {
-        return (!(strlen(trim($value)) > $ruleValue)) ? true : false;
+        $this->rules = $rules;
     }
 
-    protected function regex($value, $ruleValue)
+    /**
+     * Responsável por iniciar a validação
+     */
+    public function validation()
     {
-        return (preg_match($ruleValue, trim($value))) ? true : false;
+        if ($this->fieldsExists()) $this->validate();
+        else $this->addError('Houve um erro inesperado.');
     }
 
-    protected function email($value)
+    /**
+     * Verifica se os campos do formulário condizem com os dados recebidos no formulário
+     */
+    private function fieldsExists()
     {
-        return (filter_var($value, FILTER_VALIDATE_EMAIL)) ? true : false;
-    }
-
-    protected function cpf($value)
-    {
-        $cpf = preg_replace('/[^0-9]/is', '', $value);
-
-        if (strlen($cpf) != 11) {
-            return false;
-        }
-
-        if (preg_match('/(\d)\1{10}/', $cpf)) {
-            return false;
-        }
-
-        // perplexed õ.O
-        for ($t = 9; $t < 11; $t++) {
-            for ($d = 0, $c = 0; $c < $t; $c++) {
-                $d += $cpf[$c] * (($t + 1) - $c);
-            }
-            $d = ((10 * $d) % 11) % 10;
-            if ($cpf[$c] != $d) {
-                return false;
-            }
-        }
+        foreach ($this->fields as $field)
+            if (!array_key_exists($field, $this->data)) return false;
 
         return true;
     }
 
-    protected function telephone($value)
+    /**
+     * Responsável por fazer a validação e gerar erros
+     */
+    private function validate()
     {
-        $telephone = preg_replace('/[^0-9]/is', '', $value);
+        // Percorre as regras e faz a validação do formulário
+        foreach ($this->rules as $item => $rules)
+            foreach ($rules as $rule => $ruleValue) {
+                // Define o valor recebido do formulário
+                $value = $this->data[$item];
+                // Define o nome `label` do item a ser validado
+                $label = $rules['label'] ?? $item;
 
-        if (
-            (strlen($telephone) != 11) &&
-            (strlen($telephone) != 10)
-        ) return false;
+                // Aplica as regras
+                if ($rule == 'required') {
+                    if ($ruleValue && !parent::required($value))
+                        $this->addError('O campo "' . $label . '" é obrigatório.');
+                } elseif (parent::required($value)) switch ($rule) {
+                    case 'min':
+                        if (!parent::min($value, $ruleValue))
+                            $this->addError('O campo "' . $label . '" deve conter no mínimo ' . $ruleValue . ' caracteres.');
+                        break;
+                    case 'max':
+                        if (!parent::max($value, $ruleValue))
+                            $this->addError('O campo "' . $label . '" deve conter no máximo ' . $ruleValue . ' caracteres.');
+                        break;
+                    case 'regex':
+                        if (!parent::regex($value, $ruleValue))
+                            $this->addError('O campo "' . $label . '" está inválido.');
+                        break;
+                    case 'email':
+                        if (!parent::email($value))
+                            $this->addError('O campo "' . $label .  '" está inválido.');
+                        break;
+                    case 'cpf':
+                        if (!parent::cpf($value))
+                            $this->addError('O campo "' . $label . '" esta inválido.');
+                        break;
+                    case 'telephone':
+                        if (!parent::telephone($value))
+                            $this->addError('O campo "' . $label . '" está inválido.');
+                        break;
+                }
+            }
+    }
 
-        return true;
+    /**
+     * Adiciona errors que ocorreram durante a validação
+     */
+    private function addError($message)
+    {
+        $this->errors[] = $message;
+    }
+
+    /**
+     * Obtem erros que ocorreram durante a validação
+     */
+    public function errors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Verifica se validação foi concluída sem erros
+     */
+    public function passed()
+    {
+        return (empty($this->errors)) ? true : false;
     }
 }
