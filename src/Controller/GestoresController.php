@@ -275,9 +275,19 @@ class GestoresController extends GestorController
                             (self::validateMediaType($uploadedFile, $uploadRules)) &&
                             (self::validateFileSize($uploadedFile, $uploadRules))
                         ) {
-                            $fileName = self::renameFile($uploadedFile);
-        
-                            // finished the upload
+                            $currentFileName = $gestorProfile['img_url'];
+                            $uploadFileName = self::renameFile($uploadedFile);
+
+                            if (
+                                ($currentFileName !== null) &&
+                                ($currentFileName !== $uploadFileName)
+                            ) {
+                                $path = $uploadDirectory . '/' . $currentFileName;
+
+                                if (file_exists($path)) unlink($path);
+
+                                // it working
+                            }
                         }
                     }
                 } else {

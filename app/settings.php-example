@@ -5,7 +5,8 @@ ini_set('display_errors', '1');
 
 $settings = [
     'api' => [
-        'path' => '/stockapp'
+        'path' => '/stockapp',
+        'uploadDirectory' => 'uploads'
     ],
 
     'views' => [
