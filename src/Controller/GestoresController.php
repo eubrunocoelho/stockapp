@@ -362,7 +362,9 @@ class GestoresController extends GestorController
         $baseName = bin2hex(random_bytes(8));
         $fileName = $baseName . '.' . $extension;
 
-        $uploadedFile->moveTo($uploadDirectory . DIRECTORY_SEPARATOR . $fileName);
+        if ($uploadedFile->moveTo($uploadDirectory . DIRECTORY_SEPARATOR . $fileName))
+            return true;
+        else return false;
     }
 
     private static function getPersistUpdateValues($data, $request)
