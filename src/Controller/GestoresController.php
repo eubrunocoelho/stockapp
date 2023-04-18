@@ -143,31 +143,31 @@ class GestoresController extends GestorController
 
             $formRequest = (array)$request->getParsedBody();
 
-            $uploadedFiles = $request->getUploadedFiles();
-            $uploadedFile = ($uploadedFiles['img_profile']) ?? [];
+            // $uploadedFiles = $request->getUploadedFiles();
+            // $uploadedFile = ($uploadedFiles['img_profile']) ?? [];
 
-            if ($uploadedFile !== []) {
-                $uploadRules = [
-                    'mimeTypes' => [
-                        'image/gif',
-                        'image/jpeg',
-                        'image/png'
-                    ],
-                    'maxSize' => 2097152
-                ];
+            // if ($uploadedFile !== []) {
+            //     $uploadRules = [
+            //         'mimeTypes' => [
+            //             'image/gif',
+            //             'image/jpeg',
+            //             'image/png'
+            //         ],
+            //         'maxSize' => 2097152
+            //     ];
 
-                if (!self::validateMediaType($uploadedFile, $uploadRules)) dd('error');
-                if (!self::validateFileSize($uploadedFile, $uploadRules)) dd('error');
+            //     if (!self::validateMediaType($uploadedFile, $uploadRules)) dd('error');
+            //     if (!self::validateFileSize($uploadedFile, $uploadRules)) dd('error');
 
-                if (
-                    (self::validateMediaType($uploadedFile, $uploadRules)) &&
-                    (self::validateFileSize($uploadedFile, $uploadRules))
-                ) {
-                    if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
-                    if ($uploadedFile->getError() === UPLOAD_ERR_OK)
-                        self::moveUploadedFile($uploadDirectory, $uploadedFile);
-                }
-            }
+            //     if (
+            //         (self::validateMediaType($uploadedFile, $uploadRules)) &&
+            //         (self::validateFileSize($uploadedFile, $uploadRules))
+            //     ) {
+            //         if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
+            //         if ($uploadedFile->getError() === UPLOAD_ERR_OK)
+            //             self::moveUploadedFile($uploadDirectory, $uploadedFile);
+            //     }
+            // }
 
             $regex = [
                 'name' =>
@@ -248,7 +248,39 @@ class GestoresController extends GestorController
                 $this->validator->setRules($rules);
                 $this->validator->validation();
 
-                if (!$this->validator->passed()) {
+                if ($this->validator->passed()) {
+                    $uploadedFiles = $request->getUploadedFiles();
+                    $uploadedFile = $uploadedFiles['img_profile'] ?? [];
+
+                    if (
+                        ($uploadedFile !== []) &&
+                        ($uploadedFile->getClientFilename() !== '')
+                    ) {
+                        $uploadRules = [
+                            'mimeTypes' => [
+                                'image/gif',
+                                'image/jpeg',
+                                'image/png'
+                            ],
+                            'maxSize' => 2097152 //2097152
+                        ];
+
+                        if (!self::validateMediaType($uploadedFile, $uploadRules))
+                            $errors = (array)'O formato de arquivo para imagem de "Foto de Perfil" não é compatível.';
+
+                        if (!self::validateFileSize($uploadedFile, $uploadRules))
+                            $errors = (array)'O tamanho de arquivo para imagem de "Foto de Perfil" excede o permitido.';
+
+                        if (
+                            (self::validateMediaType($uploadedFile, $uploadRules)) &&
+                            (self::validateFileSize($uploadedFile, $uploadRules))
+                        ) {
+                            $fileName = self::renameFile($uploadedFile);
+        
+                            // finished the upload
+                        }
+                    }
+                } else {
                     $errors = $this->validator->errors();
                 }
             }
@@ -342,11 +374,20 @@ class GestoresController extends GestorController
         return true;
     }
 
-    private static function moveUploadedFile($uploadDirectory, $uploadedFile)
+    private static function renameFile($uploadedFile)
     {
         $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
         $baseName = bin2hex(random_bytes(8));
         $fileName = $baseName . '.' . $extension;
+
+        return $fileName;
+    }
+
+    private static function moveUploadedFile($uploadDirectory, $uploadedFile, $fileName)
+    {
+        // $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
+        // $baseName = bin2hex(random_bytes(8));
+        // $fileName = $baseName . '.' . $extension;
         $uploadedFile->moveTo($uploadDirectory . DIRECTORY_SEPARATOR . $fileName);
 
         return true;
