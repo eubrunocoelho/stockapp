@@ -83,7 +83,7 @@
                 <form class="form" action="<?=$basePath?>/gestores/update/<?=$gestorProfile['ID']?>" method="POST" enctype="multipart/form-data">
                     <div class="form__group">
                         <label class="form__label">Foto de Perfil:</label>
-                        <input type="file" id="upload" name="img_url" hidden>
+                        <input type="file" id="upload" name="img_profile" hidden>
                         <label for="upload" class="form__custom-upload">Escolher arquivo...</label>
                     </div>
                     <div class="form__group">
