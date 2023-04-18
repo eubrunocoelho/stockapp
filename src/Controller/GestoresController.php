@@ -147,10 +147,27 @@ class GestoresController extends GestorController
             $uploadedFile = ($uploadedFiles['img_profile']) ?? [];
 
             if ($uploadedFile !== []) {
-                dd(self::fileUpload($uploadedFile, $uploadDirectory));
-            }
+                $uploadRules = [
+                    'mimeTypes' => [
+                        'image/gif',
+                        'image/jpeg',
+                        'image/png'
+                    ],
+                    'maxSize' => 2097152
+                ];
 
-            // self::fileUpload($uploadedFile, $uploadDirectory);
+                if (!self::validateMediaType($uploadedFile, $uploadRules)) dd('error');
+                if (!self::validateFileSize($uploadedFile, $uploadRules)) dd('error');
+
+                if (
+                    (self::validateMediaType($uploadedFile, $uploadRules)) &&
+                    (self::validateFileSize($uploadedFile, $uploadRules))
+                ) {
+                    if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
+                    if ($uploadedFile->getError() === UPLOAD_ERR_OK)
+                        self::moveUploadedFile($uploadDirectory, $uploadedFile);
+                }
+            }
 
             $regex = [
                 'name' =>
@@ -170,7 +187,7 @@ class GestoresController extends GestorController
                     'regex' => $regex['name']
                 ],
                 'email' => [
-                    'label' => 'Email',
+                    'label' => 'E-mail',
                     'required' => true,
                     'max' => 128,
                     'email' => true
@@ -305,39 +322,21 @@ class GestoresController extends GestorController
         return $authorize;
     }
 
-    private static function fileUpload($uploadedFile, $uploadDirectory)
+    private static function validateMediaType($uploadedFile, $uploadRules)
     {
         $fileMediaType = $uploadedFile->getClientMediaType();
-        $fileSize = $uploadedFile->getSize();
 
-        $uploadFile = [
-            'fileMediaType' => $fileMediaType,
-            'fileSize' => $fileSize
-        ];
-
-        $uploadRules = [
-            'mimeTypes' => [
-                'image/gif',
-                'image/jpeg',
-                'image/png'
-            ],
-            'maxSize' => 2097152
-        ];
-
-        if (self::validateUpload($uploadFile, $uploadRules)) {
-            if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
-
-            if ($uploadedFile->getError() === UPLOAD_ERR_OK)
-                return (self::moveUploadedFile($uploadDirectory, $uploadedFile)) ? true : false;
-        } else return false;
-    }
-
-    private static function validateUpload($uploadFile, $uploadRules)
-    {
-        if (!in_array($uploadFile['fileMediaType'], $uploadRules['mimeTypes']))
+        if (!in_array($fileMediaType, $uploadRules['mimeTypes']))
             return false;
 
-        if ($uploadFile['fileSize'] > $uploadRules['maxSize'])
+        return true;
+    }
+
+    private static function validateFileSize($uploadedFile, $uploadRules)
+    {
+        $fileSize = $uploadedFile->getSize();
+
+        if ($fileSize > $uploadRules['maxSize'])
             return false;
 
         return true;
