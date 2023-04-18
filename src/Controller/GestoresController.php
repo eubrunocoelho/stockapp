@@ -97,6 +97,8 @@ class GestoresController extends GestorController
     {
         $ID = $request->getAttribute('ID');
         $basePath = $this->container->get('settings')['api']['path'];
+        $uploadDirectory =
+            $this->container->get('settings')['api']['uploadDirectory'] . '/img/profile';
 
         $gestor = parent::getGestor();
 
@@ -159,7 +161,7 @@ class GestoresController extends GestorController
             //     true
             // );
 
-            self::imgUpload($uploadedFile);
+            self::fileUpload($uploadedFile, $uploadDirectory);
 
             $regex = [
                 'name' =>
@@ -314,7 +316,7 @@ class GestoresController extends GestorController
         return $authorize;
     }
 
-    private static function imgUpload($uploadedFile)
+    private static function fileUpload($uploadedFile, $uploadDirectory)
     {
         $fileName = $uploadedFile->getClientFilename();
         $fileMediaType = $uploadedFile->getClientMediaType();
@@ -322,9 +324,7 @@ class GestoresController extends GestorController
         $fileSize = $uploadedFile->getSize();
 
         $uploadFile = [
-            'fileName' => $fileName,
             'fileMediaType' => $fileMediaType,
-            'fileExtension' => $fileExtension,
             'fileSize' => $fileSize
         ];
 
@@ -337,10 +337,15 @@ class GestoresController extends GestorController
             'maxSize' => 2097152
         ];
 
-        dd(self::uploadValidator($uploadFile, $uploadRules));
+        if (self::validateUpload($uploadFile, $uploadRules)) {
+            if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
+
+            if ($uploadedFile->getError() === UPLOAD_ERR_OK)
+                self::moveUploadedFile($uploadDirectory, $uploadedFile);
+        }
     }
 
-    private static function uploadValidator($uploadFile, $uploadRules)
+    private static function validateUpload($uploadFile, $uploadRules)
     {
         if (!in_array($uploadFile['fileMediaType'], $uploadRules['mimeTypes']))
             return false;
@@ -349,6 +354,15 @@ class GestoresController extends GestorController
             return false;
 
         return true;
+    }
+
+    private static function moveUploadedFile($uploadDirectory, $uploadedFile)
+    {
+        $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
+        $baseName = bin2hex(random_bytes(8));
+        $fileName = $baseName . '.' . $extension;
+
+        $uploadedFile->moveTo($uploadDirectory . DIRECTORY_SEPARATOR . $fileName);
     }
 
     private static function getPersistUpdateValues($data, $request)
