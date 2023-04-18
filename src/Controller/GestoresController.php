@@ -143,32 +143,6 @@ class GestoresController extends GestorController
 
             $formRequest = (array)$request->getParsedBody();
 
-            // $uploadedFiles = $request->getUploadedFiles();
-            // $uploadedFile = ($uploadedFiles['img_profile']) ?? [];
-
-            // if ($uploadedFile !== []) {
-            //     $uploadRules = [
-            //         'mimeTypes' => [
-            //             'image/gif',
-            //             'image/jpeg',
-            //             'image/png'
-            //         ],
-            //         'maxSize' => 2097152
-            //     ];
-
-            //     if (!self::validateMediaType($uploadedFile, $uploadRules)) dd('error');
-            //     if (!self::validateFileSize($uploadedFile, $uploadRules)) dd('error');
-
-            //     if (
-            //         (self::validateMediaType($uploadedFile, $uploadRules)) &&
-            //         (self::validateFileSize($uploadedFile, $uploadRules))
-            //     ) {
-            //         if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
-            //         if ($uploadedFile->getError() === UPLOAD_ERR_OK)
-            //             self::moveUploadedFile($uploadDirectory, $uploadedFile);
-            //     }
-            // }
-
             $regex = [
                 'name' =>
                 // super sweet unicode
@@ -275,21 +249,55 @@ class GestoresController extends GestorController
                             (self::validateMediaType($uploadedFile, $uploadRules)) &&
                             (self::validateFileSize($uploadedFile, $uploadRules))
                         ) {
-                            $currentFileName = $gestorProfile['img_url'];
+                            $uploadedFile = $uploadedFile;
                             $uploadFileName = self::renameFile($uploadedFile);
-
-                            if (
-                                ($currentFileName !== null) &&
-                                ($currentFileName !== $uploadFileName)
-                            ) {
-                                $path = $uploadDirectory . '/' . $currentFileName;
-
-                                if (file_exists($path)) unlink($path);
-
-                                // it working
-                            }
                         }
                     }
+
+                    $currentFileName = $gestorProfile['img_url'];
+                    $uploadedFile = $uploadedFile ?? null;
+                    $uploadFileName = $uploadFileName ?? null;
+
+                    if (
+                        ($uploadFileName !== null)
+                    ) {
+                        if (
+                            ($currentFileName !== null) &&
+                            ($currentFileName !== '')
+                        ) {
+                            $path = $uploadDirectory . '/' . $currentFileName;
+
+                            if (file_exists($path)) unlink($path);
+                        }
+
+                        if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
+
+                        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+                            self::moveUploadedFile($uploadDirectory, $uploadedFile, $uploadFileName);
+
+                            $uploadStatus = true;
+                        } else $errors = (array)'Houve um erro inesperado.';
+                    }
+
+                    $uploadStatus = $uploadStatus ?? false;
+
+                    $dataRequest = [
+                        'nome' => $formRequest['nome'] ?? null,
+                        'email' => $formRequest['email'] ?? null,
+                        'cpf' => $formRequest['cpf'] ?? null,
+                        'telefone' => $formRequest['telefone'] ?? null,
+                        'endereco' => $formRequest['endereco'] ?? null,
+                        'cargo' => $formRequest['cargo'] ?? null,
+                        'genero' => $formRequest['genero'] ?? null
+                    ];
+
+                    if ($authorize['update']['status'])
+                        $dataRequest['status'] = $formRequest['status'] ?? null;
+
+                    if ($uploadStatus) 
+                        $dataRequest['img_profile'] = $uploadFileName ?? null;
+
+                        // not long !important
                 } else {
                     $errors = $this->validator->errors();
                 }
@@ -395,9 +403,6 @@ class GestoresController extends GestorController
 
     private static function moveUploadedFile($uploadDirectory, $uploadedFile, $fileName)
     {
-        // $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-        // $baseName = bin2hex(random_bytes(8));
-        // $fileName = $baseName . '.' . $extension;
         $uploadedFile->moveTo($uploadDirectory . DIRECTORY_SEPARATOR . $fileName);
 
         return true;
@@ -411,7 +416,7 @@ class GestoresController extends GestorController
                 ($data[$key] !== '')
             ) $data[$key] = $request[$key];
 
-            if ($request[$key] == '') $request[$key] = null;
+            if ($request[$key] === '') $request[$key] = null;
         }
 
         return $request;
