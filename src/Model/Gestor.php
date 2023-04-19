@@ -123,7 +123,7 @@ class Gestor
         $this->img_url = $img_url;
     }
 
-    public function getImg_url()
+    public function getImgUrl()
     {
         return $this->img_url;
     }
