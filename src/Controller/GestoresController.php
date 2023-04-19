@@ -163,13 +163,15 @@ class GestoresController extends GestorController
                 'email' => [
                     'label' => 'E-mail',
                     'required' => true,
-                    'max' => 128,
-                    'email' => true
+                    'email' => true,
+                    'unique-update' => 'email|gestor|' . $ID,
+                    'max' => 128
                 ],
                 'cpf' => [
                     'label' => 'CPF',
                     'required' => true,
-                    'cpf' => true
+                    'cpf' => true,
+                    'unique-update' => 'cpf|gestor|' . $ID
                 ],
                 'telefone' => [
                     'label' => 'Telefone',
@@ -311,6 +313,8 @@ class GestoresController extends GestorController
                         'status' => $dataRequest['status'] ?? null,
                         'img_profile' => $dataRequest['img_profile'] ?? null
                     ];
+                    
+                    dd($dataWrite);
                 } else {
                     $errors = $this->validator->errors();
                 }

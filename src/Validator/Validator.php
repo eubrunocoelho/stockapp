@@ -13,6 +13,8 @@ class Validator extends Validators
     public function __construct($container)
     {
         $this->container = $container;
+
+        parent::__construct($this->container);
     }
 
     /**
@@ -77,6 +79,10 @@ class Validator extends Validators
                     if ($ruleValue && !parent::required($value))
                         $this->addError('O campo "' . $label . '" é obrigatório.');
                 } elseif (parent::required($value)) switch ($rule) {
+                    case 'unique-update':
+                        if (!parent::uniqueForUpdate($value, $ruleValue))
+                            $this->addError('O "' . $label . '" já está cadastrado no banco de dados.');
+                        break;
                     case 'min':
                         if (!parent::min($value, $ruleValue))
                             $this->addError('O campo "' . $label . '" deve conter no mínimo ' . $ruleValue . ' caracteres.');
