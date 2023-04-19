@@ -146,6 +146,9 @@
                         }
                         ?>>
                     </div>
+                    <?php
+                    if ($authorize['update']['cargo']) {
+                    ?>
                     <div class="form__group">
                         <label class="form__label" for="cargo">Cargo: <span class="text--danger">(*)</span></label>
                         <select class="form__select" id="cargo" name="cargo">
@@ -169,6 +172,9 @@
                             ?>>Gestor</option>
                         </select>
                     </div>
+                    <?php 
+                    }
+                    ?>
                     <div class="form__group">
                         <label class="form__label" for="genero">Gênero: <span class="text--danger">(*)</span></label>
                         <select class="form__select" id="genero" name="genero">

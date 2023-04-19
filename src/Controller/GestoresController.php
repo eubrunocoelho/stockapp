@@ -184,11 +184,6 @@ class GestoresController extends GestorController
                     'min' => 6,
                     'max' => 255
                 ],
-                'cargo' => [
-                    'label' => 'Cargo',
-                    'required' => true,
-                    'regex' => $regex['cargo']
-                ],
                 'genero' => [
                     'label' => 'Gênero',
                     'required' => true,
@@ -196,13 +191,21 @@ class GestoresController extends GestorController
                 ]
             ];
 
-            if ($authorize['update']['status']) {
+            if ($authorize['update']['cargo'])
+                $rules['cargo'] = [
+                    'cargo' => [
+                        'label' => 'Cargo',
+                        'required' => true,
+                        'regex' => $regex['cargo']
+                    ]
+                ];
+
+            if ($authorize['update']['status'])
                 $rules['status'] = [
                     'label' => 'Status',
                     'required' => true,
                     'regex' => $regex['status']
                 ];
-            }
 
             if (!empty($formRequest)) {
                 $fields = [
@@ -211,10 +214,10 @@ class GestoresController extends GestorController
                     'cpf',
                     'telefone',
                     'endereco',
-                    'cargo',
                     'genero'
                 ];
 
+                if ($authorize['update']['cargo']) $fields[] = 'cargo';
                 if ($authorize['update']['status']) $fields[] = 'status';
 
                 $persistUpdateValues = self::getPersistUpdateValues($gestorProfile, $formRequest);
@@ -289,9 +292,11 @@ class GestoresController extends GestorController
                         'cpf' => $formRequest['cpf'] ?? null,
                         'telefone' => $formRequest['telefone'] ?? null,
                         'endereco' => $formRequest['endereco'] ?? null,
-                        'cargo' => $formRequest['cargo'] ?? null,
                         'genero' => $formRequest['genero'] ?? null
                     ];
+
+                    if ($authorize['update']['cargo'])
+                        $dataRequest['cargo'] = $formRequest['cargo'] ?? null;
 
                     if ($authorize['update']['status'])
                         $dataRequest['status'] = $formRequest['status'] ?? null;
@@ -299,6 +304,7 @@ class GestoresController extends GestorController
                     if ($uploadStatus)
                         $dataRequest['img_profile'] = $uploadFileName ?? null;
 
+                    $dataRequest['cargo'] = $dataRequest['cargo'] ?? $gestorProfile['cargo'];
                     $dataRequest['status'] = $dataRequest['status'] ?? $gestorProfile['status'];
                     $dataRequest['img_profile'] = $dataRequest['img_profile'] ?? $gestorProfile['img_url'];
 
@@ -340,7 +346,6 @@ class GestoresController extends GestorController
         $errors = $errors ?? [];
 
         if (
-            !($authorize['update']['status']) &&
             !($authorize['update']['profile'])
         ) {
             $url = RouteContext::fromRequest($request)
@@ -385,14 +390,17 @@ class GestoresController extends GestorController
         switch ($status) {
             case ($userAdminProfileAdmin):
                 $authorize['update']['profile'] = false;
+                $authorize['update']['cargo'] = false;
                 $authorize['update']['status'] = false;
                 break;
             case ($userAdminProfileGestor):
                 $authorize['update']['profile'] = true;
+                $authorize['update']['cargo'] = true;
                 $authorize['update']['status'] = true;
                 break;
             case ($currentProfile):
                 $authorize['update']['profile'] = true;
+                $authorize['update']['cargo'] = false;
                 $authorize['update']['status'] = false;
                 break;
         }
