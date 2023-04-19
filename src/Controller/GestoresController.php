@@ -294,10 +294,23 @@ class GestoresController extends GestorController
                     if ($authorize['update']['status'])
                         $dataRequest['status'] = $formRequest['status'] ?? null;
 
-                    if ($uploadStatus) 
+                    if ($uploadStatus)
                         $dataRequest['img_profile'] = $uploadFileName ?? null;
 
-                        // not long !important
+                    $dataRequest['status'] = $dataRequest['status'] ?? $gestorProfile['status'];
+                    $dataRequest['img_profile'] = $dataRequest['img_profile'] ?? $gestorProfile['img_url'];
+
+                    $dataWrite = [
+                        'nome' => $dataRequest['nome'] ?? null,
+                        'email' => $dataRequest['email'] ?? null,
+                        'cpf' => $dataRequest['cpf'] ?? null,
+                        'telefone' => $dataRequest['telefone'] ?? null,
+                        'endereco' => $dataRequest['endereco'] ?? null,
+                        'cargo' => $dataRequest['cargo'] ?? null,
+                        'genero' => $dataRequest['genero'] ?? null,
+                        'status' => $dataRequest['status'] ?? null,
+                        'img_profile' => $dataRequest['img_profile'] ?? null
+                    ];
                 } else {
                     $errors = $this->validator->errors();
                 }
