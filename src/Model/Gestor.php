@@ -118,7 +118,7 @@ class Gestor
         return $this->status;
     }
 
-    public function setImg_url($img_url)
+    public function setImgUrl($img_url)
     {
         $this->img_url = $img_url;
     }

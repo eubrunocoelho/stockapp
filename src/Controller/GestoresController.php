@@ -313,8 +313,19 @@ class GestoresController extends GestorController
                         'status' => $dataRequest['status'] ?? null,
                         'img_profile' => $dataRequest['img_profile'] ?? null
                     ];
-                    
-                    dd($dataWrite);
+
+                    $this->gestor->setID($ID);
+                    $this->gestor->setNome($dataWrite['nome']);
+                    $this->gestor->setEmail($dataWrite['email']);
+                    $this->gestor->setCpf($dataWrite['cpf']);
+                    $this->gestor->setTelefone($dataWrite['telefone']);
+                    $this->gestor->setEndereco($dataWrite['endereco']);
+                    $this->gestor->setCargo($dataWrite['cargo']);
+                    $this->gestor->setGenero($dataWrite['genero']);
+                    $this->gestor->setStatus($dataWrite['status']);
+                    $this->gestor->setImgUrl($dataWrite['img_profile']);
+
+                    $this->gestorDAO->update($this->gestor); // testing
                 } else {
                     $errors = $this->validator->errors();
                 }
