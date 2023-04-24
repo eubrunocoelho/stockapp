@@ -83,11 +83,6 @@ class GestoresController extends GestorController
     {
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
-        $authorize = self::authorize($gestor);
-
-        dd($authorize);
-
-        $gestor = parent::applyGestorData($gestor);
 
         if ($gestor === []) {
             Session::destroy();
@@ -95,6 +90,21 @@ class GestoresController extends GestorController
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
                 ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $authorize = self::authorize($gestor);
+        $gestor = parent::applyGestorData($gestor);
+
+        if (
+            !($authorize['register'])
+        ) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('dashboard.index');
 
             return $response
                 ->withHeader('Location', $url)
@@ -439,8 +449,12 @@ class GestoresController extends GestorController
         if (
             ($gestorProfile === []) &&
             ($status['active'] === 1)
-        ) return $authorize['register'] = true;
-        else return $authorize['register'] = false;
+        ) return $authorize = ['register' => true];
+        elseif (
+            ($gestorProfile === []) &&
+            ($status['active'] !== 1)
+        ) return $authorize = ['register' => false];
+
 
         $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
 
