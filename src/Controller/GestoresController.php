@@ -99,9 +99,7 @@ class GestoresController extends GestorController
         $authorize = self::authorize($gestor);
         $gestor = parent::applyGestorData($gestor);
 
-        if (
-            !($authorize['register'])
-        ) {
+        if (!($authorize['register'])) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
                 ->urlFor('dashboard.index');
@@ -453,10 +451,14 @@ class GestoresController extends GestorController
         $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
 
         $userAdminProfileAdmin =
-            ($status['active'] === 1) && ($status['profile'] === 1) && ($gestor['ID'] !== $gestorProfile['ID']);
+            ($status['active'] === 1) &&
+            ($status['profile'] === 1) &&
+            ($gestor['ID'] !== $gestorProfile['ID']);
 
         $userAdminProfileGestor =
-            ($status['active'] === 1) && ($status['profile'] === 2) && ($gestor['ID'] !== $gestorProfile['ID']);
+            ($status['active'] === 1) &&
+            ($status['profile'] === 2) &&
+            ($gestor['ID'] !== $gestorProfile['ID']);
 
         $currentProfile =
             ($gestor['ID'] === $gestorProfile['ID']);
@@ -524,7 +526,6 @@ class GestoresController extends GestorController
     {
         foreach ($request as $key => $value) {
             if ((isset($data[$key])) && ($data[$key] !== '')) $data[$key] = $request[$key];
-
             if ($request[$key] === '') $request[$key] = null;
         }
 
