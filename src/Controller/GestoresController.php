@@ -453,14 +453,10 @@ class GestoresController extends GestorController
         $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
 
         $userAdminProfileAdmin =
-            ($status['active'] === 1) &&
-            ($status['profile'] === 1) &&
-            ($gestor['ID'] !== $gestorProfile['ID']);
+            ($status['active'] === 1) && ($status['profile'] === 1) && ($gestor['ID'] !== $gestorProfile['ID']);
 
         $userAdminProfileGestor =
-            ($status['active'] === 1) &&
-            ($status['profile'] === 2) &&
-            ($gestor['ID'] !== $gestorProfile['ID']);
+            ($status['active'] === 1) && ($status['profile'] === 2) && ($gestor['ID'] !== $gestorProfile['ID']);
 
         $currentProfile =
             ($gestor['ID'] === $gestorProfile['ID']);
@@ -527,10 +523,7 @@ class GestoresController extends GestorController
     private static function getPersistUpdateValues($data, $request)
     {
         foreach ($request as $key => $value) {
-            if (
-                (isset($data[$key])) &&
-                ($data[$key] !== '')
-            ) $data[$key] = $request[$key];
+            if ((isset($data[$key])) && ($data[$key] !== '')) $data[$key] = $request[$key];
 
             if ($request[$key] === '') $request[$key] = null;
         }
