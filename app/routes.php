@@ -8,6 +8,7 @@ use Slim\{
 use App\Controller\{
     LoginController,
     DashboardController,
+    GestorController,
     GestoresController
 };
 
@@ -33,5 +34,6 @@ return function (App $app) {
         $group->get('/show/{ID}', [GestoresController::class, 'show'])->setName('gestores.show');
         $group->get('/update/{ID}', [GestoresController::class, 'update'])->setName('gestores.update');
         $group->post('/update/{ID}', [GestoresController::class, 'update']);
+        $group->get('/register', [GestoresController::class, 'register'])->setName('gestores.register');
     })->add(Unauthenticated::class);
 };

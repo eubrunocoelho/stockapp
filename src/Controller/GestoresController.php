@@ -79,6 +79,36 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);
     }
 
+    public function register(Request $request, Response $response, array $args): Response
+    {
+        $basePath = $this->container->get('settings')['api']['path'];
+        $gestor = parent::getGestor();
+        $authorize = self::authorize($gestor);
+
+        dd($authorize);
+
+        $gestor = parent::applyGestorData($gestor);
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor
+        ];
+
+        return $this->renderer->render($response, 'dashboard/gestores/register.php', $templateVariables);
+    }
+
     public function show(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
@@ -402,9 +432,16 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
     }
 
-    private static function authorize($gestor, $gestorProfile)
+    private static function authorize($gestor, $gestorProfile = [])
     {
         $status['active'] = ($gestor['cargo'] === 1) ? 1 : 2;
+
+        if (
+            ($gestorProfile === []) &&
+            ($status['active'] === 1)
+        ) return $authorize['register'] = true;
+        else return $authorize['register'] = false;
+
         $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
 
         $userAdminProfileAdmin =
@@ -437,6 +474,8 @@ class GestoresController extends GestorController
                 $authorize['update']['status'] = false;
                 break;
         }
+
+
 
         return $authorize;
     }
