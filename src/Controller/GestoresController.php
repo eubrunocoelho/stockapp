@@ -334,9 +334,7 @@ class GestoresController extends GestorController
                     $uploadedFile = $uploadedFile ?? null;
                     $uploadFileName = $uploadFileName ?? null;
 
-                    if (
-                        ($uploadFileName !== null)
-                    ) {
+                    if (($uploadFileName !== null)) {
                         if (
                             ($currentFileName !== null) &&
                             ($currentFileName !== '')
