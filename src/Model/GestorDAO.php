@@ -50,9 +50,24 @@ class GestorDAO
         } else return [];
     }
 
+    public function getAll()
+    {
+        $SQL =
+            'SELECT * FROM gestor';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function update(Gestor $gestor)
     {
-        $SQL = 
+        $SQL =
             'UPDATE gestor
              SET 
                  nome = :nome,

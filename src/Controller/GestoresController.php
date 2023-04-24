@@ -47,6 +47,38 @@ class GestoresController extends GestorController
         parent::__construct($this->app);
     }
 
+    public function index(Request $request, Response $response, array $args): Response
+    {
+        $basePath = $this->container->get('settings')['api']['path'];
+        $gestor = parent::getGestor();
+        $gestor = parent::applyGestorData($gestor);
+        $gestores = $this->gestorDAO->getAll();
+
+        foreach ($gestores as $key => $value)
+            $gestores[$key] = parent::applyGestorData($gestores[$key]);
+
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor,
+            'gestores' => $gestores
+        ];
+
+        return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);
+    }
+
     public function show(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
@@ -65,6 +97,7 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         }
 
+        // ID da URL
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)

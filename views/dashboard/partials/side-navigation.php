@@ -22,7 +22,7 @@
             </li>
             <li class="side-navigation__menu-item">
                 <span class="menu-item__icon-box"><i class="fa-solid fa-clipboard-user menu-item__icon"></i></span>
-                <a href="./gestores.html" class="side-navigation__menu-link">Gestores</a>
+                <a href="<?=$basePath?>/gestores" class="side-navigation__menu-link">Gestores</a>
             </li>
         </ul>
         <div class="side-navigation__group-heading">

@@ -29,6 +29,7 @@ return function (App $app) {
     })->add(Unauthenticated::class);
 
     $app->group('/gestores', function (RouteCollectorProxy $group) {
+        $group->get('', [GestoresController::class, 'index'])->setName('gestores.index');
         $group->get('/show/{ID}', [GestoresController::class, 'show'])->setName('gestores.show');
         $group->get('/update/{ID}', [GestoresController::class, 'update'])->setName('gestores.update');
         $group->post('/update/{ID}', [GestoresController::class, 'update']);
