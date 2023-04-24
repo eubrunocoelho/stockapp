@@ -446,14 +446,8 @@ class GestoresController extends GestorController
     {
         $status['active'] = ($gestor['cargo'] === 1) ? 1 : 2;
 
-        if (
-            ($gestorProfile === []) &&
-            ($status['active'] === 1)
-        ) return $authorize = ['register' => true];
-        elseif (
-            ($gestorProfile === []) &&
-            ($status['active'] !== 1)
-        ) return $authorize = ['register' => false];
+        if (($gestorProfile === []) && ($status['active'] === 1)) return $authorize = ['register' => true];
+        elseif (($gestorProfile === []) && ($status['active'] !== 1)) return $authorize = ['register' => false];
 
 
         $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
