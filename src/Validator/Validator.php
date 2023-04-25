@@ -108,7 +108,7 @@ class Validator extends Validators
                         break;
                     case 'cpf':
                         if (!parent::cpf($value)) // quick-fix
-                            $this->addError('O campo "' . $label . '" esta inválido.');
+                            $this->addError('O campo "' . $label . '" está inválido.');
                         break;
                 }
             }

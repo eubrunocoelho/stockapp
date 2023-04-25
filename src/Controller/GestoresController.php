@@ -493,7 +493,7 @@ class GestoresController extends GestorController
                     $this->gestor->setImgUrl($dataWrite['img_profile']);
 
                     $this->gestorDAO->update($this->gestor); // testing
-                } else $errors = $this->validator->errors();
+                } else $errors = array_unique($this->validator->errors());
             }
         }
 
