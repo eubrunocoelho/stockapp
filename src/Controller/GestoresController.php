@@ -308,7 +308,8 @@ class GestoresController extends GestorController
                 // super sweet unicode
                 '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
                 'cargo' => '/^[1-2]{1}$/',
-                'cpf' => '/([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/',
+                'cpf' => '/^([0-9]){3}\.([0-9]){3}\.([0-9]){3}-([0-9]){2}$/',
+                'telefone' => '/^\([0-9]{2}\) [0-9]?[0-9]{4}-[0-9]{4}$/',
                 'genero' => '/^[1-2]{1}$/',
                 'status' => '/^[1-2]{1}$/'
             ];
@@ -332,12 +333,13 @@ class GestoresController extends GestorController
                     'label' => 'CPF',
                     'required' => true,
                     'cpf' => true,
-                    'unique-update' => 'cpf|gestor|' . $ID
+                    'unique-update' => 'cpf|gestor|' . $ID,
+                    'regex' => $regex['cpf']
                 ],
                 'telefone' => [
                     'label' => 'Telefone',
                     'required' => false,
-                    'telephone' => true
+                    'regex' => $regex['telefone']
                 ],
                 'endereco' => [
                     'label' => 'Endereço',
@@ -389,9 +391,6 @@ class GestoresController extends GestorController
                 $this->validator->validation();
 
                 if ($this->validator->passed()) {
-                    $formRequest['cpf'] = Input::numeric($formRequest['cpf']);
-                    $formRequest['telefone'] = Input::numeric($formRequest['telefone']);
-
                     $uploadedFiles = $request->getUploadedFiles();
                     $uploadedFile = $uploadedFiles['img_profile'] ?? [];
 

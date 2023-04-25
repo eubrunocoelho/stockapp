@@ -84,11 +84,11 @@ class Validator extends Validators
                         $this->addError('O campo "' . $label . '" é obrigatório.');
                 } elseif (parent::required($value)) switch ($rule) {
                     case 'unique-update':
-                        if (!parent::uniqueForUpdate(Input::numeric($value), $ruleValue))
+                        if (!parent::uniqueForUpdate($value, $ruleValue))
                             $this->addError('O "' . $label . '" já está cadastrado no banco de dados.');
                         break;
                     case 'unique':
-                        if (!parent::unique(Input::numeric($value), $ruleValue))
+                        if (!parent::unique($value, $ruleValue))
                             $this->addError('O "' . $label . '" já está cadastrado no banco de dados.');
                     case 'min':
                         if (!parent::min($value, $ruleValue))
@@ -107,12 +107,8 @@ class Validator extends Validators
                             $this->addError('O campo "' . $label .  '" está inválido.');
                         break;
                     case 'cpf':
-                        if (!parent::cpf(Input::numeric($value)))
+                        if (!parent::cpf($value)) // quick-fix
                             $this->addError('O campo "' . $label . '" esta inválido.');
-                        break;
-                    case 'telephone':
-                        if (!parent::telephone(Input::numeric($value)))
-                            $this->addError('O campo "' . $label . '" está inválido.');
                         break;
                 }
             }
