@@ -15,6 +15,7 @@ use Slim\{
 
 use App\{
     Helper\Session,
+    Helper\Input,
     Validator\Validator
 };
 
@@ -109,9 +110,97 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         }
 
+        if ($request->getMethod() == 'POST') {
+            $formRequest = (array)$request->getParsedBody();
+
+            $regex = [
+                'name' =>
+                // super sweet unicode
+                '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
+                'cargo' => '/^[1-2]{1}$/',
+                'genero' => '/^[1-2]{1}$/',
+                'status' => '/^[1-2]{1}$/'
+            ];
+
+            $rules = [
+                'nome' => [
+                    'label' => 'Nome',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 128,
+                    'regex' => $regex['name']
+                ],
+                'email' => [
+                    'label' => 'E-mail',
+                    'required' => true,
+                    'email' => true,
+                    'unique' => 'email|gestor',
+                    'max' => 128
+                ],
+                'cpf' => [
+                    'label' => 'CPF',
+                    'required' => true,
+                    'cpf' => true,
+                    'unique' => 'cpf|gestor'
+                ],
+                'senha' => [
+                    'label' => 'Senha',
+                    'required' => true,
+                    'min' => 6,
+                    'max' => 22
+                ],
+                'telefone' => [
+                    'label' => 'Telefone',
+                    'required' => false,
+                    'telephone' => true
+                ],
+                'endereco' => [
+                    'label' => 'Endereço',
+                    'required' => false,
+                    'min' => 6,
+                    'max' => 255
+                ],
+                'cargo' => [
+                    'label' => 'Cargo',
+                    'required' => true,
+                    'regex' => $regex['cargo']
+                ],
+                'genero' => [
+                    'label' => 'Gênero',
+                    'required' => true,
+                    'regex' => $regex['genero']
+                ],
+                'status' => [
+                    'label' => 'Status',
+                    'required' => true,
+                    'regex' => $regex['status']
+                ]
+            ];
+
+            if (!empty($formRequest)) {
+                $fields = [
+                    'nome',
+                    'email',
+                    'cpf',
+                    'senha',
+                    'telefone',
+                    'endereco',
+                    'cargo',
+                    'genero',
+                    'status'
+                ];
+            }
+        }
+
+        $formRequest = $formRequest ?? [];
+        $persistRegisterValues = self::getPersistRegisterValues($formRequest);
+        $errors = $errors ?? [];
+
         $templateVariables = [
             'basePath' => $basePath,
-            'gestor' => $gestor
+            'gestor' => $gestor,
+            'persistRegisterValues' => $persistRegisterValues,
+            'errors' => $errors
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/register.php', $templateVariables);
@@ -219,6 +308,7 @@ class GestoresController extends GestorController
                 // super sweet unicode
                 '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
                 'cargo' => '/^[1-2]{1}$/',
+                'cpf' => '/([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/',
                 'genero' => '/^[1-2]{1}$/',
                 'status' => '/^[1-2]{1}$/'
             ];
@@ -299,6 +389,9 @@ class GestoresController extends GestorController
                 $this->validator->validation();
 
                 if ($this->validator->passed()) {
+                    $formRequest['cpf'] = Input::numeric($formRequest['cpf']);
+                    $formRequest['telefone'] = Input::numeric($formRequest['telefone']);
+
                     $uploadedFiles = $request->getUploadedFiles();
                     $uploadedFile = $uploadedFiles['img_profile'] ?? [];
 
@@ -401,9 +494,7 @@ class GestoresController extends GestorController
                     $this->gestor->setImgUrl($dataWrite['img_profile']);
 
                     $this->gestorDAO->update($this->gestor); // testing
-                } else {
-                    $errors = $this->validator->errors();
-                }
+                } else $errors = $this->validator->errors();
             }
         }
 
@@ -525,6 +616,16 @@ class GestoresController extends GestorController
         foreach ($request as $key => $value) {
             if ((isset($data[$key])) && ($data[$key] !== '')) $data[$key] = $request[$key];
             if ($request[$key] === '') $request[$key] = null;
+        }
+
+        return $request;
+    }
+
+    private static function getPersistRegisterValues($request)
+    {
+        foreach ($request as $key => $value) {
+            if ($value !== '') $request[$key] = $value;
+            else $request[$key] = null;
         }
 
         return $request;

@@ -2,6 +2,10 @@
 
 namespace App\Validator;
 
+use App\{
+    Helper\Input
+};
+
 /**
  * Responsável por fazer validações do formulário
  */
@@ -80,9 +84,12 @@ class Validator extends Validators
                         $this->addError('O campo "' . $label . '" é obrigatório.');
                 } elseif (parent::required($value)) switch ($rule) {
                     case 'unique-update':
-                        if (!parent::uniqueForUpdate($value, $ruleValue))
+                        if (!parent::uniqueForUpdate(Input::numeric($value), $ruleValue))
                             $this->addError('O "' . $label . '" já está cadastrado no banco de dados.');
                         break;
+                    case 'unique':
+                        if (!parent::unique(Input::numeric($value), $ruleValue))
+                            $this->addError('O "' . $label . '" já está cadastrado no banco de dados.');
                     case 'min':
                         if (!parent::min($value, $ruleValue))
                             $this->addError('O campo "' . $label . '" deve conter no mínimo ' . $ruleValue . ' caracteres.');
@@ -100,11 +107,11 @@ class Validator extends Validators
                             $this->addError('O campo "' . $label .  '" está inválido.');
                         break;
                     case 'cpf':
-                        if (!parent::cpf($value))
+                        if (!parent::cpf(Input::numeric($value)))
                             $this->addError('O campo "' . $label . '" esta inválido.');
                         break;
                     case 'telephone':
-                        if (!parent::telephone($value))
+                        if (!parent::telephone(Input::numeric($value)))
                             $this->addError('O campo "' . $label . '" está inválido.');
                         break;
                 }

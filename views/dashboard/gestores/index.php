@@ -87,7 +87,7 @@
                         ?>
                     </tbody>
                 </table>
-                <button class="btn" onclick="window.location.href='./cadastrar-gestor.html'">Cadastrar Gestor</button>
+                <button class="btn" onclick="window.location.href='<?=$basePath?>/gestores/register'">Cadastrar Gestor</button>
             </div>
         </section>
         <section class="section container">

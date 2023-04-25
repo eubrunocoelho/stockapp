@@ -77,6 +77,22 @@ abstract class Validators
         return true;
     }
 
+    protected function unique($value, $rules)
+    {
+        $rules = explode('|', $rules);
+        $value = trim($value);
+
+        $SQL =
+            'SELECT * FROM ' . $rules[1] . ' 
+             WHERE ' . $rules[0] . ' = :value';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':value', $value);
+        $stmt->execute();
+
+        return (!$stmt->rowCount() > 0) ? true : false;
+    }
+
     protected function uniqueForUpdate($value, $rules)
     {
         $rules = explode('|', $rules);

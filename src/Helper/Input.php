@@ -4,6 +4,12 @@ namespace App\Helper;
 
 class Input
 {
+    public static function numeric($value)
+    {
+        $value = preg_replace('/[^0-9]/is', '', trim($value));
+
+        return $value;
+    }
     /**
      * Responsavel por persistir os dados do formulário
      */

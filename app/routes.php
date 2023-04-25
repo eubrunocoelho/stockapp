@@ -35,5 +35,6 @@ return function (App $app) {
         $group->get('/update/{ID}', [GestoresController::class, 'update'])->setName('gestores.update');
         $group->post('/update/{ID}', [GestoresController::class, 'update']);
         $group->get('/register', [GestoresController::class, 'register'])->setName('gestores.register');
+        $group->post('/register', [GestoresController::class, 'register']);
     })->add(Unauthenticated::class);
 };
