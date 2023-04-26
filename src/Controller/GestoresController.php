@@ -83,6 +83,8 @@ class GestoresController extends GestorController
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath = $this->container->get('settings')['api']['path'];
+        $uploadDirectory =
+            $this->container->get('settings')['api']['uploadDirectory'] . '/img/profile';
         $gestor = parent::getGestor();
 
         if ($gestor === []) {
@@ -118,6 +120,8 @@ class GestoresController extends GestorController
                 // super sweet unicode
                 '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
                 'cargo' => '/^[1-2]{1}$/',
+                'cpf' => '/^([0-9]){3}\.([0-9]){3}\.([0-9]){3}-([0-9]){2}$/',
+                'telefone' => '/^\([0-9]{2}\) [0-9]?[0-9]{4}-[0-9]{4}$/',
                 'genero' => '/^[1-2]{1}$/',
                 'status' => '/^[1-2]{1}$/'
             ];
@@ -141,7 +145,8 @@ class GestoresController extends GestorController
                     'label' => 'CPF',
                     'required' => true,
                     'cpf' => true,
-                    'unique' => 'cpf|gestor'
+                    'unique' => 'cpf|gestor',
+                    'regex' => $regex['cpf']
                 ],
                 'senha' => [
                     'label' => 'Senha',
@@ -152,7 +157,7 @@ class GestoresController extends GestorController
                 'telefone' => [
                     'label' => 'Telefone',
                     'required' => false,
-                    'telephone' => true
+                    'regex' => $regex['telefone']
                 ],
                 'endereco' => [
                     'label' => 'Endereço',
@@ -189,6 +194,63 @@ class GestoresController extends GestorController
                     'genero',
                     'status'
                 ];
+
+                $this->validator->setFields($fields);
+                $this->validator->setData($formRequest);
+                $this->validator->setRules($rules);
+                $this->validator->validation();
+
+                if ($this->validator->passed()) {
+                    $uploadedFiles = $request->getUploadedFiles();
+                    $uploadedFile = $uploadedFiles['img_profile'] ?? [];
+
+                    if (
+                        ($uploadedFile !== []) &&
+                        ($uploadedFile->getClientFilename() !== '')
+                    ) {
+                        $uploadRules = [
+                            'mimeTypes' => [
+                                'image/gif',
+                                'image/jpeg',
+                                'image/png'
+                            ],
+                            'maxSize' => 2097152 //2097152
+                        ];
+
+                        if (!self::validateMediaType($uploadedFile, $uploadRules))
+                            $errors = (array)'O formato de arquivo para imagem de "Foto de Perfil" não é compatível.';
+
+                        if (!self::validateFileSize($uploadedFile, $uploadRules))
+                            $errors = (array)'O tamanho de arquivo para imagem de "Foto de Perfil" excede o permitido.';
+
+                        if (
+                            (self::validateMediaType($uploadedFile, $uploadRules)) &&
+                            (self::validateFileSize($uploadedFile, $uploadRules))
+                        ) {
+                            $uploadedFile = $uploadedFile;
+                            $uploadFileName = self::renameFile($uploadedFile);
+                        }
+                    }
+
+                    $uploadedFile = $uploadedFile ?? null;
+                    $uploadFileName = $uploadFileName ?? null;
+
+                    if (($uploadFileName !== null)) {
+                        if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
+
+                        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+                            self::moveUploadedFile($uploadDirectory, $uploadedFile, $uploadFileName);
+
+                            $uploadStatus = true;
+                        } else $errors = (array)'Houve um erro inesperado';
+                    }
+
+                    $uploadStatus = $uploadStatus ?? false;
+
+                    dd($uploadFileName);
+
+                    // dd($uploadFileName);
+                } else $errors = array_unique($this->validator->errors());
             }
         }
 

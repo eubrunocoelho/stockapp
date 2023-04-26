@@ -90,6 +90,7 @@ class Validator extends Validators
                     case 'unique':
                         if (!parent::unique($value, $ruleValue))
                             $this->addError('O "' . $label . '" já está cadastrado no banco de dados.');
+                        break;
                     case 'min':
                         if (!parent::min($value, $ruleValue))
                             $this->addError('O campo "' . $label . '" deve conter no mínimo ' . $ruleValue . ' caracteres.');
@@ -107,7 +108,7 @@ class Validator extends Validators
                             $this->addError('O campo "' . $label .  '" está inválido.');
                         break;
                     case 'cpf':
-                        if (!parent::cpf($value)) // quick-fix
+                        if (!parent::cpf($value))
                             $this->addError('O campo "' . $label . '" está inválido.');
                         break;
                 }

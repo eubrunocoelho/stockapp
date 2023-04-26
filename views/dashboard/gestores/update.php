@@ -230,11 +230,11 @@
                     <button type="submit" class="btn mt--20">Salvar Informações</button>
                 </form>
                 <?php
-                    if (
-                        (isset($errors)) &&
-                        !(empty($errors))
-                    ) {
-                        foreach ($errors as $error) {
+                if (
+                    (isset($errors)) &&
+                    !(empty($errors))
+                ) {
+                    foreach ($errors as $error) {
                 ?>
                 <div class="alert-box alert--danger mt--20">
                     <p class="alert-box__text"><?=$error?></p>
