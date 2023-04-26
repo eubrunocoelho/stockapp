@@ -81,7 +81,7 @@ class GestorDAO
                  status,
                  img_url
              )
-         VALUES
+             VALUES
              (
                  :nome,
                  :email,
