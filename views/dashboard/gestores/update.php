@@ -20,7 +20,7 @@
     <main class="main">
         <div class="main-heading container">
             <h1 class="main-heading__title">Editar Perfil</h1>
-            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/gestores/update/<?=$gestorProfile['ID']?>">Editar Perfil</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/gestores/show/<?=$gestorProfile['ID']?>"><?=$gestorProfile['nome']?></a> / <a class="breadcrumbs__link" href="./gestores.html">Gestores</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
+            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/gestores/update/<?=$gestorProfile['ID']?>">Editar Perfil</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/gestores/show/<?=$gestorProfile['ID']?>"><?=$gestorProfile['nome']?></a> / <a class="breadcrumbs__link" href="<?=$basePath?>/gestores">Gestores</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container mb--30">
             <div class="box">

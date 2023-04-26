@@ -68,11 +68,11 @@
                             </td>
                             <td class="table__cell tc--w210"><?=$gestor['cargo']?></td>
                             <?php
-                            if ($gestor['cargo'] == 'Administrador') {
+                            if ($gestor['status'] == 'Ativo') {
                             ?>
                             <td class="table__cell tc--w210 text--success"><?=$gestor['status']?></td>
                             <?php
-                            } elseif ($gestor['cargo'] == 'Gestor') {
+                            } elseif ($gestor['status'] == 'Inativo') {
                             ?>
                             <td class="table__cell tc--w210 text--danger"><?=$gestor['status']?></td>
                             <?php

@@ -240,16 +240,33 @@ class GestoresController extends GestorController
 
                         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
                             self::moveUploadedFile($uploadDirectory, $uploadedFile, $uploadFileName);
-
-                            $uploadStatus = true;
                         } else $errors = (array)'Houve um erro inesperado';
                     }
 
-                    $uploadStatus = $uploadStatus ?? false;
+                    $dataWrite = [
+                        'nome' => $formRequest['nome'] ?? null,
+                        'email' => $formRequest['email'] ?? null,
+                        'cpf' => $formRequest['cpf'] ?? null,
+                        'senha' => $formRequest['senha'] ?? null,
+                        'telefone' => $formRequest['telefone'] ?? null,
+                        'endereco' => $formRequest['endereco'] ?? null,
+                        'cargo' => $formRequest['cargo'] ?? null,
+                        'genero' => $formRequest['genero'] ?? null,
+                        'status' => $formRequest['status'] ?? null,
+                        'img_profile' => $uploadFileName ?? null
+                    ];
 
-                    dd($uploadFileName);
-
-                    // dd($uploadFileName);
+                    $this->gestor->setNome($dataWrite['nome']);
+                    $this->gestor->setEmail($dataWrite['email']);
+                    $this->gestor->setCpf($dataWrite['cpf']);
+                    $this->gestor->setSenha($dataWrite['senha']);
+                    $this->gestor->setTelefone($dataWrite['telefone']);
+                    $this->gestor->setEndereco($dataWrite['endereco']);
+                    $this->gestor->setCargo($dataWrite['cargo']);
+                    $this->gestor->setGenero($dataWrite['genero']);
+                    $this->gestor->setStatus($dataWrite['status']);
+                    $this->gestor->setImgUrl($dataWrite['img_profile']);
+                    $this->gestorDAO->register($this->gestor);
                 } else $errors = array_unique($this->validator->errors());
             }
         }
