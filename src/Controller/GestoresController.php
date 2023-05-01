@@ -54,7 +54,7 @@ class GestoresController extends GestorController
 
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
-        $authorize = self::authorize($gestor);
+        $authorize = self::authorize('register', $gestor);
         $gestor = parent::applyGestorData($gestor);
         $gestores = $this->gestorDAO->getAll();
 
@@ -159,7 +159,7 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         }
 
-        $authorize = self::authorize($gestor);
+        $authorize = self::authorize('register', $gestor);
 
         if (!($authorize['register'])) {
             $this->container->get('flash')
@@ -394,7 +394,7 @@ class GestoresController extends GestorController
         }
 
         $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
-        $authorize = self::authorize($gestor, $gestorProfile); //
+        $authorize = self::authorize('update', $gestor, $gestorProfile);
 
         if ($request->getMethod() == 'POST') {
             if ($ID !== Session::get('update.ID')) {
@@ -692,54 +692,15 @@ class GestoresController extends GestorController
             return $authorize;
         }
 
-        // dd(
-        //     [
-        //         'gestor' => $gestor,
-        //         'gestorProfile' => $gestorProfile
-        //     ], true
-        // );
+        if (
+            ($type == 'register') &&
+            ($gestor !== [])
+        ) {
+            $status['active'] = ($gestor['cargo'] == 1) ? 1 : 2;
 
-        // $status['active'] = ($gestor['cargo'] === 1) ? 1 : 2;
-
-        // if (($gestorProfile === []) && ($status['active'] == 1)) return $authorize = ['register' => true];
-        // elseif (($gestorProfile === []) && ($status['active'] != 1)) return $authorize = ['register' => false];
-
-        // $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
-
-        // $userAdminProfileAdmin =
-        //     ($status['active'] === 1) &&
-        //     ($status['profile'] === 1) &&
-        //     ($gestor['ID'] !== $gestorProfile['ID']);
-
-        // $userAdminProfileGestor =
-        //     ($status['active'] === 1) &&
-        //     ($status['profile'] === 2) &&
-        //     ($gestor['ID'] !== $gestorProfile['ID']);
-
-        // $currentProfile =
-        //     ($gestor['ID'] === $gestorProfile['ID']);
-
-        // switch ($status) {
-        //     case ($userAdminProfileAdmin):
-        //         $authorize['update']['profile'] = false;
-        //         $authorize['update']['cargo'] = false;
-        //         $authorize['update']['status'] = false;
-        //         break;
-        //     case ($userAdminProfileGestor):
-        //         $authorize['update']['profile'] = true;
-        //         $authorize['update']['cargo'] = true;
-        //         $authorize['update']['status'] = true;
-        //         break;
-        //     case ($currentProfile):
-        //         $authorize['update']['profile'] = true;
-        //         $authorize['update']['cargo'] = false;
-        //         $authorize['update']['status'] = false;
-        //         break;
-        // }
-
-
-
-        // return $authorize;
+            if ($status['active'] == 1) return $authorize = ['register' => true];
+            else return $authorize = ['register' => false];
+        }
     }
 
     private static function validateMediaType($uploadedFile, $uploadRules)

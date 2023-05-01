@@ -86,7 +86,7 @@
                             foreach ($gestores as $gestor) {
                         ?>
                         <tr class="table__tr">
-                            <td class="table__cell tc--w50">1</td>
+                            <td class="table__cell tc--w50"><?=$gestor['ID']?></td>
                             <td class="table__cell fg--1">
                                 <a href="<?=$basePath?>/gestores/show/<?=$gestor['ID']?>"><?=$gestor['nome']?></a>
                             </td>
