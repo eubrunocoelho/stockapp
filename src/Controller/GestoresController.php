@@ -15,7 +15,6 @@ use Slim\{
 
 use App\{
     Helper\Session,
-    Helper\Input,
     Validator\Validator
 };
 
@@ -83,9 +82,9 @@ class GestoresController extends GestorController
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath = $this->container->get('settings')['api']['path'];
+        $gestor = parent::getGestor();
         $uploadDirectory =
             $this->container->get('settings')['api']['uploadDirectory'] . '/img/profile';
-        $gestor = parent::getGestor();
 
         if ($gestor === []) {
             Session::destroy();
@@ -100,7 +99,6 @@ class GestoresController extends GestorController
         }
 
         $authorize = self::authorize($gestor);
-        $gestor = parent::applyGestorData($gestor);
 
         if (!($authorize['register'])) {
             $url = RouteContext::fromRequest($request)
@@ -111,6 +109,8 @@ class GestoresController extends GestorController
                 ->withHeader('Location', $url)
                 ->withStatus(302);
         }
+        
+        $gestor = parent::applyGestorData($gestor);
 
         if ($request->getMethod() == 'POST') {
             $formRequest = (array)$request->getParsedBody();
@@ -611,8 +611,8 @@ class GestoresController extends GestorController
     {
         $status['active'] = ($gestor['cargo'] === 1) ? 1 : 2;
 
-        if (($gestorProfile === []) && ($status['active'] === 1)) return $authorize = ['register' => true];
-        elseif (($gestorProfile === []) && ($status['active'] !== 1)) return $authorize = ['register' => false];
+        if (($gestorProfile === []) && ($status['active'] == 1)) return $authorize = ['register' => true];
+        elseif (($gestorProfile === []) && ($status['active'] != 1)) return $authorize = ['register' => false];
 
 
         $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
