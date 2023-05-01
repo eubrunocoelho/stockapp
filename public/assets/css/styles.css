@@ -22,9 +22,15 @@
     --bg-warning-color: #ffc107;
     --bg-danger-color: #dc3545;
     --bg-overlay-color: rgba(48, 51, 54, .5);
+    --alert-text-success-color: #0a3622;
+    --alert-bg-success-color: #d1e7dd;
+    --alert-border-success-color: #a3cfbb;
     --alert-text-danger-color: #9d1c24;
     --alert-bg-danger-color: #f8d7da;
     --alert-border-danger-color: 1px solid #f5c6cb;
+    --alert-text-warning-color: #664d03;
+    --alert-bg-warning-color: #fff3cd;
+    --alert-border-warning-color: 1px solid #ffe69c;
 }
 
 /**
@@ -109,10 +115,22 @@
     display: block !important;
 }
 
+.alert--success {
+    background-color: var(--alert-bg-success-color) !important;
+    border: var(--alert-border-success-color) !important;
+    color: var(--alert-text-success-color) !important;
+}
+
 .alert--danger {
     background: var(--alert-bg-danger-color) !important;
     border: var(--alert-border-danger-color) !important;
     color: var(--alert-text-danger-color) !important;
+}
+
+.alert--warning {
+    background: var(--alert-bg-warning-color) !important;
+    border: var(--alert-border-warning-color) !important;
+    color: var(--alert-text-warning-color) !important;
 }
 
 /**

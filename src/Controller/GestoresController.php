@@ -55,7 +55,7 @@ class GestoresController extends GestorController
         $gestores = $this->gestorDAO->getAll();
 
         //
-        $this->container->get('flash')->addMessage('message', 'Olá, mundo!');
+        $this->container->get('flash')->addMessage('message.danger', 'Olá, mundo!');
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
 
