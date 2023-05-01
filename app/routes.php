@@ -8,16 +8,18 @@ use Slim\{
 use App\Controller\{
     LoginController,
     DashboardController,
-    GestorController,
     GestoresController
 };
 
 use App\Middleware\{
     Authenticated,
-    Unauthenticated
+    Unauthenticated,
+    FlashMessage
 };
 
 return function (App $app) {
+    $app->add(FlashMessage::class);
+
     $app->group('', function (RouteCollectorProxy $group) {
         $group->get('/', [LoginController::class, 'login']);
         $group->get('/login', [LoginController::class, 'login'])->setName('login');

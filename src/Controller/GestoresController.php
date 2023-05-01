@@ -54,6 +54,14 @@ class GestoresController extends GestorController
         $gestor = parent::applyGestorData($gestor);
         $gestores = $this->gestorDAO->getAll();
 
+        //
+        $this->container->get('flash')->addMessage('message', 'Olá, mundo!');
+        $flash = $this->container->get('flash');
+        $messages = $flash->getMessages();
+
+        dd($messages);
+        //
+
         foreach ($gestores as $key => $value)
             $gestores[$key] = parent::applyGestorData($gestores[$key]);
 

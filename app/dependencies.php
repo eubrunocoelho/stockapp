@@ -7,7 +7,8 @@ use Psr\{
 use Slim\{
     App,
     Factory\AppFactory,
-    Views\PhpRenderer
+    Views\PhpRenderer,
+    Flash\Messages
 };
 
 use App\{
@@ -17,6 +18,12 @@ use App\{
 return [
     'settings' => function () {
         return require __DIR__ . '/settings.php';
+    },
+
+    'flash' => function () {
+        $storage = [];
+
+        return new Messages($storage);
     },
 
     App::class => function (ContainerInterface $container) {
@@ -32,7 +39,7 @@ return [
     Validator::class => function (ContainerInterface $container) {
         return new Validator($container);
     },
-    
+
     PDO::class => function (ContainerInterface $container) {
         $settings = $container->get('settings')['database'];
 
