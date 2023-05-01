@@ -10,9 +10,9 @@
 </head>
 <body>
     <div class="window-overlay">
-        <?php
-        require __DIR__ . '/../partials/side-navigation.php';
-        ?>
+    <?php
+    require __DIR__ . '/../partials/side-navigation.php';
+    ?>
     </div>
     <?php
     require __DIR__ . '/../partials/header.php';

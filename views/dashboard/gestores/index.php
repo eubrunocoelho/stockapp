@@ -7,9 +7,9 @@
 </head>
 <body>
     <div class="window-overlay">
-        <?php
-        require __DIR__ . '/../partials/side-navigation.php';
-        ?>
+    <?php
+    require __DIR__ . '/../partials/side-navigation.php';
+    ?>
     </div>
     <?php
     require __DIR__ . '/../partials/header.php';
@@ -39,6 +39,30 @@
             </div>
         </section>
         <section class="section container mb--20">
+            <?php
+            if (
+                !(empty($messages)) &&
+                (array_key_exists('message.warning', $messages))
+            ) {
+            ?>
+            <div class="alert-box alert--warning mb--20">
+                <p class="alert-box__text"><?=$messages['message.warning'][0]?></p>
+            </div>
+            <?php
+            }
+            ?>
+            <?php
+            if (
+                !(empty($messages)) &&
+                (array_key_exists('message.success', $messages))
+            ) {
+            ?>
+            <div class="alert-box alert--success mb--20">
+                <p class="alert-box__text"><?=$messages['message.success'][0]?></p>
+            </div>
+            <?php
+            }
+            ?>
             <div class="box">
                 <div class="box-heading">
                     <h1 class="box-heading__title">Lista de Gestores</h1>
@@ -87,7 +111,13 @@
                         ?>
                     </tbody>
                 </table>
-                <button class="btn" onclick="window.location.href='<?=$basePath?>/gestores/register'">Cadastrar Gestor</button>
+                <?php
+                if ($authorize['register'] === true) {
+                ?>
+                <button class="btn" onclick="window.location.href='<?=$basePath?>/gestores/register'">Cadastrar</button>
+                <?php
+                }
+                ?>
             </div>
         </section>
         <section class="section container">

@@ -49,17 +49,17 @@ class GestoresController extends GestorController
 
     public function index(Request $request, Response $response, array $args): Response
     {
+        $flash = $this->container->get('flash');
+        $messages = $flash->getMessages();
+
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
+        $authorize = self::authorize($gestor);
         $gestor = parent::applyGestorData($gestor);
         $gestores = $this->gestorDAO->getAll();
 
         //
-        $this->container->get('flash')->addMessage('message.danger', 'Olá, mundo!');
-        $flash = $this->container->get('flash');
-        $messages = $flash->getMessages();
-
-        dd($messages);
+        // $this->container->get('flash')->addMessage('message.danger', 'Olá, mundo!');
         //
 
         foreach ($gestores as $key => $value)
@@ -81,7 +81,9 @@ class GestoresController extends GestorController
         $templateVariables = [
             'basePath' => $basePath,
             'gestor' => $gestor,
-            'gestores' => $gestores
+            'gestores' => $gestores,
+            'authorize' => $authorize,
+            'messages' => $messages
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);
@@ -89,6 +91,9 @@ class GestoresController extends GestorController
 
     public function show(Request $request, Response $response, array $args): Response
     {
+        $flash = $this->container->get('flash');
+        $messages = $flash->getMessages();
+
         $ID = $request->getAttribute('ID');
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
@@ -118,7 +123,8 @@ class GestoresController extends GestorController
         }
 
         $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
-        $authorize = self::authorize($gestor, $gestorProfile);
+        $authorize = self::authorize('update', $gestor, $gestorProfile);
+
         $gestor = parent::applyGestorData($gestor);
         $gestorProfile = parent::applyGestorData($gestorProfile);
 
@@ -127,8 +133,8 @@ class GestoresController extends GestorController
             'basePath' => $basePath,
             'gestor' => $gestor,
             'gestorProfile' => $gestorProfile,
-            'authorize' => $authorize
-
+            'authorize' => $authorize,
+            'messages' => $messages
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/show.php', $templateVariables);
@@ -156,9 +162,12 @@ class GestoresController extends GestorController
         $authorize = self::authorize($gestor);
 
         if (!($authorize['register'])) {
+            $this->container->get('flash')
+                ->addMessage('message.warning', 'Você não tem permissão para executar essa ação.');
+
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
-                ->urlFor('dashboard.index');
+                ->urlFor('gestores.index');
 
             return $response
                 ->withHeader('Location', $url)
@@ -321,7 +330,19 @@ class GestoresController extends GestorController
                     $this->gestor->setGenero($dataWrite['genero']);
                     $this->gestor->setStatus($dataWrite['status']);
                     $this->gestor->setImgUrl($dataWrite['img_profile']);
-                    $this->gestorDAO->register($this->gestor);
+
+                    if ($this->gestorDAO->register($this->gestor)) {
+                        $this->container->get('flash')
+                            ->addMessage('message.success', 'Usuário cadastrado com sucesso!');
+
+                        $url = RouteContext::fromRequest($request)
+                            ->getRouteParser()
+                            ->urlFor('gestores.index');
+
+                        return $response
+                            ->withHeader('Location', $url)
+                            ->withStatus(302);
+                    }
                 } else $errors = array_unique($this->validator->errors());
             }
         }
@@ -365,7 +386,7 @@ class GestoresController extends GestorController
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
-                ->urlFor('dashboard.index');
+                ->urlFor('gestores.index');
 
             return $response
                 ->withHeader('Location', $url)
@@ -579,7 +600,18 @@ class GestoresController extends GestorController
                     $this->gestor->setStatus($dataWrite['status']);
                     $this->gestor->setImgUrl($dataWrite['img_profile']);
 
-                    $this->gestorDAO->update($this->gestor); // testing
+                    if ($this->gestorDAO->update($this->gestor)) {
+                        $this->container->get('flash')
+                            ->addMessage('message.success', 'Usuário atualizado com sucesso.');
+
+                        $url = RouteContext::fromRequest($request)
+                            ->getRouteParser()
+                            ->urlFor('gestores.show', ['ID' => $ID]);
+
+                        return $response
+                            ->withHeader('Location', $url)
+                            ->withStatus(302);
+                    }
                 } else $errors = array_unique($this->validator->errors());
             }
         }
@@ -594,9 +626,12 @@ class GestoresController extends GestorController
         if (
             !($authorize['update']['profile'])
         ) {
+            $this->container->get('flash')
+                ->addMessage('message.warning', 'Você não tem permissão para executar essa ação.');
+
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
-                ->urlFor('dashboard.index');
+                ->urlFor('gestores.index');
 
             return $response
                 ->withHeader('Location', $url)
@@ -615,50 +650,96 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
     }
 
-    private static function authorize($gestor, $gestorProfile = [])
+    private static function authorize($type, $gestor = [], $gestorProfile = [])
     {
-        $status['active'] = ($gestor['cargo'] === 1) ? 1 : 2;
+        if (
+            ($type == 'update') &&
+            ($gestor !== []) &&
+            ($gestorProfile !== [])
+        ) {
+            $status['active'] =  ($gestor['cargo'] == 1) ? 1 : 2;
+            $status['profile'] = ($gestorProfile['cargo'] == 1) ? 1 : 2;
 
-        if (($gestorProfile === []) && ($status['active'] == 1)) return $authorize = ['register' => true];
-        elseif (($gestorProfile === []) && ($status['active'] != 1)) return $authorize = ['register' => false];
+            $userAdminProfileAdmin = ($status['active'] == 1) && ($status['profile'] == 1) && ($gestor['ID'] != $gestorProfile['ID']);
+            $userAdminProfileGestor = ($status['active'] == 1) && ($status['profile'] == 2) && ($gestor['ID'] != $gestorProfile['ID']);
+            $userGestorOtherProfile = ($status['active'] == 2) && ($gestor['ID'] != $gestorProfile['ID']);
+            $currentProfile = ($gestor['ID'] == $gestorProfile['ID']);
 
-
-        $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
-
-        $userAdminProfileAdmin =
-            ($status['active'] === 1) &&
-            ($status['profile'] === 1) &&
-            ($gestor['ID'] !== $gestorProfile['ID']);
-
-        $userAdminProfileGestor =
-            ($status['active'] === 1) &&
-            ($status['profile'] === 2) &&
-            ($gestor['ID'] !== $gestorProfile['ID']);
-
-        $currentProfile =
-            ($gestor['ID'] === $gestorProfile['ID']);
-
-        switch ($status) {
-            case ($userAdminProfileAdmin):
+            if ($userAdminProfileAdmin) {
                 $authorize['update']['profile'] = false;
                 $authorize['update']['cargo'] = false;
                 $authorize['update']['status'] = false;
-                break;
-            case ($userAdminProfileGestor):
+            }
+
+            if ($userAdminProfileGestor) {
                 $authorize['update']['profile'] = true;
                 $authorize['update']['cargo'] = true;
                 $authorize['update']['status'] = true;
-                break;
-            case ($currentProfile):
+            }
+
+            if ($userGestorOtherProfile) {
+                $authorize['update']['profile'] = false;
+                $authorize['update']['cargo'] = false;
+                $authorize['update']['status'] = false;
+            }
+
+            if ($currentProfile) {
                 $authorize['update']['profile'] = true;
                 $authorize['update']['cargo'] = false;
                 $authorize['update']['status'] = false;
-                break;
+            }
+
+            return $authorize;
         }
 
+        // dd(
+        //     [
+        //         'gestor' => $gestor,
+        //         'gestorProfile' => $gestorProfile
+        //     ], true
+        // );
+
+        // $status['active'] = ($gestor['cargo'] === 1) ? 1 : 2;
+
+        // if (($gestorProfile === []) && ($status['active'] == 1)) return $authorize = ['register' => true];
+        // elseif (($gestorProfile === []) && ($status['active'] != 1)) return $authorize = ['register' => false];
+
+        // $status['profile'] = ($gestorProfile['cargo'] === 1) ? 1 : 2;
+
+        // $userAdminProfileAdmin =
+        //     ($status['active'] === 1) &&
+        //     ($status['profile'] === 1) &&
+        //     ($gestor['ID'] !== $gestorProfile['ID']);
+
+        // $userAdminProfileGestor =
+        //     ($status['active'] === 1) &&
+        //     ($status['profile'] === 2) &&
+        //     ($gestor['ID'] !== $gestorProfile['ID']);
+
+        // $currentProfile =
+        //     ($gestor['ID'] === $gestorProfile['ID']);
+
+        // switch ($status) {
+        //     case ($userAdminProfileAdmin):
+        //         $authorize['update']['profile'] = false;
+        //         $authorize['update']['cargo'] = false;
+        //         $authorize['update']['status'] = false;
+        //         break;
+        //     case ($userAdminProfileGestor):
+        //         $authorize['update']['profile'] = true;
+        //         $authorize['update']['cargo'] = true;
+        //         $authorize['update']['status'] = true;
+        //         break;
+        //     case ($currentProfile):
+        //         $authorize['update']['profile'] = true;
+        //         $authorize['update']['cargo'] = false;
+        //         $authorize['update']['status'] = false;
+        //         break;
+        // }
 
 
-        return $authorize;
+
+        // return $authorize;
     }
 
     private static function validateMediaType($uploadedFile, $uploadRules)

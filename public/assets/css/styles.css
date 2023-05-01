@@ -24,7 +24,7 @@
     --bg-overlay-color: rgba(48, 51, 54, .5);
     --alert-text-success-color: #0a3622;
     --alert-bg-success-color: #d1e7dd;
-    --alert-border-success-color: #a3cfbb;
+    --alert-border-success-color: 1px solid #a3cfbb;
     --alert-text-danger-color: #9d1c24;
     --alert-bg-danger-color: #f8d7da;
     --alert-border-danger-color: 1px solid #f5c6cb;
@@ -116,7 +116,7 @@
 }
 
 .alert--success {
-    background-color: var(--alert-bg-success-color) !important;
+    background: var(--alert-bg-success-color) !important;
     border: var(--alert-border-success-color) !important;
     color: var(--alert-text-success-color) !important;
 }
