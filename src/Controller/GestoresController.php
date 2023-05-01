@@ -79,6 +79,53 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);
     }
 
+    public function show(Request $request, Response $response, array $args): Response
+    {
+        $ID = $request->getAttribute('ID');
+        $basePath = $this->container->get('settings')['api']['path'];
+        $gestor = parent::getGestor();
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        // ID da URL
+        $this->gestor->setID($ID);
+        if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('dashboard.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
+        $authorize = self::authorize($gestor, $gestorProfile);
+        $gestor = parent::applyGestorData($gestor);
+        $gestorProfile = parent::applyGestorData($gestorProfile);
+
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor,
+            'gestorProfile' => $gestorProfile,
+            'authorize' => $authorize
+
+        ];
+
+        return $this->renderer->render($response, 'dashboard/gestores/show.php', $templateVariables);
+    }
+
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath = $this->container->get('settings')['api']['path'];
@@ -109,7 +156,7 @@ class GestoresController extends GestorController
                 ->withHeader('Location', $url)
                 ->withStatus(302);
         }
-        
+
         $gestor = parent::applyGestorData($gestor);
 
         if ($request->getMethod() == 'POST') {
@@ -285,11 +332,13 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/register.php', $templateVariables);
     }
 
-    public function show(Request $request, Response $response, array $args): Response
+    public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
+        $uploadDirectory =
+            $this->container->get('settings')['api']['uploadDirectory'] . '/img/profile';
 
         if ($gestor === []) {
             Session::destroy();
@@ -316,56 +365,7 @@ class GestoresController extends GestorController
         }
 
         $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
-        $authorize = self::authorize($gestor, $gestorProfile);
-        $gestor = parent::applyGestorData($gestor);
-        $gestorProfile = parent::applyGestorData($gestorProfile);
-
-
-        $templateVariables = [
-            'basePath' => $basePath,
-            'gestor' => $gestor,
-            'gestorProfile' => $gestorProfile,
-            'authorize' => $authorize
-
-        ];
-
-        return $this->renderer->render($response, 'dashboard/gestores/show.php', $templateVariables);
-    }
-
-    public function update(Request $request, Response $response, array $args): Response
-    {
-        $ID = $request->getAttribute('ID');
-        $basePath = $this->container->get('settings')['api']['path'];
-        $uploadDirectory =
-            $this->container->get('settings')['api']['uploadDirectory'] . '/img/profile';
-
-        $gestor = parent::getGestor();
-
-        if ($gestor === []) {
-            Session::destroy();
-
-            $url = RouteContext::fromRequest($request)
-                ->getRouteParser()
-                ->urlFor('login');
-
-            return $response
-                ->withHeader('Location', $url)
-                ->withStatus(302);
-        }
-
-        $this->gestor->setID($ID);
-        if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
-            $url = RouteContext::fromRequest($request)
-                ->getRouteParser()
-                ->urlFor('dashboard.index');
-
-            return $response
-                ->withHeader('Location', $url)
-                ->withStatus(302);
-        }
-
-        $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
-        $authorize = self::authorize($gestor, $gestorProfile);
+        $authorize = self::authorize($gestor, $gestorProfile); //
 
         if ($request->getMethod() == 'POST') {
             if ($ID !== Session::get('update.ID')) {
