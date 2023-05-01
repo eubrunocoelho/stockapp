@@ -15,22 +15,15 @@ require_once __DIR__ . '/app/functions.php';
 
 $containerBuilder = new ContainerBuilder();
 
-// Adiciona definições ao container
 $containerBuilder->addDefinitions(__DIR__ . '/app/dependencies.php');
 
-// Cria a instância do container
 $container = $containerBuilder->build();
 
-// Cria a instância do aplicativo Slim
 $app = $container->get(App::class);
 
-// Define o base path (pasta do projeto)
 $app->setBasePath('/stockapp');
 
-// Registra as rotas
 (require __DIR__ . '/app/routes.php')($app);
-
-// Registra os middlewares
 (require __DIR__ . '/app/middleware.php')($app);
 
 return $app;

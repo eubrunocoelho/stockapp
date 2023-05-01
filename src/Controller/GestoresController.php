@@ -58,10 +58,6 @@ class GestoresController extends GestorController
         $gestor = parent::applyGestorData($gestor);
         $gestores = $this->gestorDAO->getAll();
 
-        //
-        // $this->container->get('flash')->addMessage('message.danger', 'Olá, mundo!');
-        //
-
         foreach ($gestores as $key => $value)
             $gestores[$key] = parent::applyGestorData($gestores[$key]);
 
@@ -739,21 +735,21 @@ class GestoresController extends GestorController
         }
     }
 
-    private static function getPersistUpdateValues($data, $request)
-    {
-        foreach ($request as $key => $value) {
-            if ((isset($data[$key])) && ($data[$key] !== '')) $data[$key] = $request[$key];
-            if ($request[$key] === '') $request[$key] = null;
-        }
-
-        return $request;
-    }
-
     private static function getPersistRegisterValues($request)
     {
         foreach ($request as $key => $value) {
             if ($value !== '') $request[$key] = $value;
             else $request[$key] = null;
+        }
+
+        return $request;
+    }
+
+    private static function getPersistUpdateValues($data, $request)
+    {
+        foreach ($request as $key => $value) {
+            if ((isset($data[$key])) && ($data[$key] !== '')) $data[$key] = $request[$key];
+            if ($request[$key] === '') $request[$key] = null;
         }
 
         return $request;

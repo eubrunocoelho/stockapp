@@ -18,11 +18,11 @@ class GestorDAO
     {
         $SQL =
             'SELECT * FROM gestor 
-             WHERE (email = :usuario OR cpf = :usuario) 
+             WHERE (email = :email) 
              AND senha = :senha';
 
         $stmt = $this->database->prepare($SQL);
-        $stmt->bindValue(':usuario', $gestor->getUsuario());
+        $stmt->bindValue(':email', $gestor->getEmail());
         $stmt->bindValue(':senha', $gestor->getSenha());
         $stmt->execute();
 

@@ -21,26 +21,26 @@
             </div>
             <form class="form" action="./login" method="POST">
                 <div class="form__group">
-                    <label class="form__label" for="user">Usuário:</label>
-                    <input type="text" class="form__input" id="user" name="user"<?php
-                        if (
-                            !empty($inputValues) &&
-                            isset($inputValues['user']) &&
-                            !is_null($inputValues['user'])
-                        ) {
-                            echo ' value="' . $inputValues['user'] . '"';
-                        }
+                    <label class="form__label" for="user">E-mail:</label>
+                    <input type="text" class="form__input" id="email" name="email" placeholder="E-mail"<?php
+                    if (
+                        !(empty($persistLoginValues)) &&
+                        (isset($persistLoginValues['email'])) &&
+                        ($persistLoginValues['email'] !== null)
+                    ) {
+                        echo ' value="' . $persistLoginValues['email'] . '"';
+                    }
                     ?>>
                 </div>
                 <div class="form__group">
                     <label class="form__label" for="password">Senha:</label>
-                    <input type="text" class="form__input" id="password" name="password"<?php
+                    <input type="password" class="form__input" id="senha" name="senha" placeholder="Senha"<?php
                     if (
-                        !empty($inputValues) &&
-                        isset($inputValues['password']) &&
-                        !is_null($inputValues['password'])
+                        !(empty($persistLoginValues)) &&
+                        (isset($persistLoginValues['senha'])) &&
+                        ($persistLoginValues['senha'] !== null)
                     ) {
-                        echo ' value="' . $inputValues['password'] . '"';
+                        echo ' value="' . $persistLoginValues['senha'] . '"';
                     }
                     ?>>
                 </div>

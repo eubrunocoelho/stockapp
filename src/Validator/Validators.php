@@ -4,9 +4,6 @@ namespace App\Validator;
 
 use PDO;
 
-/**
- * Responsável por validação de formato de dados
- */
 abstract class Validators
 {
     private
@@ -17,10 +14,7 @@ abstract class Validators
         $this->container = $container;
         $this->database = $this->container->get(PDO::class);
     }
-
-    /**
-     * Verifica se o valor não está vazio
-     */
+    
     protected function required($value)
     {
         return (strlen(trim($value)) > 0) ? true : false;
