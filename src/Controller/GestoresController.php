@@ -650,6 +650,42 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
     }
 
+    private static function validateMediaType($uploadedFile, $uploadRules)
+    {
+        $fileMediaType = $uploadedFile->getClientMediaType();
+
+        if (!in_array($fileMediaType, $uploadRules['mimeTypes']))
+            return false;
+
+        return true;
+    }
+
+    private static function validateFileSize($uploadedFile, $uploadRules)
+    {
+        $fileSize = $uploadedFile->getSize();
+
+        if ($fileSize > $uploadRules['maxSize'])
+            return false;
+
+        return true;
+    }
+
+    private static function renameFile($uploadedFile)
+    {
+        $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
+        $baseName = bin2hex(random_bytes(8));
+        $fileName = $baseName . '.' . $extension;
+
+        return $fileName;
+    }
+
+    private static function moveUploadedFile($uploadDirectory, $uploadedFile, $fileName)
+    {
+        $uploadedFile->moveTo($uploadDirectory . DIRECTORY_SEPARATOR . $fileName);
+
+        return true;
+    }
+
     private static function authorize($type, $gestor = [], $gestorProfile = [])
     {
         if (
@@ -701,42 +737,6 @@ class GestoresController extends GestorController
             if ($status['active'] == 1) return $authorize = ['register' => true];
             else return $authorize = ['register' => false];
         }
-    }
-
-    private static function validateMediaType($uploadedFile, $uploadRules)
-    {
-        $fileMediaType = $uploadedFile->getClientMediaType();
-
-        if (!in_array($fileMediaType, $uploadRules['mimeTypes']))
-            return false;
-
-        return true;
-    }
-
-    private static function validateFileSize($uploadedFile, $uploadRules)
-    {
-        $fileSize = $uploadedFile->getSize();
-
-        if ($fileSize > $uploadRules['maxSize'])
-            return false;
-
-        return true;
-    }
-
-    private static function renameFile($uploadedFile)
-    {
-        $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-        $baseName = bin2hex(random_bytes(8));
-        $fileName = $baseName . '.' . $extension;
-
-        return $fileName;
-    }
-
-    private static function moveUploadedFile($uploadDirectory, $uploadedFile, $fileName)
-    {
-        $uploadedFile->moveTo($uploadDirectory . DIRECTORY_SEPARATOR . $fileName);
-
-        return true;
     }
 
     private static function getPersistUpdateValues($data, $request)
