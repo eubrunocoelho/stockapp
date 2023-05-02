@@ -42,6 +42,22 @@ class LivrosController extends GestorController
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
 
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        if ($request->getMethod() == 'POST') {
+            dd('Olá, mundo!', true);
+        }
+
         $templateVariables = [
             'basePath' => $basePath,
             'gestor' => $gestor
