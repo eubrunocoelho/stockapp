@@ -19,6 +19,8 @@ use App\{
 };
 
 use App\{
+    Model\Livro,
+    Model\LivroDAO,
     Model\Autor,
     Model\AutorDAO
 };
@@ -31,7 +33,7 @@ class LivrosController extends GestorController
         $app, $container, $database, $renderer, $validator;
 
     private
-        $autor, $autorDAO;
+        $livro, $livroDAO, $autor, $autorDAO;
 
     public function __construct(App $app)
     {
@@ -41,6 +43,8 @@ class LivrosController extends GestorController
         $this->renderer = $this->container->get(PhpRenderer::class);
         $this->validator = $this->container->get(Validator::class);
 
+        $this->livro = new Livro();
+        $this->livroDAO = new LivroDAO($this->database);
         $this->autor = new Autor();
         $this->autorDAO = new AutorDAO($this->database);
 
@@ -69,7 +73,7 @@ class LivrosController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'autor' => 
+                'autor' =>
                 // super sweet unicode
                 '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
                 'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
@@ -114,6 +118,7 @@ class LivrosController extends GestorController
                 'isbn' => [
                     'label' => 'ISBN',
                     'required' => true,
+                    'unique' => 'isbn|livro',
                     'min' => 3,
                     'max' => 64
                 ],
@@ -167,21 +172,52 @@ class LivrosController extends GestorController
                 $this->validator->validation();
 
                 if ($this->validator->passed()) {
-                    $autores = explode(',', $formRequest['autor']);
+                    $dataWrite = [
+                        'titulo' => $formRequest['titulo'] ?? null,
+                        'formato' => $formRequest['formato'] ?? null,
+                        'ano_publicacao' => $formRequest['ano_publicacao'] ?? null,
+                        'isbn' => $formRequest['isbn'] ?? null,
+                        'edicao' => intval($formRequest['edicao']) ?? null,
+                        'idioma' => $formRequest['idioma'] ?? null,
+                        'paginas' => intval($formRequest['paginas']) ?? null,
+                        'descricao' => $formRequest['descricao'] ?? null,
+                        'unidades' => intval($formRequest['unidades']) ?? null
+                    ];
 
-                    foreach ($autores as $key => $value) {
-                        $autores[$key] = trim($autores[$key]);
+                    $this->livro->setTitutlo($dataWrite['titulo']);
+                    $this->livro->setFormato($dataWrite['formato']);
+                    $this->livro->setAnoPublicacao($dataWrite['ano_publicacao']);
+                    $this->livro->setIsbn($dataWrite['isbn']);
+                    $this->livro->setEdicao($dataWrite['edicao']);
+                    $this->livro->setIdioma($dataWrite['idioma']);
+                    $this->livro->setPaginas($dataWrite['paginas']);
+                    $this->livro->setDescricao($dataWrite['descricao']);
+                    $this->livro->setUnidades($dataWrite['unidades']);
 
-                        if (self::validateAutorName($autores[$key], $regex['autor'])) {
-                            $this->autor->setNome($autores[$key]);
-
-                            if(!$this->autorDAO->checkAutorByNome($this->autor)) {
-                                $this->autorDAO->register($this->autor);
-                            } else {
-                                dd($this->autorDAO->checkAutorByNome($this->autor));
-                            }
-                        };
+                    if (
+                        ($ID_livro = $this->livroDAO->register($this->livro)) !== []
+                    ) {
+                        // chegou aqui
                     }
+
+
+                    // $autores = explode(',', $formRequest['autor']);
+
+                    // foreach ($autores as $key => $value) {
+                    //     $autores[$key] = trim($autores[$key]);
+
+                    //     if (self::validateAutorName($autores[$key], $regex['autor'])) {
+                    //         $this->autor->setNome($autores[$key]);
+
+                    //         if ($this->autorDAO->getAutorByNome($this->autor) === []) {
+                    //             $this->autorDAO->register($this->autor);
+                    //         } else {
+                    //             $result = $this->autorDAO->getAutorByNome($this->autor);
+
+                    //             dd($result);
+                    //         }
+                    //     };
+                    // }
                 } else $errors = array_unique($this->validator->errors());
             }
         }

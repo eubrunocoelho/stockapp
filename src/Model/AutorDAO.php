@@ -14,7 +14,7 @@ class AutorDAO
         $this->database = $database;
     }
 
-    public function checkAutorByNome(Autor $autor)
+    public function getAutorByNome(Autor $autor)
     {
         $SQL =
             'SELECT * FROM autor
@@ -23,8 +23,12 @@ class AutorDAO
         $stmt = $this->database->prepare($SQL);
         $stmt->bindValue(':nome', $autor->getNome());
         $stmt->execute();
+        
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        return ($stmt->rowCount() > 0) ? true : false;
+            return $result;
+        } else return [];
     }
 
     public function register(Autor $autor)
