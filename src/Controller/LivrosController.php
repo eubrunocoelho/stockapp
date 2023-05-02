@@ -131,13 +131,53 @@ class LivrosController extends GestorController
                     'regex' => $regex['unidades']
                 ]
             ];
+
+            if (!empty($formRequest)) {
+                $fields = [
+                    'titulo',
+                    'autor',
+                    'editora',
+                    'formato',
+                    'ano_publicacao',
+                    'isbn',
+                    'edicao',
+                    'idioma',
+                    'paginas',
+                    'descricao',
+                    'unidades'
+                ];
+
+                $this->validator->setFields($fields);
+                $this->validator->setData($formRequest);
+                $this->validator->setRules($rules);
+                $this->validator->validation();
+
+                if ($this->validator->passed()) {
+                } else $errors = array_unique($this->validator->errors());
+            }
         }
+
+        $formRequest = $formRequest ?? [];
+        $persistRegisterValues = self::getPersistRegisterValues($formRequest);
+        $errors = $errors ?? [];
 
         $templateVariables = [
             'basePath' => $basePath,
-            'gestor' => $gestor
+            'gestor' => $gestor,
+            'persistRegisterValues' => $persistRegisterValues,
+            'errors' => $errors
         ];
 
         return $this->renderer->render($response, 'dashboard/livros/register.php', $templateVariables);
+    }
+
+    private static function getPersistRegisterValues($request)
+    {
+        foreach ($request as $key => $value) {
+            if ($value !== '') $request[$key] = $value;
+            else $request[$key] = null;
+        }
+
+        return $request;
     }
 }
