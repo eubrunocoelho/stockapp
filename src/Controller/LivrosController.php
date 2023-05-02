@@ -55,7 +55,82 @@ class LivrosController extends GestorController
         }
 
         if ($request->getMethod() == 'POST') {
-            dd('Olá, mundo!', true);
+            $formRequest = (array)$request->getParsedBody();
+
+            $regex = [
+                'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
+                'edicao' => '/^([1-9]|[0-9][0-9])$/',
+                'idioma' =>
+                // super sweet unicode
+                '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð,.\'-]+$/',
+                'paginas' => '/^([1-9]|[1-9][0-9]{1,4}|1[0-9]{5}|200000)$/',
+                'unidades' => '/^([0-9]|[1-9][0-9]{1,3}|[1-4][0-9]{4}|20000)$/'
+            ];
+
+            $rules = [
+                'titulo' => [
+                    'label' => 'Título',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 255
+                ],
+                'autor' => [
+                    'label' => 'Autor(es)',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 255
+                ],
+                'editora' => [
+                    'label' => 'Editora(s)',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 255
+                ],
+                'formato' => [
+                    'label' => 'Formato',
+                    'required' => false,
+                    'min' => 3,
+                    'max' => 128
+                ],
+                'ano_publicacao' => [
+                    'label' => 'Ano de Publicação',
+                    'required' => true,
+                    'regex' => $regex['ano_publicacao']
+                ],
+                'isbn' => [
+                    'label' => 'ISBN',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 64
+                ],
+                'edicao' => [
+                    'label' => 'Edição',
+                    'required' => false,
+                    'regex' => $regex['edicao']
+                ],
+                'idioma' => [
+                    'label' => 'Idioma',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 128,
+                    'regex' => $regex['idioma']
+                ],
+                'paginas' => [
+                    'label' => 'Páginas',
+                    'required' => false,
+                    'regex' => $regex['paginas']
+                ],
+                'descricao' => [
+                    'label' => 'Descrição',
+                    'required' => false,
+                    'max' => 6000
+                ],
+                'unidades' => [
+                    'label' => 'Unidades',
+                    'required' => true,
+                    'regex' => $regex['unidades']
+                ]
+            ];
         }
 
         $templateVariables = [

@@ -30,6 +30,14 @@
                         <input type="text" class="form__input" id="titulo" name="titulo" placeholder="Ex.: O Senhor dos Anéis">
                     </div>
                     <div class="form__group">
+                        <label class="form__label">Autor(es): <span class="text--danger">*</span></label>
+                        <input type="text" class="form__input" id="autor" name="autor" placeholder="Ex.: João Augusto, José Antônio">
+                    </div>
+                    <div class="form__group">
+                        <label class="form__label">Editora(s): <span class="text--danger">*</span></label>
+                        <input type="text" class="form__input" id="editora" name="editora" placeholder="Ex.: Globo Livros, Companhia da Letras">
+                    </div>
+                    <div class="form__group">
                         <label class="form__label">Formato:</label>
                         <input type="text" class="form__input" id="formato" name="formato" placeholder="Ex.: PDF">
                     </div>
