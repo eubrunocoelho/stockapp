@@ -8,7 +8,8 @@ use Slim\{
 use App\Controller\{
     LoginController,
     DashboardController,
-    GestoresController
+    GestoresController,
+    LivrosController,
 };
 
 use App\Middleware\{
@@ -38,5 +39,9 @@ return function (App $app) {
         $group->post('/register', [GestoresController::class, 'register']);
         $group->get('/update/{ID}', [GestoresController::class, 'update'])->setName('gestores.update');
         $group->post('/update/{ID}', [GestoresController::class, 'update']);
+    })->add(Unauthenticated::class);
+
+    $app->group('/livros', function (RouteCollectorProxy $group) {
+        $group->get('/register', [LivrosController::class, 'register'])->setName('livros.register');
     })->add(Unauthenticated::class);
 };
