@@ -87,7 +87,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">ISBN: <span class="text--danger">*</span></label>
-                        <input type="number" class="form__input" id="isbn" name="isbn" placeholder="Ex.: 0000000000000"<?php
+                        <input type="text" class="form__input" id="isbn" name="isbn" placeholder="Ex.: 0000000000000"<?php
                         if (
                             !(empty($persistRegisterValues)) &&
                             (isset($persistRegisterValues['isbn'])) &&
@@ -99,7 +99,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Edição:</label>
-                        <input type="number" class="form__input" id="edicao" name="edicao" placeholder="Ex.: 3"<?php
+                        <input type="text" class="form__input" id="edicao" name="edicao" placeholder="Ex.: 3"<?php
                         if (
                             !(empty($persistRegisterValues)) &&
                             (isset($persistRegisterValues['edicao'])) &&
@@ -123,7 +123,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Páginas:</label>
-                        <input type="number" class="form__input" id="paginas" name="paginas" placeholder="Ex.: 1200"<?php
+                        <input type="text" class="form__input" id="paginas" name="paginas" placeholder="Ex.: 1200"<?php
                         if (
                             !(empty($persistRegisterValues)) &&
                             (isset($persistRegisterValues['paginas'])) &&

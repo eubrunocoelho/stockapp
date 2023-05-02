@@ -18,7 +18,7 @@ class GestorDAO
     {
         $SQL =
             'SELECT * FROM gestor 
-             WHERE (email = :email) 
+             WHERE email = :email
              AND senha = :senha';
 
         $stmt = $this->database->prepare($SQL);

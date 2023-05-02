@@ -18,12 +18,20 @@ use App\{
     Validator\Validator
 };
 
+use App\{
+    Model\Autor,
+    Model\AutorDAO
+};
+
 use PDO;
 
 class LivrosController extends GestorController
 {
     private
         $app, $container, $database, $renderer, $validator;
+
+    private
+        $autor, $autorDAO;
 
     public function __construct(App $app)
     {
@@ -32,6 +40,9 @@ class LivrosController extends GestorController
         $this->database = $this->container->get(PDO::class);
         $this->renderer = $this->container->get(PhpRenderer::class);
         $this->validator = $this->container->get(Validator::class);
+
+        $this->autor = new Autor();
+        $this->autorDAO = new AutorDAO($this->database);
 
         parent::__construct($this->app);
     }
@@ -58,6 +69,9 @@ class LivrosController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
+                'autor' => 
+                // super sweet unicode
+                '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
                 'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
                 'edicao' => '/^([1-9]|[0-9][0-9])$/',
                 'idioma' =>
@@ -153,6 +167,21 @@ class LivrosController extends GestorController
                 $this->validator->validation();
 
                 if ($this->validator->passed()) {
+                    $autores = explode(',', $formRequest['autor']);
+
+                    foreach ($autores as $key => $value) {
+                        $autores[$key] = trim($autores[$key]);
+
+                        if (self::validateAutorName($autores[$key], $regex['autor'])) {
+                            $this->autor->setNome($autores[$key]);
+
+                            if(!$this->autorDAO->checkAutorByNome($this->autor)) {
+                                $this->autorDAO->register($this->autor);
+                            } else {
+                                dd($this->autorDAO->checkAutorByNome($this->autor));
+                            }
+                        };
+                    }
                 } else $errors = array_unique($this->validator->errors());
             }
         }
@@ -169,6 +198,11 @@ class LivrosController extends GestorController
         ];
 
         return $this->renderer->render($response, 'dashboard/livros/register.php', $templateVariables);
+    }
+
+    private static function validateAutorName($autor, $regexRule)
+    {
+        return (preg_match($regexRule, trim($autor))) ? true : false;
     }
 
     private static function getPersistRegisterValues($request)
