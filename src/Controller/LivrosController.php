@@ -96,11 +96,13 @@ class LivrosController extends GestorController
                 'autor' => [
                     'label' => 'Autor(es)',
                     'required' => true,
+                    'min' => 3,
                     'max' => 255
                 ],
                 'editora' => [
                     'label' => 'Editora(s)',
                     'required' => true,
+                    'min' => 3,
                     'max' => 255
                 ],
                 'formato' => [
@@ -129,6 +131,7 @@ class LivrosController extends GestorController
                 'idioma' => [
                     'label' => 'Idioma',
                     'required' => true,
+                    'min' => 3,
                     'max' => 128,
                     'regex' => $regex['idioma']
                 ],
@@ -209,33 +212,23 @@ class LivrosController extends GestorController
                     $this->livro->setDescricao($dataWrite['descricao']);
                     $this->livro->setUnidades($dataWrite['unidades']);
 
-                    dd(
-                        [$autores, $editoras]
-                    );
+                    if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
+                        foreach ($autores as $key => $value) {
+                            $autores[$key] = trim($autores[$key]);
 
-                    // if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
+                            $this->autor->setNome($autores[$key]);
+                          
+                            if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
+                                $IDAutor = $this->autorDAO->register($this->autor);
+                            else $IDAutor = $autor[0]['ID'];
+
+                            $this->livroAutor->setIDLivro($IDLivro);
+                            $this->livroAutor->setIDAutor($IDAutor);
+                            $this->livroAutorDAO->register($this->livroAutor);
+                        }
+
                         
-                    // }
-
-                    // if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
-                    //     $autores = explode(',', $formRequest['autor']);
-
-                    //     foreach ($autores as $key => $value) {
-                    //         $autores[$key] = trim($autores[$key]);
-
-                    //         if (self::validateAutorName($autores[$key], $regex['autor'])) {
-                    //             $this->autor->setNome($autores[$key]);
-
-                    //             if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
-                    //                 $IDAutor = $this->autorDAO->register($this->autor);
-                    //             else $IDAutor = $autor[0]['ID'];
-
-                    //             $this->livroAutor->setIDLivro($IDLivro);
-                    //             $this->livroAutor->setIDAutor($IDAutor);
-                    //             $this->livroAutorDAO->register($this->livroAutor);
-                    //         } $errors = (array)'O campo "Autor(es)" está inválido.';
-                    //     }
-                    // }
+                    }
                 } else $errors = array_unique($this->validator->errors());
             }
         }
