@@ -77,14 +77,11 @@ class LivrosController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'autor' =>
-                // super sweet unicode
-                '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
+                'autor' => '/^[A-Za-z .\'][^0-9-,]+$/',
+                'editora' => '/^[A-Za-z0-9 .\'][^,]+$/',
                 'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
                 'edicao' => '/^([1-9]|[0-9][0-9])$/',
-                'idioma' =>
-                // super sweet unicode
-                '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð,.\'-]+$/',
+                'idioma' => '/^[A-Za-z \'][^0-9.,]+$/',
                 'paginas' => '/^([1-9]|[1-9][0-9]{1,4}|1[0-9]{5}|200000)$/',
                 'unidades' => '/^([0-9]|[1-9][0-9]{1,3}|[1-4][0-9]{4}|20000)$/'
             ];
@@ -99,13 +96,11 @@ class LivrosController extends GestorController
                 'autor' => [
                     'label' => 'Autor(es)',
                     'required' => true,
-                    'min' => 3,
                     'max' => 255
                 ],
                 'editora' => [
                     'label' => 'Editora(s)',
                     'required' => true,
-                    'min' => 3,
                     'max' => 255
                 ],
                 'formato' => [
@@ -134,7 +129,6 @@ class LivrosController extends GestorController
                 'idioma' => [
                     'label' => 'Idioma',
                     'required' => true,
-                    'min' => 3,
                     'max' => 128,
                     'regex' => $regex['idioma']
                 ],
@@ -175,6 +169,23 @@ class LivrosController extends GestorController
                 $this->validator->setRules($rules);
                 $this->validator->validation();
 
+                $autores = explode(',', $formRequest['autor']);
+                $editoras = explode(',', $formRequest['editora']);
+
+                foreach ($autores as $key => $value) {
+                    $autores[$key] = trim($autores[$key]);
+
+                    if (!self::validateAutorName($autores[$key], $regex['autor']))
+                        $this->validator->addError('O campo "Autor(es)" está inválido.');
+                }
+
+                foreach ($editoras as $key => $value) {
+                    $editoras[$key] = trim($editoras[$key]);
+
+                    if (!self::validateEditoraName($editoras[$key], $regex['editora']))
+                        $this->validator->addError('O campo "Editora(s)" está inválido.');
+                }
+
                 if ($this->validator->passed()) {
                     $dataWrite = [
                         'titulo' => $formRequest['titulo'] ?? null,
@@ -198,25 +209,33 @@ class LivrosController extends GestorController
                     $this->livro->setDescricao($dataWrite['descricao']);
                     $this->livro->setUnidades($dataWrite['unidades']);
 
-                    if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
-                        $autores = explode(',', $formRequest['autor']);
+                    dd(
+                        [$autores, $editoras]
+                    );
 
-                        foreach ($autores as $key => $value) {
-                            $autores[$key] = trim($autores[$key]);
+                    // if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
+                        
+                    // }
 
-                            if (self::validateAutorName($autores[$key], $regex['autor'])) {
-                                $this->autor->setNome($autores[$key]);
+                    // if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
+                    //     $autores = explode(',', $formRequest['autor']);
 
-                                if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
-                                    $IDAutor = $this->autorDAO->register($this->autor);
-                                else $IDAutor = $autor[0]['ID'];
+                    //     foreach ($autores as $key => $value) {
+                    //         $autores[$key] = trim($autores[$key]);
 
-                                $this->livroAutor->setIDLivro($IDLivro);
-                                $this->livroAutor->setIDAutor($IDAutor);
-                                $this->livroAutorDAO->register($this->livroAutor);
-                            }
-                        }
-                    }
+                    //         if (self::validateAutorName($autores[$key], $regex['autor'])) {
+                    //             $this->autor->setNome($autores[$key]);
+
+                    //             if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
+                    //                 $IDAutor = $this->autorDAO->register($this->autor);
+                    //             else $IDAutor = $autor[0]['ID'];
+
+                    //             $this->livroAutor->setIDLivro($IDLivro);
+                    //             $this->livroAutor->setIDAutor($IDAutor);
+                    //             $this->livroAutorDAO->register($this->livroAutor);
+                    //         } $errors = (array)'O campo "Autor(es)" está inválido.';
+                    //     }
+                    // }
                 } else $errors = array_unique($this->validator->errors());
             }
         }
@@ -237,7 +256,12 @@ class LivrosController extends GestorController
 
     private static function validateAutorName($autor, $regexRule)
     {
-        return (preg_match($regexRule, trim($autor))) ? true : false;
+        return (preg_match($regexRule, $autor)) ? true : false;
+    }
+
+    private static function validateEditoraName($editora, $regexRule)
+    {
+        return (preg_match($regexRule, $editora)) ? true : false;
     }
 
     private static function getPersistRegisterValues($request)

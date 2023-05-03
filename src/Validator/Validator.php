@@ -87,7 +87,7 @@ class Validator extends Validators
             }
     }
     
-    private function addError($message)
+    public function addError($message)
     {
         $this->errors[] = $message;
     }
