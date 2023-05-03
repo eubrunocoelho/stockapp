@@ -23,8 +23,12 @@ use App\{
     Model\LivroDAO,
     Model\Autor,
     Model\AutorDAO,
+    Model\Editora,
+    Model\EditoraDAO,
     Model\LivroAutor,
-    Model\LivroAutorDAO
+    Model\LivroAutorDAO,
+    Model\LivroEditora,
+    Model\LivroEditoraDAO
 };
 
 use PDO;
@@ -35,7 +39,7 @@ class LivrosController extends GestorController
         $app, $container, $database, $renderer, $validator;
 
     private
-        $livro, $livroDAO, $autor, $autorDAO, $livroAutor, $livroAutorDAO;
+        $livro, $livroDAO, $autor, $autorDAO, $editora, $editoraDAO, $livroAutor, $livroAutorDAO, $livroEditora, $livroEditoraDAO;
 
     public function __construct(App $app)
     {
@@ -49,8 +53,12 @@ class LivrosController extends GestorController
         $this->livroDAO = new LivroDAO($this->database);
         $this->autor = new Autor();
         $this->autorDAO = new AutorDAO($this->database);
+        $this->editora = new Editora();
+        $this->editoraDAO = new EditoraDAO($this->database);
         $this->livroAutor = new LivroAutor();
         $this->livroAutorDAO = new LivroAutorDAO($this->database);
+        $this->livroEditora = new LivroEditora();
+        $this->livroEditoraDAO = new LivroEditoraDAO($this->database);
 
         parent::__construct($this->app);
     }
@@ -217,7 +225,7 @@ class LivrosController extends GestorController
                             $autores[$key] = trim($autores[$key]);
 
                             $this->autor->setNome($autores[$key]);
-                          
+
                             if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
                                 $IDAutor = $this->autorDAO->register($this->autor);
                             else $IDAutor = $autor[0]['ID'];
@@ -227,7 +235,21 @@ class LivrosController extends GestorController
                             $this->livroAutorDAO->register($this->livroAutor);
                         }
 
-                        // ...
+                        foreach ($editoras as $key => $value) {
+                            $editoras[$key] = trim($editoras[$key]);
+
+                            $this->editora->setNome($editoras[$key]);
+
+                            if (($editora = $this->editoraDAO->getEditoraByNome($this->editora)) === [])
+                                $IDEditora = $this->editoraDAO->register($this->editora);
+                            else $IDEditora = $editora[0]['ID'];
+
+                            $this->livroEditora->setIDLivro($IDLivro);
+                            $this->livroEditora->setIDEditora($IDEditora);
+                            $this->livroEditoraDAO->register($this->livroEditora);
+                        }
+
+                        // testing
                     }
                 } else $errors = array_unique($this->validator->errors());
             }
