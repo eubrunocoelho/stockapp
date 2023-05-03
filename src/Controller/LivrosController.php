@@ -209,7 +209,7 @@ class LivrosController extends GestorController
 
                                 if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
                                     $IDAutor = $this->autorDAO->register($this->autor);
-                                else  $IDAutor = $autor[0]['ID'];
+                                else $IDAutor = $autor[0]['ID'];
 
                                 $this->livroAutor->setIDLivro($IDLivro);
                                 $this->livroAutor->setIDAutor($IDAutor);

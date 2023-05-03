@@ -17,7 +17,7 @@
     <main class="main">
         <div class="main-heading container">
             <h1 class="main-heading__title">Cadastrar Livro</h1>
-            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="./cadastrar-livro.html">Cadastrar Livro</a> / <a class="breadcrumbs__link" href="./index.html">Dashboard</a></span>
+            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/livros/register">Cadastrar Livro</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/livros">Livros</a> / <a class="breadcrumbs__link" href="<?=$basePath?>">Dashboard</a></span>
         </div>
         <section class="section container">
             <div class="box">
