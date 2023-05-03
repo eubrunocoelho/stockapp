@@ -35,7 +35,7 @@ class EditoraDAO
     {
         $SQL =
             'INSERT INTO
-             autor (
+             editora (
                  nome
              )
              VALUES (
