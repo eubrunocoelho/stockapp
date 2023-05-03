@@ -198,9 +198,7 @@ class LivrosController extends GestorController
                     $this->livro->setDescricao($dataWrite['descricao']);
                     $this->livro->setUnidades($dataWrite['unidades']);
 
-                    if (
-                        ($IDLivro = $this->livroDAO->register($this->livro)) !== []
-                    ) {
+                    if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
                         $autores = explode(',', $formRequest['autor']);
 
                         foreach ($autores as $key => $value) {
