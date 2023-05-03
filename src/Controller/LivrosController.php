@@ -22,7 +22,9 @@ use App\{
     Model\Livro,
     Model\LivroDAO,
     Model\Autor,
-    Model\AutorDAO
+    Model\AutorDAO,
+    Model\LivroAutor,
+    Model\LivroAutorDAO
 };
 
 use PDO;
@@ -33,7 +35,7 @@ class LivrosController extends GestorController
         $app, $container, $database, $renderer, $validator;
 
     private
-        $livro, $livroDAO, $autor, $autorDAO;
+        $livro, $livroDAO, $autor, $autorDAO, $livroAutor, $livroAutorDAO;
 
     public function __construct(App $app)
     {
@@ -47,6 +49,8 @@ class LivrosController extends GestorController
         $this->livroDAO = new LivroDAO($this->database);
         $this->autor = new Autor();
         $this->autorDAO = new AutorDAO($this->database);
+        $this->livroAutor = new LivroAutor();
+        $this->livroAutorDAO = new LivroAutorDAO($this->database);
 
         parent::__construct($this->app);
     }
@@ -195,29 +199,26 @@ class LivrosController extends GestorController
                     $this->livro->setUnidades($dataWrite['unidades']);
 
                     if (
-                        ($ID_livro = $this->livroDAO->register($this->livro)) !== []
+                        ($IDLivro = $this->livroDAO->register($this->livro)) !== []
                     ) {
-                        // chegou aqui
+                        $autores = explode(',', $formRequest['autor']);
+
+                        foreach ($autores as $key => $value) {
+                            $autores[$key] = trim($autores[$key]);
+
+                            if (self::validateAutorName($autores[$key], $regex['autor'])) {
+                                $this->autor->setNome($autores[$key]);
+
+                                if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
+                                    $IDAutor = $this->autorDAO->register($this->autor);
+                                else  $IDAutor = $autor[0]['ID'];
+
+                                $this->livroAutor->setIDLivro($IDLivro);
+                                $this->livroAutor->setIDAutor($IDAutor);
+                                $this->livroAutorDAO->register($this->livroAutor);
+                            }
+                        }
                     }
-
-
-                    // $autores = explode(',', $formRequest['autor']);
-
-                    // foreach ($autores as $key => $value) {
-                    //     $autores[$key] = trim($autores[$key]);
-
-                    //     if (self::validateAutorName($autores[$key], $regex['autor'])) {
-                    //         $this->autor->setNome($autores[$key]);
-
-                    //         if ($this->autorDAO->getAutorByNome($this->autor) === []) {
-                    //             $this->autorDAO->register($this->autor);
-                    //         } else {
-                    //             $result = $this->autorDAO->getAutorByNome($this->autor);
-
-                    //             dd($result);
-                    //         }
-                    //     };
-                    // }
                 } else $errors = array_unique($this->validator->errors());
             }
         }

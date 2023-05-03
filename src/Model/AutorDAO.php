@@ -45,7 +45,11 @@ class AutorDAO
         $stmt = $this->database->prepare($SQL);
         $stmt->bindValue(':nome', $autor->getNome());
         $stmt->execute();
+        
+        if ($stmt->rowCount() > 0) {
+            $ID = $this->database->lastInsertId();
 
-        return ($stmt->rowCount() > 0) ? true : false;
+            return $ID;
+        } else return [];
     }
 }
