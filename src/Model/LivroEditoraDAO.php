@@ -4,7 +4,7 @@ namespace App\Model;
 
 use PDO;
 
-class LivroAutorDAO
+class LivroEditoraDAO
 {
     private
         $database;
@@ -14,22 +14,22 @@ class LivroAutorDAO
         $this->database = $database;
     }
 
-    public function register(LivroAutor $livroAutor)
+    public function register(LivroEditora $livroEditora)
     {
-        $SQL = 
+        $SQL =
             'INSERT INTO
-             livro_autor (
+             livro_editora (
                  ID_livro,
-                 ID_autor
-             ) 
+                 ID_editora
+             )
              VALUES (
                  :ID_livro,
-                 :ID_autor
+                 :ID_editora
              )';
 
         $stmt = $this->database->prepare($SQL);
-        $stmt->bindValue(':ID_livro', $livroAutor->getIDLivro());
-        $stmt->bindValue(':ID_autor', $livroAutor->getIDAutor());
+        $stmt->bindValue(':ID_livro', $livroEditora->getIDLivro());
+        $stmt->bindValue(':ID_editora', $livroEditora->getIDEditora());
         $stmt->execute();
 
         return ($stmt->rowCount() > 0) ? true : false;

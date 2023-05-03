@@ -227,7 +227,7 @@ class LivrosController extends GestorController
                             $this->livroAutorDAO->register($this->livroAutor);
                         }
 
-                        
+                        // ...
                     }
                 } else $errors = array_unique($this->validator->errors());
             }

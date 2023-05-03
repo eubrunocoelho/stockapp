@@ -4,7 +4,7 @@ namespace App\Model;
 
 use PDO;
 
-class AutorDAO
+class EditoraDAO
 {
     private
         $database;
@@ -14,16 +14,16 @@ class AutorDAO
         $this->database = $database;
     }
 
-    public function getAutorByNome(Autor $autor)
+    public function getEditoraByNome(Editora $editora)
     {
         $SQL =
-            'SELECT * FROM autor
+            'SELECT * FROM editora
              WHERE nome = :nome';
 
         $stmt = $this->database->prepare($SQL);
-        $stmt->bindValue(':nome', $autor->getNome());
+        $stmt->bindValue(':nome', $editora->getNome());
         $stmt->execute();
-        
+
         if ($stmt->rowCount() > 0) {
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -31,7 +31,7 @@ class AutorDAO
         } else return [];
     }
 
-    public function register(Autor $autor)
+    public function register(Editora $editora)
     {
         $SQL =
             'INSERT INTO
@@ -43,9 +43,9 @@ class AutorDAO
              )';
 
         $stmt = $this->database->prepare($SQL);
-        $stmt->bindValue(':nome', $autor->getNome());
+        $stmt->bindValue(':nome', $editora->getNome());
         $stmt->execute();
-        
+
         if ($stmt->rowCount() > 0) {
             $ID = $this->database->lastInsertId();
 

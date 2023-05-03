@@ -19,25 +19,25 @@ class LivroDAO
         $SQL =
             'INSERT INTO
              livro (
-                titulo,
-                formato,
-                ano_publicacao,
-                isbn,
-                edicao,
-                idioma,
-                paginas,
-                descricao,
-                unidades
+                 titulo,
+                 formato,
+                 ano_publicacao,
+                 isbn,
+                 edicao,
+                 idioma,
+                 paginas,
+                 descricao,
+                 unidades
              ) VALUES (
-                :titulo,
-                :formato,
-                :ano_publicacao,
-                :isbn,
-                :edicao,
-                :idioma,
-                :paginas,
-                :descricao,
-                :unidades
+                 :titulo,
+                 :formato,
+                 :ano_publicacao,
+                 :isbn,
+                 :edicao,
+                 :idioma,
+                 :paginas,
+                 :descricao,
+                 :unidades
              )';
 
         $stmt = $this->database->prepare($SQL);
