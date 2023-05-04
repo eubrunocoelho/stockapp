@@ -433,10 +433,24 @@ class LivrosController extends GestorController
                 }
 
                 if ($this->validator->passed()) {
+                    $this->livroAutor->setIDLivro($ID);
+
+                    if ($this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor) !== [])
+                        $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
+
+                    // working for now
                     foreach ($autores as $key => $value) {
                         $autores[$key] = trim($autores[$key]);
 
-                        
+                        $this->autor->setNome($autores[$key]);
+
+                        if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
+                            $IDAutor = $this->autorDAO->register($this->autor);
+                        else $IDAutor = $autor[0]['ID'];
+
+                        $this->livroAutor->setIDLivro($ID);
+                        $this->livroAutor->setIDAutor($IDAutor);
+                        $this->livroAutorDAO->register($this->livroAutor);
                     }
                 } else $errors = array_unique($this->validator->errors());
             }
