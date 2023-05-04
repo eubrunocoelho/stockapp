@@ -44,5 +44,6 @@ return function (App $app) {
     $app->group('/livros', function (RouteCollectorProxy $group) {
         $group->get('/register', [LivrosController::class, 'register'])->setName('livros.register');
         $group->post('/register', [LivrosController::class, 'register']);
+        $group->get('/update/{ID}', [LivrosController::class, 'update'])->setName('livros.update');
     })->add(Unauthenticated::class);
 };

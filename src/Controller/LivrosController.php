@@ -269,6 +269,28 @@ class LivrosController extends GestorController
         return $this->renderer->render($response, 'dashboard/livros/register.php', $templateVariables);
     }
 
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        $ID = $request->getAttribute('ID');
+        $basePath = $this->container->get('settings')['api']['path'];
+        $gestor = parent::getGestor();
+        $gestor = parent::applyGestorData($gestor);
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Locaion', $url)
+                ->withStatus(302);
+        }
+
+        
+    }
+
     private static function validateAutorName($autor, $regexRule)
     {
         return (preg_match($regexRule, $autor)) ? true : false;
