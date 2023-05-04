@@ -288,7 +288,12 @@ class LivrosController extends GestorController
                 ->withStatus(302);
         }
 
-        
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor
+        ];
+
+        return $this->renderer->render($response, 'dashboard/livros/update.php', $templateVariables);
     }
 
     private static function validateAutorName($autor, $regexRule)
