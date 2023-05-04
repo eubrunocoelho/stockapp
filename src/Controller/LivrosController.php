@@ -288,9 +288,171 @@ class LivrosController extends GestorController
                 ->withStatus(302);
         }
 
+        // ID da URL
+        $this->livro->setID($ID);
+        if ($this->livroDAO->getLivroByID($this->livro) === []) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('dashboard.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
+
+        if ($request->getMethod() == 'POST') {
+            if ($ID !== Session::get('livro.update.ID')) {
+                $url = RouteContext::fromRequest($request)
+                    ->getRouteParser()
+                    ->urlFor('livros.update', ['ID' => Session::get('livro.update.ID')]);
+
+                return $response
+                    ->withHeader('Location', $url)
+                    ->withStatus(302);
+            }
+
+            Session::delete('livro.update.ID');
+
+            $formRequest = (array)$request->getParsedBody();
+
+            $regex = [
+                'autor' => '/^[A-Za-z .\'][^0-9-,]+$/',
+                'editora' => '/^[A-Za-z0-9 .\'][^,]+$/',
+                'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
+                'edicao' => '/^([1-9]|[0-9][0-9])$/',
+                'idioma' => '/^[A-Za-z \'][^0-9.,]+$/',
+                'paginas' => '/^([1-9]|[1-9][0-9]{1,4}|1[0-9]{5}|200000)$/',
+                'unidades' => '/^([0-9]|[1-9][0-9]{1,3}|[1-4][0-9]{4}|20000)$/'
+            ];
+
+            $rules = [
+                'titulo' => [
+                    'label' => 'Título',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 255
+                ],
+                'autor' => [
+                    'label' => 'Autor(es)',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 255
+                ],
+                'editora' => [
+                    'label' => 'Editora(s)',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 255
+                ],
+                'formato' => [
+                    'label' => 'Formato',
+                    'required' => false,
+                    'min' => 3,
+                    'max' => 128
+                ],
+                'ano_publicacao' => [
+                    'label' => 'Ano de Publicação',
+                    'required' => true,
+                    'regex' => $regex['ano_publicacao']
+                ],
+                'isbn' => [
+                    'label' => 'ISBN',
+                    'required' => true,
+                    'unique-update' => 'isbn|livro|' . $ID,
+                    'min' => 3,
+                    'max' => 64
+                ],
+                'edicao' => [
+                    'label' => 'Edição',
+                    'required' => false,
+                    'regex' => $regex['edicao']
+                ],
+                'idioma' => [
+                    'label' => 'Idioma',
+                    'required' => true,
+                    'min' => 3,
+                    'max' => 128,
+                    'regex' => $regex['idioma']
+                ],
+                'paginas' => [
+                    'label' => 'Páginas',
+                    'required' => false,
+                    'regex' => $regex['paginas']
+                ],
+                'descricao' => [
+                    'label' => 'Descrição',
+                    'required' => false,
+                    'max' => 6000
+                ],
+                'unidades' => [
+                    'label' => 'Unidades',
+                    'required' => true,
+                    'regex' => $regex['unidades']
+                ]
+            ];
+
+            if (!empty($formRequest)) {
+                $fields = [
+                    'titulo',
+                    'autor',
+                    'editora',
+                    'formato',
+                    'ano_publicacao',
+                    'isbn',
+                    'edicao',
+                    'idioma',
+                    'paginas',
+                    'descricao',
+                    'unidades'
+                ];
+
+                $persistUpdateValues = self::getPersistUpdateValues($livro, $formRequest);
+
+                $this->validator->setFields($fields);
+                $this->validator->setData($formRequest);
+                $this->validator->setRules($rules);
+                $this->validator->validation();
+
+                $autores = explode(',', $formRequest['autor']);
+                $editoras = explode(',', $formRequest['editora']);
+
+                foreach ($autores as $key => $value) {
+                    $autores[$key] = trim($autores[$key]);
+
+                    if (!self::validateAutorName($autores[$key], $regex['autor']))
+                        $this->validator->addError('O campo "Autor(es)" está inválido.');
+                }
+
+                foreach ($editoras as $key => $value) {
+                    $editoras[$key] = trim($editoras[$key]);
+
+                    if (!self::validateEditoraName($editoras[$key], $regex['editora']))
+                        $this->validator->addError('O campo "Editora(s)" está inválido.');
+                }
+
+                if ($this->validator->passed()) {
+                    foreach ($autores as $key => $value) {
+                        $autores[$key] = trim($autores[$key]);
+
+                        
+                    }
+                } else $errors = array_unique($this->validator->errors());
+            }
+        }
+
+        Session::create('livro.update.ID', $ID);
+
+        $persistUpdateValues = $persistUpdateValues ?? $livro;
+        $errors = $errors ?? [];
+
         $templateVariables = [
             'basePath' => $basePath,
-            'gestor' => $gestor
+            'gestor' => $gestor,
+            'livro' => $livro,
+            'persistUpdateValues' => $persistUpdateValues,
+            'errors' => $errors
         ];
 
         return $this->renderer->render($response, 'dashboard/livros/update.php', $templateVariables);
@@ -311,6 +473,19 @@ class LivrosController extends GestorController
         foreach ($request as $key => $value) {
             if ($value !== '') $request[$key] = $value;
             else $request[$key] = null;
+        }
+
+        return $request;
+    }
+
+    private static function getPersistUpdateValues($data, $request)
+    {
+        foreach ($request as $key => $value) {
+            if (
+                (isset($data[$key])) &&
+                ($data[$key] !== '')
+            ) $data[$key] = $request[$key];
+            if ($request[$key] === '') $request[$key] = null;
         }
 
         return $request;

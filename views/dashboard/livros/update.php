@@ -75,53 +75,139 @@
                 <div class="box-heading">
                     <h1 class="box-heading__title">Editar Livro</h1>
                 </div>
-                <form class="form">
+                <form class="form" action="<?=$basePath?>/livros/update/<?=$livro['ID']?>" method="POST">
                     <div class="form__group">
                         <label class="form__label">Título: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" placeholder="Ex.: O Senhor dos Anéis">
+                        <input type="text" class="form__input" id="titulo" name="titulo" placeholder="Ex.: O Senhor dos Anéis"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['titulo'])) &&
+                            ($persistUpdateValues['titulo'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['titulo'] . '"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label">Autor(es): <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" placeholder="Ex.: João Augusto, José Antônio">
+                        <input type="text" class="form__input" id="autor" name="autor" placeholder="Ex.: João Augusto, José Antônio">
                     </div>
                     <div class="form__group">
                         <label class="form__label">Editora(s): <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" placeholder="Ex.: Globo Livros, Companhias das Letras">
+                        <input type="text" class="form__input" id="editora" name="editora" placeholder="Ex.: Globo Livros, Companhias das Letras">
                     </div>
                     <div class="form__group">
                         <label class="form__label">Formato:</label>
-                        <input type="text" class="form__input" placeholder="Ex.: PDF">
+                        <input type="text" class="form__input" id="formato" name="formato" placeholder="Ex.: PDF"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['formato'])) &&
+                            ($persistUpdateValues['formato'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['formato'] . '"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label">Ano da Publicação:</label>
-                        <input type="text" class="form__input" placeholder="Ex.: 2012">
+                        <input type="text" class="form__input" id="ano_publicacao" name="ano_publicacao" placeholder="Ex.: 2012"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['ano_publicacao'])) &&
+                            ($persistUpdateValues['ano_publicacao'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['ano_publicacao'] . '"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label">ISBN: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" placeholder="Ex.: 0000000000000">
+                        <input type="text" class="form__input" id="isbn" name="isbn" placeholder="Ex.: 0000000000000"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['isbn'])) &&
+                            ($persistUpdateValues['isbn'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['isbn'] . '"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label">Edição:</label>
-                        <input type="text" class="form__input" placeholder="Ex.: 3">
+                        <input type="text" class="form__input" id="edicao" name="edicao" placeholder="Ex.: 3"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['edicao'])) &&
+                            ($persistUpdateValues['edicao'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['edicao'] . '"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label">Idioma: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" placeholder="Ex.: Português">
+                        <input type="text" class="form__input" id="idioma" name="idioma" placeholder="Ex.: Português"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['idioma'])) &&
+                            ($persistUpdateValues['idioma'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['idioma'] . '"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label">Páginas:</label>
-                        <input type="text" class="form__input" placeholder="Ex.: 1200">
+                        <input type="text" class="form__input" id="paginas" name="paginas" placeholder="Ex.: 1200"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['paginas'])) &&
+                            ($persistUpdateValues['paginas'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['paginas'] . '"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group ai--start">
                         <label class="form__label pt--12">Descrição:</label>
-                        <textarea class="form__textarea" placeholder="Ex.: A batalha do anel começou na Terra Média..."></textarea>
+                        <textarea class="form__textarea" id="descricao" name="descricao" placeholder="Ex.: A batalha do anel começou na Terra Média..."><?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['descricao'])) &&
+                            ($persistUpdateValues['descricao'] !== null)
+                        ) {
+                            echo $persistUpdateValues['descricao'];
+                        }
+                        ?></textarea>
                     </div>
                     <div class="form__group">
                         <label class="form__label">Unidades: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" placeholder="Ex.: 100">
+                        <input type="text" class="form__input" id="unidades" name="unidades" placeholder="Ex.: 100"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['unidades'])) &&
+                            ($persistUpdateValues['unidades'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['unidades'] . '"';
+                        }
+                        ?>>
                     </div>
                     <button type="submit" class="btn mt--20">Cadastrar</button>
                 </form>
+                <?php
+                if (
+                    (isset($errors)) &&
+                    !(empty($errors))
+                ) {
+                    foreach ($errors as $error) {
+                ?>
+                <div class="alert-box alert--danger mt--20">
+                        <p class="alert-box__text"><?=$error?></p>
+                </div>
+                <?php
+                    }
+                }
+                ?>
             </div>
         </section>
     </main>

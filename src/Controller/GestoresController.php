@@ -393,6 +393,7 @@ class GestoresController extends GestorController
         $authorize = self::authorize('update', $gestor, $gestorProfile);
 
         if ($request->getMethod() == 'POST') {
+            // !important
             if ($ID !== Session::get('update.ID')) {
                 $url = RouteContext::fromRequest($request)
                     ->getRouteParser()
@@ -748,7 +749,10 @@ class GestoresController extends GestorController
     private static function getPersistUpdateValues($data, $request)
     {
         foreach ($request as $key => $value) {
-            if ((isset($data[$key])) && ($data[$key] !== '')) $data[$key] = $request[$key];
+            if (
+                (isset($data[$key])) &&
+                ($data[$key] !== '')
+            ) $data[$key] = $request[$key];
             if ($request[$key] === '') $request[$key] = null;
         }
 
