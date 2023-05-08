@@ -91,25 +91,12 @@ class LivrosController extends GestorController
                 'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
                 'edicao' => '/^([1-9]|[0-9][0-9])$/',
                 'idioma' => '/^[A-Za-z \'][^0-9.,]+$/',
-                'paginas' => '/^([1-9]|[1-9][0-9]{1,4}|1[0-9]{5}|200000)$/',
-                'unidades' => '/^([0-9]|[1-9][0-9]{1,3}|[1-4][0-9]{4}|20000)$/'
+                'paginas' => '/^([1-9]|[1-9][0-9]{1,4}|1[0-9]{5}|200000)$/'
             ];
 
             $rules = [
                 'titulo' => [
                     'label' => 'Título',
-                    'required' => true,
-                    'min' => 3,
-                    'max' => 255
-                ],
-                'autor' => [
-                    'label' => 'Autor(es)',
-                    'required' => true,
-                    'min' => 3,
-                    'max' => 255
-                ],
-                'editora' => [
-                    'label' => 'Editora(s)',
                     'required' => true,
                     'min' => 3,
                     'max' => 255
@@ -316,30 +303,17 @@ class LivrosController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'autor' => '/^[A-Za-z .\'][^0-9-,]+$/',
+                'autor' => '/^[A-Za-z .\'][^0-9,]+$/',
                 'editora' => '/^[A-Za-z0-9 .\'][^,]+$/',
                 'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
                 'edicao' => '/^([1-9]|[0-9][0-9])$/',
                 'idioma' => '/^[A-Za-z \'][^0-9.,]+$/',
-                'paginas' => '/^([1-9]|[1-9][0-9]{1,4}|1[0-9]{5}|200000)$/',
-                'unidades' => '/^([0-9]|[1-9][0-9]{1,3}|[1-4][0-9]{4}|20000)$/'
+                'paginas' => '/^([1-9]|[1-9][0-9]{1,4}|1[0-9]{5}|200000)$/'
             ];
 
             $rules = [
                 'titulo' => [
                     'label' => 'Título',
-                    'required' => true,
-                    'min' => 3,
-                    'max' => 255
-                ],
-                'autor' => [
-                    'label' => 'Autor(es)',
-                    'required' => true,
-                    'min' => 3,
-                    'max' => 255
-                ],
-                'editora' => [
-                    'label' => 'Editora(s)',
                     'required' => true,
                     'min' => 3,
                     'max' => 255
@@ -383,11 +357,6 @@ class LivrosController extends GestorController
                     'label' => 'Descrição',
                     'required' => false,
                     'max' => 6000
-                ],
-                'unidades' => [
-                    'label' => 'Unidades',
-                    'required' => true,
-                    'regex' => $regex['unidades']
                 ]
             ];
 
@@ -402,8 +371,7 @@ class LivrosController extends GestorController
                     'edicao',
                     'idioma',
                     'paginas',
-                    'descricao',
-                    'unidades'
+                    'descricao'
                 ];
 
                 $persistUpdateValues = self::getPersistUpdateValues($livro, $formRequest);
@@ -416,40 +384,59 @@ class LivrosController extends GestorController
                 $autores = explode(',', $formRequest['autor']);
                 $editoras = explode(',', $formRequest['editora']);
 
-                foreach ($autores as $key => $value) {
-                    $autores[$key] = trim($autores[$key]);
+                if (strlen(trim($formRequest['autor'])) > 0) {
+                    $autores = explode(',', $formRequest['autor']);
 
-                    if (!self::validateAutorName($autores[$key], $regex['autor']))
-                        $this->validator->addError('O campo "Autor(es)" está inválido.');
-                }
+                    foreach ($autores as $key => $value) {
+                        $autores[$key] = trim($autores[$key]);
 
-                foreach ($editoras as $key => $value) {
-                    $editoras[$key] = trim($editoras[$key]);
+                        if (!self::validateAutorName($autores[$key], $regex['autor']))
+                            $this->validator->addError('O campo "Autor(es)" está inválido.');
+                    }
+                } else $this->validator->addError('O campo "Autor(es)" é obrigatório.');
 
-                    if (!self::validateEditoraName($editoras[$key], $regex['editora']))
-                        $this->validator->addError('O campo "Editora(s)" está inválido.');
-                }
+                if (strlen(trim($formRequest['editora'])) > 0) {
+                    $editoras = explode(',', $formRequest['editora']);
+
+                    foreach ($editoras as $key => $value) {
+                        $editoras[$key] = trim($editoras[$key]);
+
+                        if (!self::validateEditoraName($editoras[$key], $regex['editora']))
+                            $this->validator->addError('O campo "Editora(s)" está inválido.');
+                    }
+                } else $this->validator->addError('O campo "Editora(s)" é obrigatório.');
 
                 if ($this->validator->passed()) {
                     $this->livroAutor->setIDLivro($ID);
 
-                    if ($this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor) !== [])
-                        $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
+                    $livroAutor = $this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor);
 
-                    // working for now
-                    foreach ($autores as $key => $value) {
-                        $autores[$key] = trim($autores[$key]);
-
-                        $this->autor->setNome($autores[$key]);
-
-                        if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
-                            $IDAutor = $this->autorDAO->register($this->autor);
-                        else $IDAutor = $autor[0]['ID'];
-
-                        $this->livroAutor->setIDLivro($ID);
-                        $this->livroAutor->setIDAutor($IDAutor);
-                        $this->livroAutorDAO->register($this->livroAutor);
+                    foreach ($livroAutor as $livroAutor) {
+                        dd($livroAutor);
                     }
+
+                    // if ($this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor) !== []) {
+                    // $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
+                    // }
+
+                    // $this->livroAutor->setIDLivro($ID);
+
+                    // if ($this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor) !== [])
+                    //     $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
+
+                    // foreach ($autores as $key => $value) {
+                    //     $autores[$key] = trim($autores[$key]);
+
+                    //     $this->autor->setNome($autores[$key]);
+
+                    //     if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
+                    //         $IDAutor = $this->autorDAO->register($this->autor);
+                    //     else $IDAutor = $autor[0]['ID'];
+
+                    //     $this->livroAutor->setIDLivro($ID);
+                    //     $this->livroAutor->setIDAutor($IDAutor);
+                    //     $this->livroAutorDAO->register($this->livroAutor);
+                    // }
                 } else $errors = array_unique($this->validator->errors());
             }
         }
