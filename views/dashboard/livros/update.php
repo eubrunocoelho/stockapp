@@ -180,7 +180,7 @@
                         }
                         ?></textarea>
                     </div>
-                    <button type="submit" class="btn mt--20">Cadastrar</button>
+                    <button type="submit" class="btn mt--20">Editar</button>
                 </form>
                 <?php
                 if (

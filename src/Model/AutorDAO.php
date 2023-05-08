@@ -23,7 +23,7 @@ class AutorDAO
         $stmt = $this->database->prepare($SQL);
         $stmt->bindValue(':nome', $autor->getNome());
         $stmt->execute();
-        
+
         if ($stmt->rowCount() > 0) {
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -45,11 +45,26 @@ class AutorDAO
         $stmt = $this->database->prepare($SQL);
         $stmt->bindValue(':nome', $autor->getNome());
         $stmt->execute();
-        
+
         if ($stmt->rowCount() > 0) {
             $ID = $this->database->lastInsertId();
 
             return $ID;
         } else return [];
+    }
+
+    public function deleteAutorByID(Autor $autor)
+    {
+        $SQL =
+            'DELETE FROM
+                 autor
+             WHERE
+                 ID = :ID';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID', $autor->getID());
+        $stmt->execute();
+
+        return ($stmt->rowCount() > 0) ? true : false;
     }
 }

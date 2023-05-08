@@ -115,7 +115,6 @@ class LivrosController extends GestorController
                 'isbn' => [
                     'label' => 'ISBN',
                     'required' => true,
-                    'unique' => 'isbn|livro',
                     'min' => 3,
                     'max' => 64
                 ],
@@ -332,7 +331,6 @@ class LivrosController extends GestorController
                 'isbn' => [
                     'label' => 'ISBN',
                     'required' => true,
-                    'unique-update' => 'isbn|livro|' . $ID,
                     'min' => 3,
                     'max' => 64
                 ],
@@ -408,35 +406,37 @@ class LivrosController extends GestorController
 
                 if ($this->validator->passed()) {
                     $this->livroAutor->setIDLivro($ID);
+                    $autoresFromDelete = $this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor);
 
-                    $livroAutor = $this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor);
+                    if ($autoresFromDelete !== []) {
+                        $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
 
-                    foreach ($livroAutor as $livroAutor) {
-                        dd($livroAutor);
+                        foreach ($autoresFromDelete as $autorFromDelete) {
+                            $this->livroAutor->setIDLivro($ID);
+                            $this->livroAutor->setIDAutor($autorFromDelete['ID_autor']);
+
+                            $livroAutor = $this->livroAutorDAO->getLivroAutorByOtherIDLivroAndByIDAutor($this->livroAutor);
+                            if (!($livroAutor !== [])) {
+                                $this->autor->setID($autorFromDelete['ID_autor']);
+                                $this->autorDAO->deleteAutorByID($this->autor);
+                            }
+                        }
                     }
 
-                    // if ($this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor) !== []) {
-                    // $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
-                    // }
+                    foreach ($autores as $key => $value) {
+                        $autores[$key] = trim($autores[$key]);
 
-                    // $this->livroAutor->setIDLivro($ID);
+                        $this->autor->setNome($autores[$key]);
 
-                    // if ($this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor) !== [])
-                    //     $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
+                        $autor = $this->autorDAO->getAutorByNome($this->autor);
+                        if ($autor === []) {
+                            $IDAutor = $this->autorDAO->register($this->autor);
+                        } else $IDAutor = $autor[0]['ID'];
 
-                    // foreach ($autores as $key => $value) {
-                    //     $autores[$key] = trim($autores[$key]);
-
-                    //     $this->autor->setNome($autores[$key]);
-
-                    //     if (($autor = $this->autorDAO->getAutorByNome($this->autor)) === [])
-                    //         $IDAutor = $this->autorDAO->register($this->autor);
-                    //     else $IDAutor = $autor[0]['ID'];
-
-                    //     $this->livroAutor->setIDLivro($ID);
-                    //     $this->livroAutor->setIDAutor($IDAutor);
-                    //     $this->livroAutorDAO->register($this->livroAutor);
-                    // }
+                        $this->livroAutor->setIDLivro($ID);
+                        $this->livroAutor->setIDAutor($IDAutor);
+                        $this->livroAutorDAO->register($this->livroAutor);
+                    } // finalized algorithm o.Õ
                 } else $errors = array_unique($this->validator->errors());
             }
         }
