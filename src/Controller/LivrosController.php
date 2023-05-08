@@ -86,7 +86,7 @@ class LivrosController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'autor' => '/^[A-Za-z .\'][^0-9-,]+$/',
+                'autor' => '/^[A-Za-z .\'][^0-9,]+$/',
                 'editora' => '/^[A-Za-z0-9 .\'][^,]+$/',
                 'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
                 'edicao' => '/^([1-9]|[0-9][0-9])$/',
