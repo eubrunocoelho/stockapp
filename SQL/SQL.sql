@@ -22,12 +22,12 @@ CREATE TABLE livro(
     titulo VARCHAR(255) NOT NULL,
     formato VARCHAR(128),
     ano_publicacao YEAR NOT NULL,
-    isbn VARCHAR(64) UNIQUE NOT NULL,
+    isbn VARCHAR(64) NOT NULL,
     edicao INT,
     idioma VARCHAR(128) NOT NULL,
     paginas INT,
     descricao TEXT,
-    unidades INT NOT NULL,
+    unidades INT DEFAULT 0,
     CONSTRAINT PK_ID_livro PRIMARY KEY(ID)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 

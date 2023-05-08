@@ -145,18 +145,6 @@
                         }
                         ?></textarea>
                     </div>
-                    <div class="form__group">
-                        <label class="form__label">Unidades: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="unidades" name="unidades" placeholder="Ex.: 100"<?php
-                        if (
-                            !(empty($persistRegisterValues)) &&
-                            (isset($persistRegisterValues['unidades'])) &&
-                            ($persistRegisterValues['unidades'] !== null)
-                        ) {
-                            echo ' value="' . $persistRegisterValues['unidades'] . '"';
-                        }
-                        ?>>
-                    </div>
                     <button type="submit" class="btn mt--20">Cadastrar</button>
                 </form>
                 <?php

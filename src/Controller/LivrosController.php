@@ -15,6 +15,7 @@ use Slim\{
 
 use App\{
     Helper\Session,
+    Helper\DataFilter,
     Validator\Validator
 };
 
@@ -152,11 +153,6 @@ class LivrosController extends GestorController
                     'label' => 'Descrição',
                     'required' => false,
                     'max' => 6000
-                ],
-                'unidades' => [
-                    'label' => 'Unidades',
-                    'required' => true,
-                    'regex' => $regex['unidades']
                 ]
             ];
 
@@ -171,8 +167,7 @@ class LivrosController extends GestorController
                     'edicao',
                     'idioma',
                     'paginas',
-                    'descricao',
-                    'unidades'
+                    'descricao'
                 ];
 
                 $this->validator->setFields($fields);
@@ -180,22 +175,27 @@ class LivrosController extends GestorController
                 $this->validator->setRules($rules);
                 $this->validator->validation();
 
-                $autores = explode(',', $formRequest['autor']);
-                $editoras = explode(',', $formRequest['editora']);
+                if (strlen(trim($formRequest['autor'])) > 0) {
+                    $autores = explode(',', $formRequest['autor']);
 
-                foreach ($autores as $key => $value) {
-                    $autores[$key] = trim($autores[$key]);
+                    foreach ($autores as $key => $value) {
+                        $autores[$key] = trim($autores[$key]);
 
-                    if (!self::validateAutorName($autores[$key], $regex['autor']))
-                        $this->validator->addError('O campo "Autor(es)" está inválido.');
-                }
+                        if (!self::validateAutorName($autores[$key], $regex['autor']))
+                            $this->validator->addError('O campo "Autor(es)" está inválido.');
+                    }
+                } else $this->validator->addError('O campo "Autor(es)" é obrigatório.');
 
-                foreach ($editoras as $key => $value) {
-                    $editoras[$key] = trim($editoras[$key]);
+                if (strlen(trim($formRequest['editora'])) > 0) {
+                    $editoras = explode(',', $formRequest['editora']);
 
-                    if (!self::validateEditoraName($editoras[$key], $regex['editora']))
-                        $this->validator->addError('O campo "Editora(s)" está inválido.');
-                }
+                    foreach ($editoras as $key => $value) {
+                        $editoras[$key] = trim($editoras[$key]);
+
+                        if (!self::validateEditoraName($editoras[$key], $regex['editora']))
+                            $this->validator->addError('O campo "Editora(s)" está inválido.');
+                    }
+                } else $this->validator->addError('O campo "Editora(s)" é obrigatório.');
 
                 if ($this->validator->passed()) {
                     $dataWrite = [
@@ -203,11 +203,10 @@ class LivrosController extends GestorController
                         'formato' => $formRequest['formato'] ?? null,
                         'ano_publicacao' => $formRequest['ano_publicacao'] ?? null,
                         'isbn' => $formRequest['isbn'] ?? null,
-                        'edicao' => intval($formRequest['edicao']) ?? null,
+                        'edicao' => DataFilter::isInteger($formRequest['edicao']) ?? null,
                         'idioma' => $formRequest['idioma'] ?? null,
-                        'paginas' => intval($formRequest['paginas']) ?? null,
-                        'descricao' => $formRequest['descricao'] ?? null,
-                        'unidades' => intval($formRequest['unidades']) ?? null
+                        'paginas' => DataFilter::isInteger($formRequest['paginas']) ?? null,
+                        'descricao' => $formRequest['descricao'] ?? null
                     ];
 
                     $this->livro->setTitutlo($dataWrite['titulo']);
@@ -218,7 +217,6 @@ class LivrosController extends GestorController
                     $this->livro->setIdioma($dataWrite['idioma']);
                     $this->livro->setPaginas($dataWrite['paginas']);
                     $this->livro->setDescricao($dataWrite['descricao']);
-                    $this->livro->setUnidades($dataWrite['unidades']);
 
                     if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
                         foreach ($autores as $key => $value) {
