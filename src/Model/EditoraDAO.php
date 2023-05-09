@@ -52,4 +52,19 @@ class EditoraDAO
             return $ID;
         } else return [];
     }
+
+    public function deleteEditoraByID(Editora $editora)
+    {
+        $SQL =
+            'DELETE FROM
+                 editora
+             WHERE
+                 ID = :ID';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID', $editora->getID());
+        $stmt->execute();
+
+        return ($stmt->rowCount() > 0) ? true : false;
+    }
 }
