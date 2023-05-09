@@ -28,6 +28,7 @@ CREATE TABLE livro(
     paginas INT,
     descricao TEXT,
     unidades INT DEFAULT 0,
+    criado_em DATETIME NOT NULL,
     CONSTRAINT PK_ID_livro PRIMARY KEY(ID)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 

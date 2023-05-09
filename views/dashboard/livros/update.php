@@ -121,7 +121,7 @@
                         ?>>
                     </div>
                     <div class="form__group">
-                        <label class="form__label">ISBN: <span class="text--danger">*</span></label>
+                        <label class="form__label">ISBN:</label>
                         <input type="text" class="form__input" id="isbn" name="isbn" placeholder="Ex.: 0000000000000"<?php
                         if (
                             !(empty($persistUpdateValues)) &&

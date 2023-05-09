@@ -114,7 +114,7 @@ class LivrosController extends GestorController
                 ],
                 'isbn' => [
                     'label' => 'ISBN',
-                    'required' => true,
+                    'required' => false,
                     'min' => 3,
                     'max' => 64
                 ],
@@ -192,7 +192,8 @@ class LivrosController extends GestorController
                         'edicao' => DataFilter::isInteger($formRequest['edicao']) ?? null,
                         'idioma' => $formRequest['idioma'] ?? null,
                         'paginas' => DataFilter::isInteger($formRequest['paginas']) ?? null,
-                        'descricao' => $formRequest['descricao'] ?? null
+                        'descricao' => $formRequest['descricao'] ?? null,
+                        'criado_em' => date('Y-m-d H:i:s') ?? null
                     ];
 
                     $this->livro->setTitutlo($dataWrite['titulo']);
@@ -203,6 +204,7 @@ class LivrosController extends GestorController
                     $this->livro->setIdioma($dataWrite['idioma']);
                     $this->livro->setPaginas($dataWrite['paginas']);
                     $this->livro->setDescricao($dataWrite['descricao']);
+                    $this->livro->setCriadoEm($dataWrite['criado_em']);
 
                     if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
                         foreach ($autores as $key => $value) {
@@ -233,7 +235,7 @@ class LivrosController extends GestorController
                             $this->livroEditoraDAO->register($this->livroEditora);
                         }
 
-                        // testing (OK)
+                        dd('OK');
                     }
                 } else $errors = array_unique($this->validator->errors());
             }
@@ -330,7 +332,7 @@ class LivrosController extends GestorController
                 ],
                 'isbn' => [
                     'label' => 'ISBN',
-                    'required' => true,
+                    'required' => false,
                     'min' => 3,
                     'max' => 64
                 ],
@@ -414,9 +416,9 @@ class LivrosController extends GestorController
                         foreach ($autoresFromDelete as $autorFromDelete) {
                             $this->livroAutor->setIDLivro($ID);
                             $this->livroAutor->setIDAutor($autorFromDelete['ID_autor']);
-
                             $livroAutor = $this->livroAutorDAO->getLivroAutorByOtherIDLivroAndByIDAutor($this->livroAutor);
-                            if (!($livroAutor !== [])) {
+                            
+                            if ($livroAutor === []) {
                                 $this->autor->setID($autorFromDelete['ID_autor']);
                                 $this->autorDAO->deleteAutorByID($this->autor);
                             }
@@ -427,8 +429,8 @@ class LivrosController extends GestorController
                         $autores[$key] = trim($autores[$key]);
 
                         $this->autor->setNome($autores[$key]);
-
                         $autor = $this->autorDAO->getAutorByNome($this->autor);
+                        
                         if ($autor === []) {
                             $IDAutor = $this->autorDAO->register($this->autor);
                         } else $IDAutor = $autor[0]['ID'];
@@ -436,7 +438,7 @@ class LivrosController extends GestorController
                         $this->livroAutor->setIDLivro($ID);
                         $this->livroAutor->setIDAutor($IDAutor);
                         $this->livroAutorDAO->register($this->livroAutor);
-                    } // finalized algorithm o.Õ
+                    }
                 } else $errors = array_unique($this->validator->errors());
             }
         }

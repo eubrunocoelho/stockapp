@@ -5,7 +5,7 @@ namespace App\Model;
 class Livro
 {
     private
-        $ID, $titulo, $formato, $ano_publicacao, $isbn, $edicao, $idioma, $paginas, $descricao, $unidades;
+        $ID, $titulo, $formato, $ano_publicacao, $isbn, $edicao, $idioma, $paginas, $descricao, $unidades, $criado_em;
 
     public function setID($ID)
     {
@@ -105,5 +105,15 @@ class Livro
     public function getUnidades()
     {
         return $this->unidades;
+    }
+
+    public function setCriadoEm($criado_em)
+    {
+        $this->criado_em = $criado_em;
+    }
+
+    public function getCriadoEm()
+    {
+        return $this->criado_em;
     }
 }
