@@ -410,6 +410,9 @@ class LivrosController extends GestorController
                     $this->livroAutor->setIDLivro($ID);
                     $autoresFromDelete = $this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor);
 
+                    $this->livroEditora->setIDLivro($ID);
+                    $editorasFromDelete = $this->livroEditoraDAO->getLivroEditoraByIDLivro($this->livroEditora);
+
                     if ($autoresFromDelete !== []) {
                         $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
 
@@ -417,7 +420,7 @@ class LivrosController extends GestorController
                             $this->livroAutor->setIDLivro($ID);
                             $this->livroAutor->setIDAutor($autorFromDelete['ID_autor']);
                             $livroAutor = $this->livroAutorDAO->getLivroAutorByOtherIDLivroAndByIDAutor($this->livroAutor);
-                            
+
                             if ($livroAutor === []) {
                                 $this->autor->setID($autorFromDelete['ID_autor']);
                                 $this->autorDAO->deleteAutorByID($this->autor);
@@ -430,7 +433,7 @@ class LivrosController extends GestorController
 
                         $this->autor->setNome($autores[$key]);
                         $autor = $this->autorDAO->getAutorByNome($this->autor);
-                        
+
                         if ($autor === []) {
                             $IDAutor = $this->autorDAO->register($this->autor);
                         } else $IDAutor = $autor[0]['ID'];
@@ -438,6 +441,38 @@ class LivrosController extends GestorController
                         $this->livroAutor->setIDLivro($ID);
                         $this->livroAutor->setIDAutor($IDAutor);
                         $this->livroAutorDAO->register($this->livroAutor);
+                    }
+
+                    if ($editorasFromDelete !== []) {
+                        $this->livroEditoraDAO->deleteLivroEditoraByIDLivro($this->livroEditora);
+
+                        foreach ($editorasFromDelete as $editoraFromDelete) {
+                            $this->livroEditora->setIDLivro($ID);
+                            $this->livroEditora->setIDEditora($editoraFromDelete['ID_editora']);
+                            $livroEditora = $this->livroEditoraDAO->getLivroEditoraByOtherIDLivroAndByIDEditora($this->livroEditora);
+
+                            if ($livroEditora === []) {
+                                $this->editora->setID($editoraFromDelete['ID_editora']);
+                                $this->editoraDAO->deleteEditoraByID($this->editora);
+                            }
+                        }
+
+                        foreach ($editoras as $key => $value) {
+                            $editoras[$key] = trim($editoras[$key]);
+
+                            $this->editora->setNome($editoras[$key]);
+                            $editora = $this->editoraDAO->getEditoraByNome($this->editora);
+
+                            if ($editora === []) {
+                                $IDEditora = $this->editoraDAO->register($this->editora);
+                            } else $IDEditora = $editora[0]['ID'];
+
+                            $this->livroEditora->setIDLivro($ID);
+                            $this->livroEditora->setIDEditora($IDEditora);
+                            $this->livroEditoraDAO->register($this->livroEditora);
+                        }
+
+                        dd('OK'); // testado e criado a rotina
                     }
                 } else $errors = array_unique($this->validator->errors());
             }

@@ -56,7 +56,7 @@ class LivroEditoraDAO
 
     public function getLivroEditoraByOtherIDLivroAndByIDEditora(LivroEditora $livroEditora)
     {
-        $SQL = 
+        $SQL =
             'SELECT * FROM
                  livro_editora
              WHERE
@@ -73,5 +73,20 @@ class LivroEditoraDAO
 
             return $result;
         } else return [];
+    }
+
+    public function deleteLivroEditoraByIDLivro(LivroEditora $livroEditora)
+    {
+        $SQL =
+            'DELETE FROM
+                 livro_editora
+             WHERE
+                 ID_livro = :ID_livro';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID_livro', $livroEditora->getIDLivro());
+        $stmt->execute();
+
+        return ($stmt->rowCount() > 0) ? true : false;
     }
 }
