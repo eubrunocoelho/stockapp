@@ -75,4 +75,34 @@ class LivroDAO
             return $ID;
         } else return [];
     }
+
+    public function update(Livro $livro)
+    {
+        $SQL =
+            'UPDATE livro
+             SET
+                 titulo = :titulo,
+                 formato = :formato,
+                 ano_publicacao = :ano_publicacao,
+                 isbn = :isbn,
+                 edicao = :edicao,
+                 idioma = :idioma,
+                 paginas = :paginas,
+                 descricao = :descricao
+             WHERE
+                 ID = :ID';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID', $livro->getID());
+        $stmt->bindValue(':titulo', $livro->getTitulo());
+        $stmt->bindValue(':formato', $livro->getFormato());
+        $stmt->bindValue(':ano_publicacao', $livro->getAnoPublicacao());
+        $stmt->bindValue(':isbn', $livro->getIsbn());
+        $stmt->bindValue(':edicao', $livro->getEdicao());
+        $stmt->bindValue(':idioma', $livro->getIdioma());
+        $stmt->bindValue(':paginas', $livro->getPaginas());
+        $stmt->bindValue(':descricao', $livro->getDescricao());
+
+        return ($stmt->execute()) ? true : false;
+    }
 }

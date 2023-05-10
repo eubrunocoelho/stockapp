@@ -409,6 +409,26 @@ class LivrosController extends GestorController
                 } else $this->validator->addError('O campo "Editora(s)" é obrigatório.');
 
                 if ($this->validator->passed()) {
+                    $dataWrite = [
+                        'titulo' => $formRequest['titulo'] ?? null,
+                        'formato' => $formRequest['formato'] ?? null,
+                        'ano_publicacao' => $formRequest['ano_publicacao'] ?? null,
+                        'isbn' => $formRequest['isbn'] ?? null,
+                        'edicao' => DataFilter::isInteger($formRequest['edicao']) ?? null,
+                        'idioma' => $formRequest['idioma'] ?? null,
+                        'paginas' => DataFilter::isInteger($formRequest['paginas']) ?? null,
+                        'descricao' => $formRequest['descricao'] ?? null
+                    ];
+
+                    $this->livro->setTitutlo($dataWrite['titulo']);
+                    $this->livro->setFormato($dataWrite['formato']);
+                    $this->livro->setAnoPublicacao($dataWrite['ano_publicacao']);
+                    $this->livro->setIsbn($dataWrite['isbn']);
+                    $this->livro->setEdicao($dataWrite['edicao']);
+                    $this->livro->setIdioma($dataWrite['idioma']);
+                    $this->livro->setPaginas($dataWrite['paginas']);
+                    $this->livro->setDescricao($dataWrite['descricao']);
+
                     $this->livroAutor->setIDLivro($ID);
                     $autoresFromDelete = $this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor);
 
@@ -471,6 +491,10 @@ class LivrosController extends GestorController
                         $this->livroEditora->setIDLivro($ID);
                         $this->livroEditora->setIDEditora($IDEditora);
                         $this->livroEditoraDAO->register($this->livroEditora);
+                    }
+
+                    if ($this->livroDAO->update($this->livro)) {
+                        dd('OK');
                     }
                 } else $errors = array_unique($this->validator->errors());
             }
