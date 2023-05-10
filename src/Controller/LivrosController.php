@@ -206,7 +206,9 @@ class LivrosController extends GestorController
                     $this->livro->setDescricao($dataWrite['descricao']);
                     $this->livro->setCriadoEm($dataWrite['criado_em']);
 
-                    if (($IDLivro = $this->livroDAO->register($this->livro)) !== []) {
+                    $IDLivro = $this->livroDAO->register($this->livro);
+
+                    if ($IDLivro !== []) {
                         foreach ($autores as $key => $value) {
                             $autores[$key] = trim($autores[$key]);
 
@@ -434,9 +436,8 @@ class LivrosController extends GestorController
                         $this->autor->setNome($autores[$key]);
                         $autor = $this->autorDAO->getAutorByNome($this->autor);
 
-                        if ($autor === []) {
-                            $IDAutor = $this->autorDAO->register($this->autor);
-                        } else $IDAutor = $autor[0]['ID'];
+                        if ($autor === []) $IDAutor = $this->autorDAO->register($this->autor);
+                        else $IDAutor = $autor[0]['ID'];
 
                         $this->livroAutor->setIDLivro($ID);
                         $this->livroAutor->setIDAutor($IDAutor);
@@ -456,23 +457,20 @@ class LivrosController extends GestorController
                                 $this->editoraDAO->deleteEditoraByID($this->editora);
                             }
                         }
+                    }
 
-                        foreach ($editoras as $key => $value) {
-                            $editoras[$key] = trim($editoras[$key]);
+                    foreach ($editoras as $key => $value) {
+                        $editoras[$key] = trim($editoras[$key]);
 
-                            $this->editora->setNome($editoras[$key]);
-                            $editora = $this->editoraDAO->getEditoraByNome($this->editora);
+                        $this->editora->setNome($editoras[$key]);
+                        $editora = $this->editoraDAO->getEditoraByNome($this->editora);
 
-                            if ($editora === []) {
-                                $IDEditora = $this->editoraDAO->register($this->editora);
-                            } else $IDEditora = $editora[0]['ID'];
+                        if ($editora === []) $IDEditora = $this->editoraDAO->register($this->editora);
+                        else $IDEditora = $editora[0]['ID'];
 
-                            $this->livroEditora->setIDLivro($ID);
-                            $this->livroEditora->setIDEditora($IDEditora);
-                            $this->livroEditoraDAO->register($this->livroEditora);
-                        }
-
-                        dd('OK'); // testado e criado a rotina
+                        $this->livroEditora->setIDLivro($ID);
+                        $this->livroEditora->setIDEditora($IDEditora);
+                        $this->livroEditoraDAO->register($this->livroEditora);
                     }
                 } else $errors = array_unique($this->validator->errors());
             }
