@@ -56,16 +56,23 @@ class GestoresController extends GestorController
         $gestor = parent::getGestor();
         $authorize = self::authorize('register', $gestor);
         $gestor = parent::applyGestorData($gestor);
-        // $gestores = $this->gestorDAO->getAll();
 
         $URI = (array)$request->getQueryParams();
-
-        // system pagination
+        
         $pagination['currentPage'] = $URI['page'] ?? 1;
         $pagination['resultLimit'] = 5;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
+        $pagination['totalRegisters'] = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
+        $pagination['totalPages'] = ceil($pagination['totalRegisters'] / $pagination['resultLimit']);
+
+        if ($pagination['currentPage'] == 1) $pagination['links']['previous'] = false;
+        else $pagination['links']['previous'] = true;
+
+        if ($pagination['currentPage'] == $pagination['totalPages']) $pagination['links']['next'] = false;
+        else $pagination['links']['next'] = true;
 
         $gestores = $this->gestorDAO->getAllWithPagination($pagination);
+
 
         foreach ($gestores as $key => $value)
             $gestores[$key] = parent::applyGestorData($gestores[$key]);
@@ -88,7 +95,8 @@ class GestoresController extends GestorController
             'gestor' => $gestor,
             'gestores' => $gestores,
             'authorize' => $authorize,
-            'messages' => $messages
+            'messages' => $messages,
+            'pagination' => $pagination
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);

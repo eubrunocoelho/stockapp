@@ -124,13 +124,33 @@
             <div class="pagination">
                 <ul class="pagination__list">
                     <li class="pagination__item">
+                        <?php
+                        if ($pagination['links']['previous']) {
+                        ?>
+                        <a href="<?=$basePath?>/gestores?page=<?=$pagination['currentPage'] - 1?>" class="pagination__link">«</a>
+                        <?php
+                        } else {
+                        ?>
                         <span class="pagination__link text--disabled">«</span>
+                        <?php
+                        }
+                        ?>
                     </li>
                     <li class="pagination__item">
-                        <a href="./gestores.html" class="pagination__link border--active">1</a>
+                        <a href="<?=$basePath?>/gestores?page=<?=$pagination['currentPage']?>" class="pagination__link border--active"><?=$pagination['currentPage']?></a>
                     </li>
                     <li class="pagination__item">
+                        <?php
+                        if ($pagination['links']['next']) {
+                        ?>
+                        <a href="<?=$basePath?>/gestores?page=<?=$pagination['currentPage'] + 1?>" class="pagination__link">»</a>
+                        <?php
+                        } else {
+                        ?>
                         <span class="pagination__link text--disabled">»</span>
+                        <?php
+                        }
+                        ?>
                     </li>
                 </ul>
             </div>
