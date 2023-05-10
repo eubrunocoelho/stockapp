@@ -494,7 +494,7 @@ class LivrosController extends GestorController
                     }
 
                     if ($this->livroDAO->update($this->livro)) {
-                        dd('OK');
+                        dd('OK'); // testing OK
                     }
                 } else $errors = array_unique($this->validator->errors());
             }

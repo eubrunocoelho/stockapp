@@ -50,10 +50,11 @@ class GestorDAO
         } else return [];
     }
 
-    public function getAll()
+    public function getAllWithPagination($params)
     {
         $SQL =
-            'SELECT * FROM gestor';
+            'SELECT * FROM gestor
+             LIMIT ' . $params['start'] . ', ' . $params['resultLimit'] . '';
 
         $stmt = $this->database->prepare($SQL);
         $stmt->execute();

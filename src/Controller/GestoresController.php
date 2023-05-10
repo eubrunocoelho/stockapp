@@ -56,7 +56,16 @@ class GestoresController extends GestorController
         $gestor = parent::getGestor();
         $authorize = self::authorize('register', $gestor);
         $gestor = parent::applyGestorData($gestor);
-        $gestores = $this->gestorDAO->getAll();
+        // $gestores = $this->gestorDAO->getAll();
+
+        $URI = (array)$request->getQueryParams();
+
+        // system pagination
+        $pagination['currentPage'] = $URI['page'] ?? 1;
+        $pagination['resultLimit'] = 5;
+        $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
+
+        $gestores = $this->gestorDAO->getAllWithPagination($pagination);
 
         foreach ($gestores as $key => $value)
             $gestores[$key] = parent::applyGestorData($gestores[$key]);
@@ -176,9 +185,7 @@ class GestoresController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'name' =>
-                // super sweet unicode
-                '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
+                'name' => '/^[A-Za-z .\'][^0-9,]+$/',
                 'cargo' => '/^[1-2]{1}$/',
                 'cpf' => '/^([0-9]){3}\.([0-9]){3}\.([0-9]){3}-([0-9]){2}$/',
                 'telefone' => '/^\([0-9]{2}\) [0-9]?[0-9]{4}-[0-9]{4}$/',
@@ -300,7 +307,7 @@ class GestoresController extends GestorController
 
                         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
                             self::moveUploadedFile($uploadDirectory, $uploadedFile, $uploadFileName);
-                        } else $errors = (array)'Houve um erro inesperado';
+                        } else $errors = (array)'Houve um erro inesperado.';
                     }
 
                     $dataWrite = [
@@ -338,7 +345,7 @@ class GestoresController extends GestorController
                         return $response
                             ->withHeader('Location', $url)
                             ->withStatus(302);
-                    }
+                    } else $errors = (array)'Houve um erro inesperado.';
                 } else $errors = array_unique($this->validator->errors());
             }
         }
@@ -394,24 +401,22 @@ class GestoresController extends GestorController
 
         if ($request->getMethod() == 'POST') {
             // !important
-            if ($ID !== Session::get('update.ID')) {
+            if ($ID !== Session::get('gestor.update.ID')) {
                 $url = RouteContext::fromRequest($request)
                     ->getRouteParser()
-                    ->urlFor('gestores.update', ['ID' => Session::get('update.ID')]);
+                    ->urlFor('gestores.update', ['ID' => Session::get('gestor.update.ID')]);
 
                 return $response
                     ->withHeader('Location', $url)
                     ->withStatus(302);
             }
 
-            Session::delete('update.ID');
+            Session::delete('gestor.update.ID');
 
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'name' =>
-                // super sweet unicode
-                '/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.\'-]+$/',
+                'name' => '/^[A-Za-z .\'][^0-9,]+$/',
                 'cargo' => '/^[1-2]{1}$/',
                 'cpf' => '/^([0-9]){3}\.([0-9]){3}\.([0-9]){3}-([0-9]){2}$/',
                 'telefone' => '/^\([0-9]{2}\) [0-9]?[0-9]{4}-[0-9]{4}$/',
@@ -608,12 +613,12 @@ class GestoresController extends GestorController
                         return $response
                             ->withHeader('Location', $url)
                             ->withStatus(302);
-                    }
+                    } else $errors = (array)'Houve um erro inesperado.';
                 } else $errors = array_unique($this->validator->errors());
             }
         }
 
-        Session::create('update.ID', $ID);
+        Session::create('gestor.update.ID', $ID);
 
         $gestor = parent::applyGestorData($gestor);
         $persistUpdateValues = $persistUpdateValues ?? $gestorProfile;
