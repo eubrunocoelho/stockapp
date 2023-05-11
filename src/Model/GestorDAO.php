@@ -50,11 +50,31 @@ class GestorDAO
         } else return [];
     }
 
-    public function getAllWithPagination($params)
+    public function getSearchWithPagination($pagination, $search)
     {
         $SQL =
             'SELECT * FROM gestor
-             LIMIT ' . $params['start'] . ', ' . $params['resultLimit'] . '';
+             WHERE nome LIKE :nome
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':nome', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getAllWithPagination($pagination)
+    {
+        $SQL =
+            'SELECT * FROM gestor 
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
 
         $stmt = $this->database->prepare($SQL);
         $stmt->execute();

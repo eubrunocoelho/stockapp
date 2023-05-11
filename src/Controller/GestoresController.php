@@ -58,7 +58,7 @@ class GestoresController extends GestorController
         $gestor = parent::applyGestorData($gestor);
 
         $URI = (array)$request->getQueryParams();
-        
+
         $pagination['currentPage'] = $URI['page'] ?? 1;
         $pagination['resultLimit'] = 5;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
@@ -73,6 +73,10 @@ class GestoresController extends GestorController
 
         $gestores = $this->gestorDAO->getAllWithPagination($pagination);
 
+        if (isset($URI['search'])) {
+            $search['data'] = '%' . $URI['search'] . '%';
+            $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
+        }
 
         foreach ($gestores as $key => $value)
             $gestores[$key] = parent::applyGestorData($gestores[$key]);

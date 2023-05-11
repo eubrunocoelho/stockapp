@@ -22,8 +22,8 @@
         <section class="section container mb--30">
             <div class="filter">
                 <div class="filter__search fg--1">
-                    <form action="#">
-                        <input type="text" class="search__input" placeholder="Pesquisar...">
+                    <form action="<?=$basePath?>/gestores" method="GET">
+                        <input type="text" class="search__input" id="search" name="search" placeholder="Pesquisar...">
                         <button class="search__btn">
                             <i class="fa-solid fa-magnifying-glass btn__icon"></i>
                         </button>
