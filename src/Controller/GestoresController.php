@@ -49,6 +49,8 @@ class GestoresController extends GestorController
 
     public function index(Request $request, Response $response, array $args): Response
     {
+        $URI = (array)$request->getQueryParams();
+
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
 
@@ -57,23 +59,20 @@ class GestoresController extends GestorController
         $authorize = self::authorize('register', $gestor);
         $gestor = parent::applyGestorData($gestor);
 
-        $URI = (array)$request->getQueryParams();
-
         $pagination['currentPage'] = $URI['page'] ?? 1;
         $pagination['resultLimit'] = 5;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
-
+        $pagination['totalRegisters'] = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
+        
         $gestores = $this->gestorDAO->getAllWithPagination($pagination);
 
-        $pagination['totalRegisters'] = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
-
-
         if (isset($URI['search'])) {
-            $search['data'] = '%' . $URI['search'] . '%';
-            $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
-            $pagination['totalRegisters'] = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
-
             $search['status'] = true;
+            $search['data'] = '%' . $URI['search'] . '%';
+
+            $pagination['totalRegisters'] = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
+            
+            $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
         } else $search['status'] = false;
 
         $pagination['totalPages'] = ceil($pagination['totalRegisters'] / $pagination['resultLimit']);
