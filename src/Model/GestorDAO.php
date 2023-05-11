@@ -86,6 +86,23 @@ class GestorDAO
         } else return [];
     }
 
+    public function getSearchRegisters($search)
+    {
+        $SQL =
+            'SELECT COUNT(ID) AS total_registros FROM gestor
+             WHERE nome LIKE :nome';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':nome', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function getTotalRegisters()
     {
         $SQL =

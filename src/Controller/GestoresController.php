@@ -76,7 +76,15 @@ class GestoresController extends GestorController
         if (isset($URI['search'])) {
             $search['data'] = '%' . $URI['search'] . '%';
             $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
-        }
+            $pagination['totalRegisters'] = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
+
+            dd($pagination, true);
+
+            $search['status'] = true;
+        } else $search['status'] = false;
+
+        if ($search['status']) $baseLink['search'] = '?search=' . $URI['search'] . '&';
+        else $baseLink['search'] = null;
 
         foreach ($gestores as $key => $value)
             $gestores[$key] = parent::applyGestorData($gestores[$key]);
@@ -100,7 +108,9 @@ class GestoresController extends GestorController
             'gestores' => $gestores,
             'authorize' => $authorize,
             'messages' => $messages,
-            'pagination' => $pagination
+            'pagination' => $pagination,
+            'search' => $search,
+            'baseLink' => $baseLink
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);
