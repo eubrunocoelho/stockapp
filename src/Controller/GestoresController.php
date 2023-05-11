@@ -62,7 +62,20 @@ class GestoresController extends GestorController
         $pagination['currentPage'] = $URI['page'] ?? 1;
         $pagination['resultLimit'] = 5;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
+
+        $gestores = $this->gestorDAO->getAllWithPagination($pagination);
+
         $pagination['totalRegisters'] = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
+
+
+        if (isset($URI['search'])) {
+            $search['data'] = '%' . $URI['search'] . '%';
+            $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
+            $pagination['totalRegisters'] = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
+
+            $search['status'] = true;
+        } else $search['status'] = false;
+
         $pagination['totalPages'] = ceil($pagination['totalRegisters'] / $pagination['resultLimit']);
 
         if ($pagination['currentPage'] == 1) $pagination['links']['previous'] = false;
@@ -70,18 +83,6 @@ class GestoresController extends GestorController
 
         if ($pagination['currentPage'] == $pagination['totalPages']) $pagination['links']['next'] = false;
         else $pagination['links']['next'] = true;
-
-        $gestores = $this->gestorDAO->getAllWithPagination($pagination);
-
-        if (isset($URI['search'])) {
-            $search['data'] = '%' . $URI['search'] . '%';
-            $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
-            $pagination['totalRegisters'] = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
-
-            dd($pagination, true);
-
-            $search['status'] = true;
-        } else $search['status'] = false;
 
         if ($search['status']) $baseLink['search'] = '?search=' . $URI['search'] . '&';
         else $baseLink['search'] = null;
