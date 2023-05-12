@@ -124,13 +124,13 @@
             <div class="pagination">
                 <ul class="pagination__list">
                     <li class="pagination__item">
-                        <span class="pagination__link text--disabled">«</span>
+                        <?=$templatePagination['previous']?>
                     </li>
                     <li class="pagination__item">
-                        <a href="./gestores.html" class="pagination__link border--active">1</a>
+                        <?=$templatePagination['current']?>
                     </li>
                     <li class="pagination__item">
-                        <span class="pagination__link text--disabled">»</span>
+                        <?=$templatePagination['next']?>
                     </li>
                 </ul>
             </div>
