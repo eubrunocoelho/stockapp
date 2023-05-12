@@ -119,26 +119,26 @@ class GestoresController extends GestorController
         $status['status']['active'] = $status['status']['active'] ?? false;
         $status['status']['inactive'] = $status['status']['inactive'] ?? false;
 
-        if ($status['status']['active']) $baseLink['status'] = '&status=active&';
+        if ($status['status']['active']) $baseLink['status'] = '&status=active';
         elseif (
             !($status['status']['active']) &&
             !($status['status']['inactive'])
         ) $baseLink['status'] = null;
 
-        if ($status['status']['inactive']) $baseLink['status'] = '&status=inactive&';
+        if ($status['status']['inactive']) $baseLink['status'] = '&status=inactive';
         elseif (
             !($status['status']['inactive']) &&
             !($status['status']['active'])
         ) $baseLink['status'] = null;
 
-        if ($status['search']) $baseLink['search'] = 'search=' . $URI['search'];
+        if ($status['search']) $baseLink['search'] = '&search=' . $URI['search'];
         elseif (!($status['search'])) $baseLink['search'] = null;
 
         $baseLink = $baseLink ?? [];
 
-        dd($baseLink, true);
-
         $testing = '?page=' . $pagination['currentPage'] - 1 . $baseLink['status'] . $baseLink['search'];
+
+        dd($testing, true);
 
         if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
         else $pagination['links']['previous'] = false;
