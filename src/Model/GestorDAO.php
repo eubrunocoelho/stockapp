@@ -69,10 +69,86 @@ class GestorDAO
         } else return [];
     }
 
+    public function getSearchAndStatusActiveWithPagination($pagination, $search)
+    {
+        $SQL =
+            'SELECT * FROM gestor
+             WHERE nome LIKE :nome
+             AND status = 1
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':nome', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getSearchAndStatusInactiveWithPagination($pagination, $search)
+    {
+        $SQL =
+            'SELECT * FROM gestor
+             WHERE nome LIKE :nome
+             AND status = 2
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':nome', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function getAllWithPagination($pagination)
     {
         $SQL =
             'SELECT * FROM gestor 
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getStatusActiveWithPagination($pagination)
+    {
+        $SQL =
+            'SELECT * FROM gestor
+             WHERE status = 1
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getStatusInactiveWithPagination($pagination)
+    {
+        $SQL =
+            'SELECT * FROM gestor
+             WHERE status = 2
              ORDER BY ID ASC
              LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
 

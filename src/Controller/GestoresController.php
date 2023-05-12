@@ -62,17 +62,33 @@ class GestoresController extends GestorController
         $pagination['currentPage'] = $URI['page'] ?? 1;
         $pagination['resultLimit'] = 5;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
-        
+
         $totalRegisters = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
         $gestores = $this->gestorDAO->getAllWithPagination($pagination);
 
-        if (isset($URI['search'])) {
+        if (isset($URI['status'])) {
+            if ($URI['status'] == 'active') $gestores = $this->gestorDAO->getStatusActiveWithPagination($pagination);
+            if ($URI['status'] == 'inactive') $gestores = $this->gestorDAO->getStatusInactiveWithPagination($pagination);
+        }
+
+        if (
+            (isset($URI['status'])) &&
+            (isset($URI['search']))
+        ) {
             $search['status'] = true;
             $search['data'] = '%' . $URI['search'] . '%';
 
-            $totalRegisters = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
-            $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
+            if ($URI['status'] == 'active') $gestores = $this->gestorDAO->getSearchAndStatusActiveWithPagination($pagination, $search);
+            if ($URI['status'] == 'inactive') $gestores = $this->gestorDAO->getSearchAndStatusInactiveWithPagination($pagination, $search);
         } else $search['status'] = false;
+
+        // if (isset($URI['search'])) {
+        //     $search['status'] = true;
+        //     $search['data'] = '%' . $URI['search'] . '%';
+
+        //     $totalRegisters = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
+        //     $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
+        // } else $search['status'] = false;
 
         $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
 
