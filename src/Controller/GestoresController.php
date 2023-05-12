@@ -60,7 +60,7 @@ class GestoresController extends GestorController
         $gestor = parent::applyGestorData($gestor);
 
         $pagination['currentPage'] = $URI['page'] ?? 1;
-        $pagination['resultLimit'] = 2;
+        $pagination['resultLimit'] = 1;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
 
         $totalRegisters = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
@@ -97,7 +97,7 @@ class GestoresController extends GestorController
                 $totalRegisters = $this->gestorDAO->getSearchAndStatusActiveRegisters($search)[0]['total_registros'];
                 $gestores = $this->gestorDAO->getSearchAndStatusActiveWithPagination($pagination, $search);
             }
-            
+
             if ($URI['status'] == 'inactive') {
                 $totalRegisters = $this->gestorDAO->getSearchAndStatusInactiveRegisters($search)[0]['total_registros'];
                 $gestores = $this->gestorDAO->getSearchAndStatusInactiveWithPagination($pagination, $search);
