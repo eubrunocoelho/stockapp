@@ -88,7 +88,7 @@ class GestoresController extends GestorController
             $search['data'] = '%' . $URI['search'] . '%';
 
             $totalRegisters = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
-            $gestores = $this->gestorDAO->getSearchAndStatusActiveWithPagination($pagination, $search);
+            $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
         } else $status['search'] = false;
 
         if (
@@ -136,9 +136,9 @@ class GestoresController extends GestorController
 
         $baseLink = $baseLink ?? [];
 
-        $testing = '?page=' . $pagination['currentPage'] - 1 . $baseLink['status'] . $baseLink['search'];
-
-        dd($testing, true);
+        $pagination['URL']['previous'] = $basePath . '/gestores?page=' . $pagination['currentPage'] - 1 . $baseLink['status'] . $baseLink['search'];
+        $pagination['URL']['next'] = $basePath . '/gestores?page=' . $pagination['currentPage'] + 1 . $baseLink['status'] . $baseLink['search'];
+        $pagination['URL']['current'] = $basePath . '/gestores?page=' . $pagination['currentPage'] . $baseLink['status'] . $baseLink['search'];
 
         if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
         else $pagination['links']['previous'] = false;
@@ -164,7 +164,7 @@ class GestoresController extends GestorController
         if ($pagination['links']['previous'])
             $templatePagination['previous'] =
                 '
-                <a href="' . $basePath . '/gestores?page=' . $pagination['currentPage'] - 1 . '" class="pagination__link">«</a>
+                <a href="' . $pagination['URL']['previous'] . '" class="pagination__link">«</a>
                 ';
         else
             $templatePagination['previous'] =
@@ -175,7 +175,7 @@ class GestoresController extends GestorController
         if ($pagination['links']['next'])
             $templatePagination['next'] =
                 '
-                <a href="' . $basePath . '/gestores?page=' . $pagination['currentPage'] + 1 . '" class="pagination__link">»</a>
+                <a href="' . $pagination['URL']['next'] . '" class="pagination__link">»</a>
                 ';
         else
             $templatePagination['next'] =
@@ -185,7 +185,7 @@ class GestoresController extends GestorController
 
         $templatePagination['current'] =
             '
-            <a href="' . $basePath . '/gestores?page=' . $pagination['currentPage'] . '" class="pagination__link border--active"> ' . $pagination['currentPage'] . '</a> 
+            <a href="' . $pagination['URL']['current'] . '" class="pagination__link border--active"> ' . $pagination['currentPage'] . '</a> 
             ';
 
         $templateVariables = [
