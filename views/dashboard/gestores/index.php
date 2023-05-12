@@ -124,45 +124,13 @@
             <div class="pagination">
                 <ul class="pagination__list">
                     <li class="pagination__item">
-                        <?php
-                        if ($pagination['links']['previous']) {
-                            if ($search['status']) {
-                        ?>
-                        <a href="<?=$basePath?>/gestores<?=$baseLink['search']?>page=<?=$pagination['currentPage'] - 1?>" class="pagination__link">«</a>
-                        <?php
-                            } else {
-                        ?>
-                        <a href="<?=$basePath?>/gestores?page=<?=$pagination['currentPage'] - 1?>" class="pagination__link">«</a>
-                        <?php
-                            }
-                        } else {
-                        ?>
                         <span class="pagination__link text--disabled">«</span>
-                        <?php
-                        }
-                        ?>
                     </li>
                     <li class="pagination__item">
-                        <a href="<?=$basePath?>/gestores?page=<?=$pagination['currentPage']?>" class="pagination__link border--active"><?=$pagination['currentPage']?></a>
+                        <a href="./gestores.html" class="pagination__link border--active">1</a>
                     </li>
                     <li class="pagination__item">
-                        <?php
-                        if ($pagination['links']['next']) {
-                            if ($search['status']) {
-                        ?>
-                        <a href="<?=$basePath?>/gestores<?=$baseLink['search']?>page=<?=$pagination['currentPage'] + 1?>" class="pagination__link">»</a>
-                        <?php
-                            } else {
-                        ?>
-                        <a href="<?=$basePath?>/gestores?page=<?=$pagination['currentPage'] + 1?>" class="pagination__link">»</a>
-                        <?php
-                            }
-                        } else {
-                        ?>
                         <span class="pagination__link text--disabled">»</span>
-                        <?php
-                        }
-                        ?>
                     </li>
                 </ul>
             </div>

@@ -226,14 +226,12 @@ class GestorDAO
         } else return [];
     }
 
-    public function getSearchAndStatusActiveRegisters($pagination, $search)
+    public function getSearchAndStatusActiveRegisters($search)
     {
         $SQL =
             'SELECT COUNT(ID) as total_registros FROM gestor
              WHERE nome LIKE :nome
-             AND status = 1
-             ORDER BY ID ASC
-             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+             AND status = 1';
 
         $stmt = $this->database->prepare($SQL);
         $stmt->bindValue(':nome', $search['data']);
@@ -246,14 +244,12 @@ class GestorDAO
         } else return [];
     }
 
-    public function getSearchAndStatusInactiveRegisters($pagination, $search)
+    public function getSearchAndStatusInactiveRegisters($search)
     {
         $SQL =
             'SELECT COUNT(ID) as total_registros FROM gestor
              WHERE nome LIKE :nome
-             AND status = 2
-             ORDER BY ID ASC
-             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+             AND status = 2';
 
         $stmt = $this->database->prepare($SQL);
         $stmt->bindValue(':nome', $search['data']);
