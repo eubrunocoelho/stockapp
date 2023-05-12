@@ -194,6 +194,78 @@ class GestorDAO
         } else return [];
     }
 
+    public function getStatusActiveRegisters()
+    {
+        $SQL =
+            'SELECT COUNT(ID) as total_registros FROM gestor
+             WHERE status = 1';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getStatusInactiveRegisters()
+    {
+        $SQL =
+            'SELECT COUNT(ID) as total_registros FROM gestor
+             WHERE status = 2';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getSearchAndStatusActiveRegisters($pagination, $search)
+    {
+        $SQL =
+            'SELECT COUNT(ID) as total_registros FROM gestor
+             WHERE nome LIKE :nome
+             AND status = 1
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':nome', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getSearchAndStatusInactiveRegisters($pagination, $search)
+    {
+        $SQL =
+            'SELECT COUNT(ID) as total_registros FROM gestor
+             WHERE nome LIKE :nome
+             AND status = 2
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':nome', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function register(Gestor $gestor)
     {
         $SQL =
