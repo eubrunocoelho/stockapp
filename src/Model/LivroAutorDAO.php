@@ -14,6 +14,26 @@ class LivroAutorDAO
         $this->database = $database;
     }
 
+    public function getAutorByIDLivro(LivroAutor $livroAutor)
+    {
+        $SQL =
+            'SELECT autor.ID, autor.nome
+             FROM autor
+             INNER JOIN livro_autor ON autor.ID = livro_autor.ID_autor
+             INNER JOIN livro ON livro.ID = livro_autor.ID_livro
+             WHERE ID_livro = :ID_livro';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID_livro', $livroAutor->getIDLivro());
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function register(LivroAutor $livroAutor)
     {
         $SQL =
@@ -56,7 +76,7 @@ class LivroAutorDAO
 
     public function getLivroAutorByOtherIDLivroAndByIDAutor(LivroAutor $livroAutor)
     {
-        $SQL = 
+        $SQL =
             'SELECT * FROM
                  livro_autor
              WHERE

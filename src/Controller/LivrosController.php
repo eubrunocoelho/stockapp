@@ -505,6 +505,17 @@ class LivrosController extends GestorController
         $persistUpdateValues = $persistUpdateValues ?? $livro;
         $errors = $errors ?? [];
 
+        $this->livroAutor->setIDLivro($ID);
+        $autor['items'] = $this->livroAutorDAO->getAutorByIDLivro($this->livroAutor);
+        $autor['string'] = self::autoresOrEditorasToString($autor['items']);
+        
+        $this->livroEditora->setIDLivro($ID);
+        $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
+        $editora['string'] = self::autoresOrEditorasToString($editora['items']);
+
+        dd($autor['string']);
+        dd($editora['string'], true);
+
         $templateVariables = [
             'basePath' => $basePath,
             'gestor' => $gestor,
@@ -524,6 +535,19 @@ class LivrosController extends GestorController
     private static function validateEditoraName($editora, $regexRule)
     {
         return (preg_match($regexRule, $editora)) ? true : false;
+    }
+
+    private static function autoresOrEditorasToString($array)
+    {
+        $string = '';
+
+        foreach ($array as $item) {
+            $string .= $item['nome'] . ', ';
+        }
+
+        $string = rtrim($string, ', ');
+
+        return $string;
     }
 
     private static function getPersistRegisterValues($request)

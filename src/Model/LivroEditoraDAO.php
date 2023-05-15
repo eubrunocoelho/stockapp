@@ -14,6 +14,26 @@ class LivroEditoraDAO
         $this->database = $database;
     }
 
+    public function getEditoraByIDLivro(LivroEditora $livroEditora)
+    {
+        $SQL =
+            'SELECT editora.ID, editora.nome
+             FROM editora
+             INNER JOIN livro_editora ON editora.ID = livro_editora.ID_editora
+             INNER JOIN livro ON livro.ID = livro_editora.ID_livro
+             WHERE ID_livro = :ID_livro';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID_livro', $livroEditora->getIDLivro());
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function register(LivroEditora $livroEditora)
     {
         $SQL =
