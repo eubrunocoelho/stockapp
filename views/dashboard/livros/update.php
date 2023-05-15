@@ -1,3 +1,6 @@
+<?php
+// dd($livro, true);
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -17,54 +20,54 @@
     <main class="main">
         <div class="main-heading container">
             <h1 class="main-heading__title">Editar Livro</h1>
-            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="#">Editar Livro</a> / <a class="breadcrumbs__link" href="#">O Senhor dos Anéis</a> / <a class="breadcrumbs__link" href="#">Livros</a> / <a class="breadcrumbs__link" href="#">Dashboard</a></span>
+            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/livros/update/<?=$livro['ID']?>">Editar Livro</a> / <a class="breadcrumbs__link" href="#">O Senhor dos Anéis</a> / <a class="breadcrumbs__link" href="#">Livros</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container mb--30">
             <div class="box">
                 <div class="box-heading">
-                    <h1 class="box-heading__title">O Senhor dos Anéis</h1>
+                    <h1 class="box-heading__title"><?=$livro['titulo']?></h1>
                 </div>
                 <table class="table">
                     <tbody>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Título</th>
-                            <td class="table__cell fg--1">O Senhor dos Anéis</td>
+                            <td class="table__cell fg--1"><?=$livro['titulo']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Autor(es)</th>
-                            <td class="table__cell fg--1">Satanic Books, Hell of Word</td>
+                            <td class="table__cell fg--1"><?=$livro['autor']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Editora(s)</th>
-                            <td class="table__cell fg--1">Inferno Dungeons</td>
+                            <td class="table__cell fg--1"><?=$livro['editora']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Formato</th>
-                            <td class="table__cell fg--1">Brochura</td>
+                            <td class="table__cell fg--1"><?=$livro['formato']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Ano da Publicação</th>
-                            <td class="table__cell fg--1">2006</td>
+                            <td class="table__cell fg--1"><?=$livro['ano_publicacao']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">ISBN</th>
-                            <td class="table__cell fg--1">123456789012</td>
+                            <td class="table__cell fg--1"><?=$livro['isbn']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Edição</th>
-                            <td class="table__cell fg--1">7</td>
+                            <td class="table__cell fg--1"><?=$livro['edicao']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Idioma</th>
-                            <td class="table__cell fg--1">Português</td>
+                            <td class="table__cell fg--1"><?=$livro['idioma']?></td>
                         </tr>
                         <tr class="table__tr">
-                            <th class="table__cell tc--w210">Descrição</th>
-                            <td class="table__cell fg--1">Olá, Satan!</td>
+                            <th class="table__cell tc--w210">Páginas</th>
+                            <td class="table__cell fg--1"><?=$livro['paginas']?></td>
                         </tr>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Unidades</th>
-                            <td class="table__cell fg--1">666</td>
+                            <td class="table__cell fg--1"><?=$livro['unidades']?></td>
                         </tr>
                     </tbody>
                 </table>
@@ -90,11 +93,27 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Autor(es): <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="autor" name="autor" placeholder="Ex.: João Augusto, José Antônio">
+                        <input type="text" class="form__input" id="autor" name="autor" placeholder="Ex.: João Augusto, José Antônio"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['autor'])) &&
+                            ($persistUpdateValues['titulo'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['autor'] . '"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label">Editora(s): <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="editora" name="editora" placeholder="Ex.: Globo Livros, Companhias das Letras">
+                        <input type="text" class="form__input" id="editora" name="editora" placeholder="Ex.: Globo Livros, Companhias das Letras"<?php
+                        if (
+                            !(empty($persistUpdateValues)) &&
+                            (isset($persistUpdateValues['editora'])) &&
+                            ($persistUpdateValues['editora'] !== null)
+                        ) {
+                            echo ' value="' . $persistUpdateValues['editora'] . '"';
+                        }
+                        ?>>
                     </div>
                     <div class="form__group">
                         <label class="form__label">Formato:</label>

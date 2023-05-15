@@ -86,8 +86,8 @@ class LivrosController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'autor' => '/^[A-Za-z .\'][^0-9,]+$/',
-                'editora' => '/^[A-Za-z0-9 .\'][^,]+$/',
+                'autor' => '/^[A-Za-z .\'][^0-9,=]+$/',
+                'editora' => '/^[A-Za-z0-9 .\'][^,=]+$/',
                 'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
                 'edicao' => '/^([1-9]|[0-9][0-9])$/',
                 'idioma' => '/^[A-Za-z \'][^0-9.,]+$/',
@@ -167,7 +167,7 @@ class LivrosController extends GestorController
                     foreach ($autores as $key => $value) {
                         $autores[$key] = trim($autores[$key]);
 
-                        if (!self::validateAutorName($autores[$key], $regex['autor']))
+                        if (!self::validateAutorOrEditoraName($autores[$key], $regex['autor']))
                             $this->validator->addError('O campo "Autor(es)" está inválido.');
                     }
                 } else $this->validator->addError('O campo "Autor(es)" é obrigatório.');
@@ -178,7 +178,7 @@ class LivrosController extends GestorController
                     foreach ($editoras as $key => $value) {
                         $editoras[$key] = trim($editoras[$key]);
 
-                        if (!self::validateEditoraName($editoras[$key], $regex['editora']))
+                        if (!self::validateAutorOrEditoraName($editoras[$key], $regex['editora']))
                             $this->validator->addError('O campo "Editora(s)" está inválido.');
                     }
                 } else $this->validator->addError('O campo "Editora(s)" é obrigatório.');
@@ -306,8 +306,8 @@ class LivrosController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'autor' => '/^[A-Za-z .\'][^0-9,]+$/',
-                'editora' => '/^[A-Za-z0-9 .\'][^,]+$/',
+                'autor' => '/^[A-Za-z .\'][^0-9,=]+$/',
+                'editora' => '/^[A-Za-z0-9 .\'][^,=]+$/',
                 'ano_publicacao' => '/^19[0-9][0-9]|20[01][0-9]|202[0-3]$/',
                 'edicao' => '/^([1-9]|[0-9][0-9])$/',
                 'idioma' => '/^[A-Za-z \'][^0-9.,]+$/',
@@ -392,7 +392,7 @@ class LivrosController extends GestorController
                     foreach ($autores as $key => $value) {
                         $autores[$key] = trim($autores[$key]);
 
-                        if (!self::validateAutorName($autores[$key], $regex['autor']))
+                        if (!self::validateAutorOrEditoraName($autores[$key], $regex['autor']))
                             $this->validator->addError('O campo "Autor(es)" está inválido.');
                     }
                 } else $this->validator->addError('O campo "Autor(es)" é obrigatório.');
@@ -403,7 +403,7 @@ class LivrosController extends GestorController
                     foreach ($editoras as $key => $value) {
                         $editoras[$key] = trim($editoras[$key]);
 
-                        if (!self::validateEditoraName($editoras[$key], $regex['editora']))
+                        if (!self::validateAutorOrEditoraName($editoras[$key], $regex['editora']))
                             $this->validator->addError('O campo "Editora(s)" está inválido.');
                     }
                 } else $this->validator->addError('O campo "Editora(s)" é obrigatório.');
@@ -502,19 +502,16 @@ class LivrosController extends GestorController
 
         Session::create('livro.update.ID', $ID);
 
-        $persistUpdateValues = $persistUpdateValues ?? $livro;
-        $errors = $errors ?? [];
-
         $this->livroAutor->setIDLivro($ID);
         $autor['items'] = $this->livroAutorDAO->getAutorByIDLivro($this->livroAutor);
-        $autor['string'] = self::autoresOrEditorasToString($autor['items']);
+        $livro['autor'] = self::autoresOrEditorasToString($autor['items']);
         
         $this->livroEditora->setIDLivro($ID);
         $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
-        $editora['string'] = self::autoresOrEditorasToString($editora['items']);
+        $livro['editora'] = self::autoresOrEditorasToString($editora['items']);
 
-        dd($autor['string']);
-        dd($editora['string'], true);
+        $persistUpdateValues = $persistUpdateValues ?? $livro;
+        $errors = $errors ?? [];
 
         $templateVariables = [
             'basePath' => $basePath,
@@ -527,14 +524,9 @@ class LivrosController extends GestorController
         return $this->renderer->render($response, 'dashboard/livros/update.php', $templateVariables);
     }
 
-    private static function validateAutorName($autor, $regexRule)
+    private static function validateAutorOrEditoraName($autor, $regexRule)
     {
         return (preg_match($regexRule, $autor)) ? true : false;
-    }
-
-    private static function validateEditoraName($editora, $regexRule)
-    {
-        return (preg_match($regexRule, $editora)) ? true : false;
     }
 
     private static function autoresOrEditorasToString($array)

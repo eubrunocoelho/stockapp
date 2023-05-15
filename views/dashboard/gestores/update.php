@@ -41,24 +41,14 @@
                             <th class="table__cell tc--w210">CPF</th>
                             <td class="table__cell fg--1"><?=$gestorProfile['cpf']?></td>
                         </tr>
-                        <?php
-                        if (isset($gestorProfile['telefone'])) {
-                        ?>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Telefone</th>
                             <td class="table__cell fg--1"><?=$gestorProfile['telefone']?></td>
                         </tr>
-                        <?php
-                        }
-                        if (isset($gestorProfile['endereco'])) {
-                        ?>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Endereço</th>
                             <td class="table__cell fg--1"><?=$gestorProfile['endereco']?></td>
                         </tr>
-                        <?php
-                        }
-                        ?>
                         <tr class="table__tr">
                             <th class="table__cell tc--w210">Cargo</th>
                             <td class="table__cell fg--1"><?=$gestorProfile['cargo']?></td>

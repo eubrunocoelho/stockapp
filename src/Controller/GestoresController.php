@@ -60,7 +60,7 @@ class GestoresController extends GestorController
         $gestor = parent::applyGestorData($gestor);
 
         $pagination['currentPage'] = $URI['page'] ?? 1;
-        $pagination['resultLimit'] = 1;
+        $pagination['resultLimit'] = 10;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
 
         $totalRegisters = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
@@ -291,7 +291,7 @@ class GestoresController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'name' => '/^[A-Za-z .\'][^0-9,]+$/',
+                'name' => '/^[A-Za-z .\'][^0-9,=]+$/',
                 'cargo' => '/^[1-2]{1}$/',
                 'cpf' => '/^([0-9]){3}\.([0-9]){3}\.([0-9]){3}-([0-9]){2}$/',
                 'telefone' => '/^\([0-9]{2}\) [0-9]?[0-9]{4}-[0-9]{4}$/',
@@ -522,7 +522,7 @@ class GestoresController extends GestorController
             $formRequest = (array)$request->getParsedBody();
 
             $regex = [
-                'name' => '/^[A-Za-z .\'][^0-9,]+$/',
+                'name' => '/^[A-Za-z .\'][^0-9,=]+$/',
                 'cargo' => '/^[1-2]{1}$/',
                 'cpf' => '/^([0-9]){3}\.([0-9]){3}\.([0-9]){3}-([0-9]){2}$/',
                 'telefone' => '/^\([0-9]{2}\) [0-9]?[0-9]{4}-[0-9]{4}$/',
