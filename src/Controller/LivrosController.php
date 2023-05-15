@@ -524,9 +524,9 @@ class LivrosController extends GestorController
         return $this->renderer->render($response, 'dashboard/livros/update.php', $templateVariables);
     }
 
-    private static function validateAutorOrEditoraName($autor, $regexRule)
+    private static function validateAutorOrEditoraName($value, $regexRule)
     {
-        return (preg_match($regexRule, $autor)) ? true : false;
+        return (preg_match($regexRule, $value)) ? true : false;
     }
 
     private static function autoresOrEditorasToString($array)
