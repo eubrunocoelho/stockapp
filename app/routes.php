@@ -42,9 +42,11 @@ return function (App $app) {
     })->add(Unauthenticated::class);
 
     $app->group('/livros', function (RouteCollectorProxy $group) {
+        $group->get('', [LivrosController::class, 'index'])->setName('livros.index');
         $group->get('/register', [LivrosController::class, 'register'])->setName('livros.register');
         $group->post('/register', [LivrosController::class, 'register']);
         $group->get('/update/{ID}', [LivrosController::class, 'update'])->setName('livros.update');
         $group->post('/update/{ID}', [LivrosController::class, 'update']);
+        $group->get('/show/{ID}', [LivrosController::class, 'show'])->setName('livros.show');
     })->add(Unauthenticated::class);
 };

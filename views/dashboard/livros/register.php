@@ -155,7 +155,7 @@
                     foreach ($errors as $error) {
                 ?>
                 <div class="alert-box alert--danger mt--20">
-                        <p class="alert-box__text"><?=$error?></p>
+                    <p class="alert-box__text"><?=$error?></p>
                 </div>
                 <?php
                     }

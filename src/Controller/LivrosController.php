@@ -64,6 +64,99 @@ class LivrosController extends GestorController
         parent::__construct($this->app);
     }
 
+    public function index(Request $request, Response $response, array $args): Response
+    {
+        $basePath = $this->container->get('settings')['api']['path'];
+        $gestor = parent::getGestor();
+        $gestor = parent::applyGestorData($gestor);
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $livros = $this->livroDAO->getAll();
+
+        foreach ($livros as $key => $value) {
+            $this->livroAutor->setIDLivro($livros[$key]['ID']);
+            $autor['items'] = $this->livroAutorDAO->getAutorByIDLivro($this->livroAutor);
+            $livros[$key]['autor'] = self::autoresOrEditorasToString($autor['items']);
+
+            $this->livroEditora->setIDLivro($livros[$key]['ID']);
+            $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
+            $livros[$key]['editora'] = self::autoresOrEditorasToString($editora['items']);
+        }
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor,
+            'livros' => $livros
+        ];
+
+        return $this->renderer->render($response, 'dashboard/livros/index.php', $templateVariables);
+    }
+
+    public function show(Request $request, Response $response, array $args): Response
+    {
+        $flash = $this->container->get('flash');
+        $messages = $flash->getMessages();
+
+        $ID = $request->getAttribute('ID');
+        $basePath = $this->container->get('settings')['api']['path'];
+        $gestor = parent::getGestor();
+        $gestor = parent::applyGestorData($gestor);
+
+        $this->livro->setID($ID);
+        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
+
+        $this->livroAutor->setIDLivro($ID);
+        $autor['items'] = $this->livroAutorDAO->getAutorByIDLivro($this->livroAutor);
+        $livro['autor'] = self::autoresOrEditorasToString($autor['items']);
+
+        $this->livroEditora->setIDLivro($ID);
+        $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
+        $livro['editora'] = self::autoresOrEditorasToString($editora['items']);
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $this->livro->setID($ID);
+        if ($this->livroDAO->getLivroByID($this->livro) === []) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('livros.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor,
+            'messages' => $messages,
+            'livro' => $livro
+        ];
+
+        return $this->renderer->render($response, 'dashboard/livros/show.php', $templateVariables);
+    }
+
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath = $this->container->get('settings')['api']['path'];
@@ -505,7 +598,7 @@ class LivrosController extends GestorController
         $this->livroAutor->setIDLivro($ID);
         $autor['items'] = $this->livroAutorDAO->getAutorByIDLivro($this->livroAutor);
         $livro['autor'] = self::autoresOrEditorasToString($autor['items']);
-        
+
         $this->livroEditora->setIDLivro($ID);
         $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
         $livro['editora'] = self::autoresOrEditorasToString($editora['items']);

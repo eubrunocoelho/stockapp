@@ -65,10 +65,6 @@
                             <th class="table__cell tc--w210">Páginas</th>
                             <td class="table__cell fg--1"><?=$livro['paginas']?></td>
                         </tr>
-                        <tr class="table__tr">
-                            <th class="table__cell tc--w210">Unidades</th>
-                            <td class="table__cell fg--1"><?=$livro['unidades']?></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -209,7 +205,7 @@
                     foreach ($errors as $error) {
                 ?>
                 <div class="alert-box alert--danger mt--20">
-                        <p class="alert-box__text"><?=$error?></p>
+                    <p class="alert-box__text"><?=$error?></p>
                 </div>
                 <?php
                     }
