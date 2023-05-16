@@ -339,7 +339,6 @@ class LivrosController extends GestorController
                         }
 
                         // chegou aqui tá OK!
-
                         $this->container->get('flash')
                             ->addMessage('message.success', 'Livro cadastrado com sucesso!');
 

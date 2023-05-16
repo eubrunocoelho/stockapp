@@ -51,13 +51,26 @@ class GestoresController extends GestorController
     {
         $URI = (array)$request->getQueryParams();
 
+        $basePath = $this->container->get('settings')['api']['path'];
+
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
 
-        $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
         $authorize = self::authorize('register', $gestor);
         $gestor = parent::applyGestorData($gestor);
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
 
         $pagination['currentPage'] = $URI['page'] ?? 1;
         $pagination['resultLimit'] = 10;
@@ -84,7 +97,6 @@ class GestoresController extends GestorController
 
         if (isset($URI['search'])) {
             $status['search'] = true;
-
             $search['data'] = '%' . $URI['search'] . '%';
 
             $totalRegisters = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
@@ -149,18 +161,6 @@ class GestoresController extends GestorController
         foreach ($gestores as $key => $value)
             $gestores[$key] = parent::applyGestorData($gestores[$key]);
 
-        if ($gestor === []) {
-            Session::destroy();
-
-            $url = RouteContext::fromRequest($request)
-                ->getRouteParser()
-                ->urlFor('login');
-
-            return $response
-                ->withHeader('Location', $url)
-                ->withStatus(302);
-        }
-
         if ($pagination['links']['previous'])
             $templatePagination['previous'] =
                 '
@@ -190,10 +190,10 @@ class GestoresController extends GestorController
 
         $templateVariables = [
             'basePath' => $basePath,
+            'messages' => $messages,
             'gestor' => $gestor,
             'gestores' => $gestores,
             'authorize' => $authorize,
-            'messages' => $messages,
             'templatePagination' => $templatePagination
         ];
 
@@ -202,11 +202,14 @@ class GestoresController extends GestorController
 
     public function show(Request $request, Response $response, array $args): Response
     {
+        $ID = $request->getAttribute('ID');
+
+        $basePath = $this->container->get('settings')['api']['path'];
+
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
 
-        $ID = $request->getAttribute('ID');
-        $basePath = $this->container->get('settings')['api']['path'];
+        // \o/
         $gestor = parent::getGestor();
 
         if ($gestor === []) {
@@ -239,13 +242,12 @@ class GestoresController extends GestorController
         $gestor = parent::applyGestorData($gestor);
         $gestorProfile = parent::applyGestorData($gestorProfile);
 
-
         $templateVariables = [
             'basePath' => $basePath,
+            'messages' => $messages,
             'gestor' => $gestor,
             'gestorProfile' => $gestorProfile,
-            'authorize' => $authorize,
-            'messages' => $messages
+            'authorize' => $authorize
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/show.php', $templateVariables);
@@ -254,9 +256,11 @@ class GestoresController extends GestorController
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath = $this->container->get('settings')['api']['path'];
-        $gestor = parent::getGestor();
         $uploadDirectory =
             $this->container->get('settings')['api']['uploadDirectory'] . '/img/profile';
+
+        $gestor = parent::getGestor();
+        $authorize = self::authorize('register', $gestor);
 
         if ($gestor === []) {
             Session::destroy();
@@ -473,10 +477,12 @@ class GestoresController extends GestorController
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
+
         $basePath = $this->container->get('settings')['api']['path'];
-        $gestor = parent::getGestor();
         $uploadDirectory =
             $this->container->get('settings')['api']['uploadDirectory'] . '/img/profile';
+
+        $gestor = parent::getGestor();
 
         if ($gestor === []) {
             Session::destroy();
@@ -505,8 +511,22 @@ class GestoresController extends GestorController
         $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
         $authorize = self::authorize('update', $gestor, $gestorProfile);
 
+        if (
+            !($authorize['update']['profile'])
+        ) {
+            $this->container->get('flash')
+                ->addMessage('message.warning', 'Você não tem permissão para executar essa ação.');
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('gestores.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
         if ($request->getMethod() == 'POST') {
-            // !important
             if ($ID !== Session::get('gestor.update.ID')) {
                 $url = RouteContext::fromRequest($request)
                     ->getRouteParser()
@@ -731,21 +751,6 @@ class GestoresController extends GestorController
         $gestorProfile = parent::applyGestorData($gestorProfile);
         $errors = $errors ?? [];
 
-        if (
-            !($authorize['update']['profile'])
-        ) {
-            $this->container->get('flash')
-                ->addMessage('message.warning', 'Você não tem permissão para executar essa ação.');
-
-            $url = RouteContext::fromRequest($request)
-                ->getRouteParser()
-                ->urlFor('gestores.index');
-
-            return $response
-                ->withHeader('Location', $url)
-                ->withStatus(302);
-        }
-
         $templateVariables = [
             'basePath' => $basePath,
             'gestor' => $gestor,
@@ -756,42 +761,6 @@ class GestoresController extends GestorController
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
-    }
-
-    private static function validateMediaType($uploadedFile, $uploadRules)
-    {
-        $fileMediaType = $uploadedFile->getClientMediaType();
-
-        if (!in_array($fileMediaType, $uploadRules['mimeTypes']))
-            return false;
-
-        return true;
-    }
-
-    private static function validateFileSize($uploadedFile, $uploadRules)
-    {
-        $fileSize = $uploadedFile->getSize();
-
-        if ($fileSize > $uploadRules['maxSize'])
-            return false;
-
-        return true;
-    }
-
-    private static function renameFile($uploadedFile)
-    {
-        $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-        $baseName = bin2hex(random_bytes(8));
-        $fileName = $baseName . '.' . $extension;
-
-        return $fileName;
-    }
-
-    private static function moveUploadedFile($uploadDirectory, $uploadedFile, $fileName)
-    {
-        $uploadedFile->moveTo($uploadDirectory . DIRECTORY_SEPARATOR . $fileName);
-
-        return true;
     }
 
     private static function authorize($type, $gestor = [], $gestorProfile = [])
@@ -845,6 +814,42 @@ class GestoresController extends GestorController
             if ($status['active'] == 1) return $authorize = ['register' => true];
             else return $authorize = ['register' => false];
         }
+    }
+
+    private static function validateMediaType($uploadedFile, $uploadRules)
+    {
+        $fileMediaType = $uploadedFile->getClientMediaType();
+
+        if (!in_array($fileMediaType, $uploadRules['mimeTypes']))
+            return false;
+
+        return true;
+    }
+
+    private static function validateFileSize($uploadedFile, $uploadRules)
+    {
+        $fileSize = $uploadedFile->getSize();
+
+        if ($fileSize > $uploadRules['maxSize'])
+            return false;
+
+        return true;
+    }
+
+    private static function renameFile($uploadedFile)
+    {
+        $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
+        $baseName = bin2hex(random_bytes(8));
+        $fileName = $baseName . '.' . $extension;
+
+        return $fileName;
+    }
+
+    private static function moveUploadedFile($uploadDirectory, $uploadedFile, $fileName)
+    {
+        $uploadedFile->moveTo($uploadDirectory . DIRECTORY_SEPARATOR . $fileName);
+
+        return true;
     }
 
     private static function getPersistRegisterValues($request)
