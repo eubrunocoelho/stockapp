@@ -710,7 +710,7 @@ class GestoresController extends GestorController
 
                     if ($this->gestorDAO->update($this->gestor)) {
                         $this->container->get('flash')
-                            ->addMessage('message.success', 'Usuário atualizado com sucesso.');
+                            ->addMessage('message.success', 'Usuário atualizado com sucesso!');
 
                         $url = RouteContext::fromRequest($request)
                             ->getRouteParser()

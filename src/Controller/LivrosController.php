@@ -66,6 +66,9 @@ class LivrosController extends GestorController
 
     public function index(Request $request, Response $response, array $args): Response
     {
+        $flash = $this->container->get('flash');
+        $messages = $flash->getMessages();
+
         $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
@@ -97,7 +100,8 @@ class LivrosController extends GestorController
         $templateVariables = [
             'basePath' => $basePath,
             'gestor' => $gestor,
-            'livros' => $livros
+            'livros' => $livros,
+            'messages' => $messages
         ];
 
         return $this->renderer->render($response, 'dashboard/livros/index.php', $templateVariables);
@@ -330,8 +334,17 @@ class LivrosController extends GestorController
                             $this->livroEditoraDAO->register($this->livroEditora);
                         }
 
-                        dd('OK');
-                    }
+                        $this->container->get('flash')
+                            ->addMessage('message.success', 'Livro cadastrado com sucesso!');
+
+                        $url = RouteContext::fromRequest($request)
+                            ->getRouteParser()
+                            ->urlFor('livros.index');
+
+                        return $response
+                            ->withHeader('Location', $url)
+                            ->withStatus(302);
+                    } else $errors = (array)'Houve um erro inesperado.';
                 } else $errors = array_unique($this->validator->errors());
             }
         }
@@ -587,8 +600,17 @@ class LivrosController extends GestorController
                     }
 
                     if ($this->livroDAO->update($this->livro)) {
-                        dd('OK'); // testing OK
-                    }
+                        $this->container->get('flash')
+                            ->addMessage('message.success', 'Livro atualizado com sucesso!');
+
+                        $url = RouteContext::fromRequest($request)
+                            ->getRouteParser()
+                            ->urlFor('livros.show', ['ID' => $ID]);
+
+                        return $response
+                            ->withHeader('Location', $url)
+                            ->withStatus(302);
+                    } else $errors = (array)'Houve um erro inesperado.';
                 } else $errors = array_unique($this->validator->errors());
             }
         }

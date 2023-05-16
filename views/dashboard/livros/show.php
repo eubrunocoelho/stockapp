@@ -20,6 +20,31 @@
             <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/livros/show/<?=$livro['ID']?>"><?=$livro['titulo']?></a> / <a class="breadcrumbs__link" href="<?=$basePath?>/livros">Livros</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container">
+            
+        <?php
+            if (
+                !(empty($messages)) &&
+                (array_key_exists('message.warning', $messages))
+            ) {
+            ?>
+            <div class="alert-box alert--warning mb--20">
+                <p class="alert-box__text"><?=$messages['message.warning'][0]?></p>
+            </div>
+            <?php
+            }
+            ?>
+            <?php
+            if (
+                !(empty($messages)) &&
+                (array_key_exists('message.success', $messages))
+            ) {
+            ?>
+            <div class="alert-box alert--success mb--20">
+                <p class="alert-box__text"><?=$messages['message.success'][0]?></p>
+            </div>
+            <?php
+            }
+            ?>
             <div class="box">
                 <div class="box-heading">
                     <h1 class="box-heading__title"><?=$livro['titulo']?></h1>

@@ -40,6 +40,30 @@
             </div>
         </section>
         <section class="section container mb--20">
+        <?php
+            if (
+                !(empty($messages)) &&
+                (array_key_exists('message.warning', $messages))
+            ) {
+            ?>
+            <div class="alert-box alert--warning mb--20">
+                <p class="alert-box__text"><?=$messages['message.warning'][0]?></p>
+            </div>
+            <?php
+            }
+            ?>
+            <?php
+            if (
+                !(empty($messages)) &&
+                (array_key_exists('message.success', $messages))
+            ) {
+            ?>
+            <div class="alert-box alert--success mb--20">
+                <p class="alert-box__text"><?=$messages['message.success'][0]?></p>
+            </div>
+            <?php
+            }
+            ?>
             <div class="box">
                 <div class="box-heading">
                     <h1 class="box-heading__title">Lista de Livros</h1>
