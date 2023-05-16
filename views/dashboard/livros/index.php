@@ -17,7 +17,7 @@
     <main class="main">
         <div class="main-heading container">
             <h1 class="main-heading__title">Livros</h1>
-            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="./livros.html">Livros</a> / <a class="breadcrumbs__link" href="./index.html">Dashboard</a></span>
+            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/livros">Livros</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container mb--30">
             <div class="filter">
@@ -78,7 +78,7 @@
                         ?>
                     </tbody>
                 </table>
-                <button class="btn" onclick="window.location.href='./cadastrar-livro.html';">Cadastrar Livro</button>
+                <button class="btn" onclick="window.location.href='<?=$basePath?>/livros/register';">Cadastrar Livro</button>
             </div>
         </section>
         <section class="section container">

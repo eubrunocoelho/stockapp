@@ -1,6 +1,3 @@
-<?php
-// dd($livro, true);
-?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -20,7 +17,7 @@
     <main class="main">
         <div class="main-heading container">
             <h1 class="main-heading__title">Livro: <?=$livro['titulo']?></h1>
-            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/livros/show/<?=$livro['ID']?>"><?=$livro['titulo']?></a> / <a class="breadcrumbs__link" href="#">Livros</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
+            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/livros/show/<?=$livro['ID']?>"><?=$livro['titulo']?></a> / <a class="breadcrumbs__link" href="<?=$basePath?>/livros">Livros</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container">
             <div class="box">
