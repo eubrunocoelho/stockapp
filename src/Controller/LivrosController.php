@@ -66,10 +66,11 @@ class LivrosController extends GestorController
 
     public function index(Request $request, Response $response, array $args): Response
     {
+        $basePath = $this->container->get('settings')['api']['path'];
+
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
 
-        $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
 
@@ -99,9 +100,9 @@ class LivrosController extends GestorController
 
         $templateVariables = [
             'basePath' => $basePath,
+            'messages' => $messages,
             'gestor' => $gestor,
-            'livros' => $livros,
-            'messages' => $messages
+            'livros' => $livros
         ];
 
         return $this->renderer->render($response, 'dashboard/livros/index.php', $templateVariables);
@@ -109,24 +110,15 @@ class LivrosController extends GestorController
 
     public function show(Request $request, Response $response, array $args): Response
     {
+        $ID = $request->getAttribute('ID');
+
+        $basePath = $this->container->get('settings')['api']['path'];
+        
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
 
-        $ID = $request->getAttribute('ID');
-        $basePath = $this->container->get('settings')['api']['path'];
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
-
-        $this->livro->setID($ID);
-        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
-
-        $this->livroAutor->setIDLivro($ID);
-        $autor['items'] = $this->livroAutorDAO->getAutorByIDLivro($this->livroAutor);
-        $livro['autor'] = self::autoresOrEditorasToString($autor['items']);
-
-        $this->livroEditora->setIDLivro($ID);
-        $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
-        $livro['editora'] = self::autoresOrEditorasToString($editora['items']);
 
         if ($gestor === []) {
             Session::destroy();
@@ -141,6 +133,18 @@ class LivrosController extends GestorController
         }
 
         $this->livro->setID($ID);
+        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
+
+        $this->livroAutor->setIDLivro($ID);
+        $autor['items'] = $this->livroAutorDAO->getAutorByIDLivro($this->livroAutor);
+        $livro['autor'] = self::autoresOrEditorasToString($autor['items']);
+
+        $this->livroEditora->setIDLivro($ID);
+        $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
+        $livro['editora'] = self::autoresOrEditorasToString($editora['items']);
+
+        // ID da URL
+        $this->livro->setID($ID);
         if ($this->livroDAO->getLivroByID($this->livro) === []) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -153,8 +157,8 @@ class LivrosController extends GestorController
 
         $templateVariables = [
             'basePath' => $basePath,
-            'gestor' => $gestor,
             'messages' => $messages,
+            'gestor' => $gestor,
             'livro' => $livro
         ];
 
@@ -164,6 +168,7 @@ class LivrosController extends GestorController
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath = $this->container->get('settings')['api']['path'];
+
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
 
@@ -304,7 +309,6 @@ class LivrosController extends GestorController
                     $this->livro->setCriadoEm($dataWrite['criado_em']);
 
                     $IDLivro = $this->livroDAO->register($this->livro);
-
                     if ($IDLivro !== []) {
                         foreach ($autores as $key => $value) {
                             $autores[$key] = trim($autores[$key]);
@@ -333,6 +337,8 @@ class LivrosController extends GestorController
                             $this->livroEditora->setIDEditora($IDEditora);
                             $this->livroEditoraDAO->register($this->livroEditora);
                         }
+
+                        // chegou aqui tá OK!
 
                         $this->container->get('flash')
                             ->addMessage('message.success', 'Livro cadastrado com sucesso!');
@@ -366,7 +372,9 @@ class LivrosController extends GestorController
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
+
         $basePath = $this->container->get('settings')['api']['path'];
+
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
 
@@ -632,8 +640,8 @@ class LivrosController extends GestorController
             'basePath' => $basePath,
             'gestor' => $gestor,
             'livro' => $livro,
-            'persistUpdateValues' => $persistUpdateValues,
-            'errors' => $errors
+            'errors' => $errors,
+            'persistUpdateValues' => $persistUpdateValues
         ];
 
         return $this->renderer->render($response, 'dashboard/livros/update.php', $templateVariables);
