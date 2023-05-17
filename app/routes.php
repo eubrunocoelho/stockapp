@@ -8,6 +8,7 @@ use Slim\{
 use App\Controller\{
     LoginController,
     DashboardController,
+    EntradaSaidaController,
     GestoresController,
     LivrosController,
 };
@@ -43,10 +44,12 @@ return function (App $app) {
 
     $app->group('/livros', function (RouteCollectorProxy $group) {
         $group->get('', [LivrosController::class, 'index'])->setName('livros.index');
+        $group->get('/show/{ID}', [LivrosController::class, 'show'])->setName('livros.show');
         $group->get('/register', [LivrosController::class, 'register'])->setName('livros.register');
         $group->post('/register', [LivrosController::class, 'register']);
         $group->get('/update/{ID}', [LivrosController::class, 'update'])->setName('livros.update');
         $group->post('/update/{ID}', [LivrosController::class, 'update']);
-        $group->get('/show/{ID}', [LivrosController::class, 'show'])->setName('livros.show');
+        $group->get('/entrada/{ID}', [EntradaSaidaController::class, 'entrada'])->setName('livros.entrada');
+        $group->post('/entrada/{ID}', [EntradaSaidaController::class, 'entrada']);
     })->add(Unauthenticated::class);
 };
