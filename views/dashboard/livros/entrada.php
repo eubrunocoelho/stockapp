@@ -46,7 +46,15 @@
                 <form class="form" action="<?=$basePath?>/livros/entrada/<?=$livro['ID']?>" method="POST">
                     <div class="form__group">
                         <label class="form__label">Unidades:</label>
-                        <input type="text" class="form__input" id="unidades" name="unidades" placeholder="Unidades">
+                        <input type="text" class="form__input" id="unidades" name="unidades" placeholder="Unidades"<?php
+                        if (
+                            !(empty($persistRegisterValues)) &&
+                            (isset($persistRegisterValues['unidades'])) &&
+                            ($persistRegisterValues['unidades'] !== null)
+                        ) {
+                            echo ' value="' . $persistRegisterValues['unidades'] . '"';
+                        }
+                        ?>>
                     </div>
                     <button type="submit" class="btn mt--20">Registrar</button>
                 </form>

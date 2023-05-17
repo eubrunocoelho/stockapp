@@ -120,4 +120,20 @@ class LivroDAO
 
         return ($stmt->execute()) ? true : false;
     }
+
+    public function updateUnidades(Livro $livro)
+    {
+        $SQL =
+            'UPDATE livro
+             SET
+                 unidades = :unidades
+             WHERE
+                 ID = :ID';
+        
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID', $livro->getID());
+        $stmt->bindValue(':unidades', $livro->getUnidades());
+
+        return ($stmt->execute()) ? true : false;
+    }
 }
