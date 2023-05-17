@@ -57,3 +57,25 @@ CREATE TABLE livro_autor(
     CONSTRAINT ID_livro_livro_autor FOREIGN KEY(ID_livro) REFERENCES livro(ID),
     CONSTRAINT ID_autor_livro_autor FOREIGN KEY(ID_autor) REFERENCES autor(ID)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE entrada(
+    ID INT NOT NULL AUTO_INCREMENT,
+    ID_livro INT NOT NULL,
+    ID_gestor INT NOT NULL,
+    quantidade INT NOT NULL,
+    registrado_em DATETIME NOT NULL,
+    CONSTRAINT PK_ID_entrada PRIMARY KEY (ID),
+    CONSTRAINT FK_ID_livro_entrada FOREIGN KEY (ID_livro) REFERENCES livro(ID),
+    CONSTRAINT FK_ID_gestor_entrada FOREIGN KEY (ID_gestor) REFERENCES gestor(ID)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE saida(
+    ID INT NOT NULL AUTO_INCREMENT,
+    ID_livro INT NOT NULL,
+    ID_gestor INT NOT NULL,
+    quantidade INT NOT NULL,
+    registrado_em DATETIME NOT NULL,
+    CONSTRAINT PK_ID_entrada PRIMARY KEY (ID),
+    CONSTRAINT FK_ID_livro_saida FOREIGN KEY (ID_livro) REFERENCES livro(ID),
+    CONSTRAINT FK_ID_gestor_saida FOREIGN KEY (ID_gestor) REFERENCES gestor(ID)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
