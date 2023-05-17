@@ -211,7 +211,6 @@ class GestoresController extends GestorController
 
         // \o/
         $gestor = parent::getGestor();
-
         if ($gestor === []) {
             Session::destroy();
 
@@ -223,8 +222,7 @@ class GestoresController extends GestorController
                 ->withHeader('Location', $url)
                 ->withStatus(302);
         }
-
-        // ID da URL
+        
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
@@ -496,7 +494,6 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         }
 
-        // ID da URL
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
@@ -716,8 +713,7 @@ class GestoresController extends GestorController
                         'status' => $dataRequest['status'] ?? null,
                         'img_profile' => $dataRequest['img_profile'] ?? null
                     ];
-
-                    $this->gestor->setID($ID);
+                    
                     $this->gestor->setNome($dataWrite['nome']);
                     $this->gestor->setEmail($dataWrite['email']);
                     $this->gestor->setCpf($dataWrite['cpf']);

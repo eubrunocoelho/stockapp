@@ -142,9 +142,7 @@ class LivrosController extends GestorController
         $this->livroEditora->setIDLivro($ID);
         $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
         $livro['editora'] = self::autoresOrEditorasToString($editora['items']);
-
-        // ID da URL
-        $this->livro->setID($ID);
+        
         if ($this->livroDAO->getLivroByID($this->livro) === []) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -337,8 +335,7 @@ class LivrosController extends GestorController
                             $this->livroEditora->setIDEditora($IDEditora);
                             $this->livroEditoraDAO->register($this->livroEditora);
                         }
-
-                        // chegou aqui tá OK!
+                        
                         $this->container->get('flash')
                             ->addMessage('message.success', 'Livro cadastrado com sucesso!');
 
@@ -388,8 +385,7 @@ class LivrosController extends GestorController
                 ->withHeader('Locaion', $url)
                 ->withStatus(302);
         }
-
-        // ID da URL
+        
         $this->livro->setID($ID);
         if ($this->livroDAO->getLivroByID($this->livro) === []) {
             $url = RouteContext::fromRequest($request)

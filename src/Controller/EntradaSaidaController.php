@@ -73,10 +73,6 @@ class EntradaSaidaController extends GestorController
         }
 
         $this->livro->setID($ID);
-        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
-
-        // ID da URL
-        $this->livro->setID($ID);
         if ($this->livroDAO->getLivroByID($this->livro) === []) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -86,6 +82,8 @@ class EntradaSaidaController extends GestorController
                 ->withHeader('Location', $url)
                 ->withStatus(302);
         }
+
+        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
 
         if ($request->getMethod() == 'POST') {
             if ($ID !== Session::get('livro.entrada.ID')) {
