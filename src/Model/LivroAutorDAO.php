@@ -34,27 +34,6 @@ class LivroAutorDAO
         } else return [];
     }
 
-    public function register(LivroAutor $livroAutor)
-    {
-        $SQL =
-            'INSERT INTO
-             livro_autor (
-                 ID_livro,
-                 ID_autor
-             ) 
-             VALUES (
-                 :ID_livro,
-                 :ID_autor
-             )';
-
-        $stmt = $this->database->prepare($SQL);
-        $stmt->bindValue(':ID_livro', $livroAutor->getIDLivro());
-        $stmt->bindValue(':ID_autor', $livroAutor->getIDAutor());
-        $stmt->execute();
-
-        return ($stmt->rowCount() > 0) ? true : false;
-    }
-
     public function getLivroAutorByIDLivro(LivroAutor $livroAutor)
     {
         $SQL =
@@ -93,6 +72,27 @@ class LivroAutorDAO
 
             return $result;
         } else return [];
+    }
+
+    public function register(LivroAutor $livroAutor)
+    {
+        $SQL =
+            'INSERT INTO
+             livro_autor (
+                 ID_livro,
+                 ID_autor
+             ) 
+             VALUES (
+                 :ID_livro,
+                 :ID_autor
+             )';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID_livro', $livroAutor->getIDLivro());
+        $stmt->bindValue(':ID_autor', $livroAutor->getIDAutor());
+        $stmt->execute();
+
+        return ($stmt->rowCount() > 0) ? true : false;
     }
 
     public function deleteLivroAutorByIDLivro(LivroAutor $livroAutor)

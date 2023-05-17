@@ -34,6 +34,7 @@ class DashboardController extends GestorController
     public function index(Request $request, Response $response, array $args): Response
     {
         $basePath = $this->container->get('settings')['api']['path'];
+        
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
 

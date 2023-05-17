@@ -55,7 +55,7 @@ abstract class GestorController
         return $gestor;
     }
 
-    private function getCargo($cargo)
+    private static function getCargo($cargo)
     {
         switch ($cargo) {
             case 1:
@@ -71,7 +71,7 @@ abstract class GestorController
         return $cargo;
     }
 
-    private function getGenero($genero)
+    private static function getGenero($genero)
     {
         switch ($genero) {
             case 1:
@@ -87,7 +87,7 @@ abstract class GestorController
         return $genero;
     }
 
-    private function getStatus($status)
+    private static function getStatus($status)
     {
         switch ($status) {
             case 1:
