@@ -30,10 +30,29 @@
                     </form>
                 </div>
                 <div class="filter__order-by">
-                    <select class="order-by__select">
-                        <option>Todos</option>
-                        <option>Ativos</option>
-                        <option>Inativos</option>
+                    <select class="order-by__select" id="orderBy">
+                        <option value="<?=$orderBy['URL']['todos']?>"<?php
+                        if (
+                            !($status['status']['active']) &&
+                            !($status['status']['inactive'])
+                        ) {
+                            echo ' selected';
+                        }
+                        ?>>Todos</option>
+                        <option value="<?=$orderBy['URL']['active']?>"<?php
+                        if (
+                            ($status['status']['active'])
+                        ) {
+                            echo ' selected';
+                        }
+                        ?>>Ativos</option>
+                        <option value="<?=$orderBy['URL']['inactive']?>"<?php
+                        if (
+                            ($status['status']['inactive'])
+                        ) {
+                            echo ' selected';
+                        }
+                        ?>>Inativos</option>
                     </select>
                 </div>
             </div>
@@ -92,11 +111,15 @@
                             </td>
                             <td class="table__cell tc--w210"><?=$gestor['cargo']?></td>
                             <?php
-                            if ($gestor['status'] == 'Ativo') {
+                            if (
+                                $gestor['status'] == 'Ativo'
+                            ) {
                             ?>
                             <td class="table__cell tc--w210 text--success"><?=$gestor['status']?></td>
                             <?php
-                            } elseif ($gestor['status'] == 'Inativo') {
+                            } elseif (
+                                $gestor['status'] == 'Inativo'
+                            ) {
                             ?>
                             <td class="table__cell tc--w210 text--danger"><?=$gestor['status']?></td>
                             <?php
@@ -112,7 +135,9 @@
                     </tbody>
                 </table>
                 <?php
-                if ($authorize['register'] === true) {
+                if (
+                    $authorize['register'] === true
+                ) {
                 ?>
                 <button class="btn" onclick="window.location.href='<?=$basePath?>/gestores/register'">Cadastrar</button>
                 <?php
@@ -124,13 +149,37 @@
             <div class="pagination">
                 <ul class="pagination__list">
                     <li class="pagination__item">
-                        <?=$templatePagination['previous']?>
+                        <?php
+                        if (
+                            $pagination['links']['previous']
+                        ) {
+                        ?>
+                        <a href="<?=$pagination['URL']['previous']?>" class="pagination__link">«</a>
+                        <?php
+                        } else {
+                        ?>
+                        <span class="pagination__link text--disabled">«</span>
+                        <?php
+                        }
+                        ?>
                     </li>
                     <li class="pagination__item">
-                        <?=$templatePagination['current']?>
+                        <a href="<?=$pagination['URL']['current']?>" class="pagination__link border--active"><?=$pagination['currentPage']?></a>
                     </li>
                     <li class="pagination__item">
-                        <?=$templatePagination['next']?>
+                        <?php
+                        if (
+                            $pagination['links']['next']
+                        ) {
+                        ?>
+                        <a href="<?=$pagination['URL']['next']?>" class="pagination__link">»</a>
+                        <?php
+                        } else {
+                        ?>
+                        <span class="pagination__link text--disabled">»</span>
+                        <?php
+                        }
+                        ?>
                     </li>
                 </ul>
             </div>
@@ -139,6 +188,19 @@
     <?php
     require __DIR__ . '/../partials/footer.php';
     ?>
+    <script>
+        let selectOrderBy = document.querySelector('#orderBy');
+
+        selectOrderBy.addEventListener('change', (e) => {
+            let goToURL = e.currentTarget.value;
+            
+            redirect(goToURL);
+        });
+
+        let redirect = (goToURL) => {
+            window.location = goToURL;
+        }
+    </script>
     <?php
     require __DIR__ . '/../partials/scripts.php';
     ?>

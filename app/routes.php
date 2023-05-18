@@ -8,9 +8,9 @@ use Slim\{
 use App\Controller\{
     LoginController,
     DashboardController,
-    EntradaSaidaController,
     GestoresController,
     LivrosController,
+    EntradaSaidaController
 };
 
 use App\Middleware\{

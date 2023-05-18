@@ -73,7 +73,7 @@ class GestoresController extends GestorController
         }
 
         $pagination['currentPage'] = $URI['page'] ?? 1;
-        $pagination['resultLimit'] = 10;
+        $pagination['resultLimit'] = 3;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
 
         $totalRegisters = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
@@ -148,6 +148,9 @@ class GestoresController extends GestorController
 
         $baseLink = $baseLink ?? [];
 
+        $orderBy['URL']['todos'] = $basePath . '/gestores';
+        $orderBy['URL']['active'] = $basePath . '/gestores?status=active' . $baseLink['search'];
+        $orderBy['URL']['inactive'] = $basePath . '/gestores?status=inactive' . $baseLink['search'];
         $pagination['URL']['previous'] = $basePath . '/gestores?page=' . $pagination['currentPage'] - 1 . $baseLink['status'] . $baseLink['search'];
         $pagination['URL']['next'] = $basePath . '/gestores?page=' . $pagination['currentPage'] + 1 . $baseLink['status'] . $baseLink['search'];
         $pagination['URL']['current'] = $basePath . '/gestores?page=' . $pagination['currentPage'] . $baseLink['status'] . $baseLink['search'];
@@ -161,40 +164,15 @@ class GestoresController extends GestorController
         foreach ($gestores as $key => $value)
             $gestores[$key] = parent::applyGestorData($gestores[$key]);
 
-        if ($pagination['links']['previous'])
-            $templatePagination['previous'] =
-                '
-                <a href="' . $pagination['URL']['previous'] . '" class="pagination__link">«</a>
-                ';
-        else
-            $templatePagination['previous'] =
-                '
-                <span class="pagination__link text--disabled">«</span>
-                ';
-
-        if ($pagination['links']['next'])
-            $templatePagination['next'] =
-                '
-                <a href="' . $pagination['URL']['next'] . '" class="pagination__link">»</a>
-                ';
-        else
-            $templatePagination['next'] =
-                '
-                <span class="pagination__link text--disabled">»</span>
-                ';
-
-        $templatePagination['current'] =
-            '
-            <a href="' . $pagination['URL']['current'] . '" class="pagination__link border--active"> ' . $pagination['currentPage'] . '</a> 
-            ';
-
         $templateVariables = [
             'basePath' => $basePath,
             'messages' => $messages,
             'gestor' => $gestor,
             'gestores' => $gestores,
             'authorize' => $authorize,
-            'templatePagination' => $templatePagination
+            'orderBy' => $orderBy,
+            'pagination' => $pagination,
+            'status' => $status
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);
