@@ -136,7 +136,7 @@
                             ) {
                                 echo ' selected';
                             }
-                            ?>>Mascúlino</option>
+                            ?>>Masculino</option>
                             <option value="2"<?php
                             if (
                                 !(empty($persistRegisterValues)) &&

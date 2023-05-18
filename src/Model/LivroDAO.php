@@ -69,7 +69,7 @@ class LivroDAO
                  :idioma,
                  :paginas,
                  :descricao,
-                 :criado_em
+                 :registrado_em
              )';
 
         $stmt = $this->database->prepare($SQL);
@@ -81,7 +81,7 @@ class LivroDAO
         $stmt->bindValue(':idioma', $livro->getIdioma());
         $stmt->bindValue(':paginas', $livro->getPaginas());
         $stmt->bindValue(':descricao', $livro->getDescricao());
-        $stmt->bindValue(':criado_em', $livro->getCriadoEm());
+        $stmt->bindValue(':registrado_em', $livro->getRegistradoEm());
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {

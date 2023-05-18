@@ -293,7 +293,7 @@ class LivrosController extends GestorController
                         'idioma' => $formRequest['idioma'] ?? null,
                         'paginas' => DataFilter::isInteger($formRequest['paginas']) ?? null,
                         'descricao' => $formRequest['descricao'] ?? null,
-                        'criado_em' => date('Y-m-d H:i:s') ?? null
+                        'registrado_em' => date('Y-m-d H:i:s') ?? null
                     ];
 
                     $this->livro->setTitutlo($dataWrite['titulo']);
@@ -304,7 +304,7 @@ class LivrosController extends GestorController
                     $this->livro->setIdioma($dataWrite['idioma']);
                     $this->livro->setPaginas($dataWrite['paginas']);
                     $this->livro->setDescricao($dataWrite['descricao']);
-                    $this->livro->setCriadoEm($dataWrite['criado_em']);
+                    $this->livro->setRegistradoEm($dataWrite['registrado_em']);
 
                     $IDLivro = $this->livroDAO->register($this->livro);
                     if ($IDLivro !== []) {
