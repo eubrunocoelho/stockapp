@@ -100,15 +100,10 @@ class EntradaSaidaController extends GestorController
 
             $formRequest = (array)$request->getParsedBody();
 
-            $regex = [
-                'unidades' => '/^([1-9]|[1-9][0-9]{1,2}|1[0-9]{3}|2000)$/'
-            ];
-
             $rules = [
                 'unidades' => [
                     'label' => 'Unidades',
-                    'required' => true,
-                    'regex' => $regex['unidades']
+                    'required' => true
                 ]
             ];
 
@@ -121,6 +116,19 @@ class EntradaSaidaController extends GestorController
                 $this->validator->setData($formRequest);
                 $this->validator->setRules($rules);
                 $this->validator->validation();
+
+                $formRequest['unidades'] = intval($formRequest['unidades']);
+
+                if (strlen($formRequest['unidades']) > 0) {
+                    if (!is_int($formRequest['unidades']))
+                        $this->validator->addError('O campo "Unidades" está inválido.');
+
+                    if (!($formRequest['unidades'] > 0))
+                        $this->validator->addError('O campo "Unidades" deve conter um valor maior do que 0.');
+
+                    if ($formRequest['unidades'] > 2000)
+                        $this->validator->addError('O campo "Unidades" deve conter um valor no máximo de 2000.');
+                }
 
                 if ($this->validator->passed()) {
                     $totalUnidades = ($livro['unidades'] + $formRequest['unidades']);
@@ -139,10 +147,9 @@ class EntradaSaidaController extends GestorController
                         $this->entrada->setQuantidade($dataWrite['quantidade']);
                         $this->entrada->setRegistradoEm($dataWrite['registrado_em']);
 
-                        if ($this->entradaDAO->register($this->entrada)) {
-                            dd('OK');
-                        }
-                    } else $errors = (array)'Houve um erro inesperado.';
+                        if ($this->entradaDAO->register($this->entrada)) dd('OK');
+                        else $errors = (array)'Houve um erro inesperado.';
+                    }
                 } else $errors = array_unique($this->validator->errors());
             }
         }
