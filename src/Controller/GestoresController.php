@@ -148,7 +148,7 @@ class GestoresController extends GestorController
 
         $baseLink = $baseLink ?? [];
 
-        $orderBy['URL']['todos'] = $basePath . '/gestores';
+        $orderBy['URL']['todos'] = $basePath . '/gestores?' . $baseLink['search'];
         $orderBy['URL']['active'] = $basePath . '/gestores?status=active' . $baseLink['search'];
         $orderBy['URL']['inactive'] = $basePath . '/gestores?status=inactive' . $baseLink['search'];
         $pagination['URL']['previous'] = $basePath . '/gestores?page=' . $pagination['currentPage'] - 1 . $baseLink['status'] . $baseLink['search'];
@@ -172,7 +172,8 @@ class GestoresController extends GestorController
             'authorize' => $authorize,
             'orderBy' => $orderBy,
             'pagination' => $pagination,
-            'status' => $status
+            'status' => $status,
+            'URI' => $URI
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);

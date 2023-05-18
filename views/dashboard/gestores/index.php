@@ -23,7 +23,14 @@
             <div class="filter">
                 <div class="filter__search fg--1">
                     <form action="<?=$basePath?>/gestores" method="GET">
-                        <input type="text" class="search__input" id="search" name="search" placeholder="Pesquisar...">
+                        <input type="text" class="search__input" id="search" name="search" placeholder="Pesquisar..."<?php
+                        if (
+                            !(empty($URI)) &&
+                            (isset($URI['search']))
+                        ) {
+                            echo ' value="' . $URI['search'] . '"';
+                        }
+                        ?>>
                         <button class="search__btn">
                             <i class="fa-solid fa-magnifying-glass btn__icon"></i>
                         </button>
