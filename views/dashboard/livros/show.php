@@ -92,8 +92,8 @@
                             <td class="table__cell fg--1"><?=$livro['unidades']?></td>
                         </tr>
                         <tr class="table__tr">
-                            <th class="table__cell tc--w210">Adicionado em</th>
-                            <td class="table__cell fg--1">--</td>
+                            <th class="table__cell tc--w210">Registrado em</th>
+                            <td class="table__cell fg--1"><?=$livro['registrado_em']?></td>
                         </tr>
                     </tbody>
                 </table> 

@@ -86,7 +86,24 @@ class LivrosController extends GestorController
                 ->withStatus(302);
         }
 
-        $livros = $this->livroDAO->getAll();
+        $pagination['currentPage'] = $URI['page'] ?? 1;
+        $pagination['resultLimit'] = 3;
+        $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
+
+        $totalRegisters = $this->livroDAO->getTotalRegisters()[0]['total_registros'];
+        $livros = $this->livroDAO->getAllWithPagination($pagination);
+
+        $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
+
+        $pagination['URL']['previous'] = $basePath . '/gestores?page=' . $pagination['currentPage'] - 1;
+        $pagination['URL']['next'] = $basePath . '/gestores?page=' . $pagination['currentPage'] + 1;
+        $pagination['URL']['current'] = $basePath . '/gestores?page=' . $pagination['currentPage'];
+
+        if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
+        else $pagination['links']['previous'] = false;
+
+        if (!($pagination['currentPage'] == $pagination['totalPages'])) $pagination['links']['next'] = true;
+        else $pagination['links']['next'] = false;
 
         foreach ($livros as $key => $value) {
             $this->livroAutor->setIDLivro($livros[$key]['ID']);
@@ -102,7 +119,8 @@ class LivrosController extends GestorController
             'basePath' => $basePath,
             'messages' => $messages,
             'gestor' => $gestor,
-            'livros' => $livros
+            'livros' => $livros,
+            'pagination' => $pagination
         ];
 
         return $this->renderer->render($response, 'dashboard/livros/index.php', $templateVariables);
@@ -113,7 +131,7 @@ class LivrosController extends GestorController
         $ID = $request->getAttribute('ID');
 
         $basePath = $this->container->get('settings')['api']['path'];
-        
+
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
 
@@ -142,7 +160,7 @@ class LivrosController extends GestorController
         $this->livroEditora->setIDLivro($ID);
         $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
         $livro['editora'] = self::autoresOrEditorasToString($editora['items']);
-        
+
         if ($this->livroDAO->getLivroByID($this->livro) === []) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -335,7 +353,7 @@ class LivrosController extends GestorController
                             $this->livroEditora->setIDEditora($IDEditora);
                             $this->livroEditoraDAO->register($this->livroEditora);
                         }
-                        
+
                         $this->container->get('flash')
                             ->addMessage('message.success', 'Livro cadastrado com sucesso!');
 
@@ -385,7 +403,7 @@ class LivrosController extends GestorController
                 ->withHeader('Locaion', $url)
                 ->withStatus(302);
         }
-        
+
         $this->livro->setID($ID);
         if ($this->livroDAO->getLivroByID($this->livro) === []) {
             $url = RouteContext::fromRequest($request)

@@ -14,10 +14,12 @@ class LivroDAO
         $this->database = $database;
     }
 
-    public function getAll()
+    public function getAllWithPagination($pagination)
     {
         $SQL =
-            'SELECT * FROM livro';
+            'SELECT * FROM livro
+             ORDER BY ID DESC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
 
         $stmt = $this->database->prepare($SQL);
         $stmt->execute();
@@ -28,6 +30,21 @@ class LivroDAO
             return $result;
         } else return [];
     }
+
+    // public function getAll()
+    // {
+    //     $SQL =
+    //         'SELECT * FROM livro';
+
+    //     $stmt = $this->database->prepare($SQL);
+    //     $stmt->execute();
+
+    //     if ($stmt->rowCount() > 0) {
+    //         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //         return $result;
+    //     } else return [];
+    // }
 
     public function getLivroByID(Livro $livro)
     {
@@ -40,6 +57,21 @@ class LivroDAO
         $stmt->execute();
 
         if ($stmt->rowCount() == 1) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getTotalRegisters()
+    {
+        $SQL =
+            'SELECT COUNT(ID) AS total_registros FROM livro';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $result;
@@ -59,7 +91,7 @@ class LivroDAO
                  idioma,
                  paginas,
                  descricao,
-                 criado_em
+                 registrado_em
              ) VALUES (
                  :titulo,
                  :formato,
@@ -129,7 +161,7 @@ class LivroDAO
                  unidades = :unidades
              WHERE
                  ID = :ID';
-        
+
         $stmt = $this->database->prepare($SQL);
         $stmt->bindValue(':ID', $livro->getID());
         $stmt->bindValue(':unidades', $livro->getUnidades());

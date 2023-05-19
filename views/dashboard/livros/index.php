@@ -109,22 +109,37 @@
             <div class="pagination">
                 <ul class="pagination__list">
                     <li class="pagination__item">
+                        <?php
+                        if (
+                            $pagination['links']['previous']
+                        ) {
+                        ?>
+                        <a href="<?=$pagination['URL']['previous']?>" class="pagination__link">«</a>
+                        <?php
+                        } else {
+                        ?>
                         <span class="pagination__link text--disabled">«</span>
+                        <?php
+                        }
+                        ?>
                     </li>
                     <li class="pagination__item">
-                        <a href="./livros.html" class="pagination__link border--active">1</a>
+                        <a href="<?=$pagination['URL']['current']?>" class="pagination__link border--active"><?=$pagination['currentPage']?></a>
                     </li>
                     <li class="pagination__item">
-                        <a href="./livros.html" class="pagination__link">2</a>
-                    </li>
-                    <li class="pagination__item">
-                        <span class="pagination__link text--disabled">...</span>
-                    </li> 
-                    <li class="pagination__item">
-                        <a href="./livros.html" class="pagination__link">901</a>
-                    </li>
-                    <li class="pagination__item">
-                        <a href="./livros.html" class="pagination__link">»</a>
+                        <?php
+                        if (
+                            $pagination['links']['next']
+                        ) {
+                        ?>
+                        <a href="<?=$pagination['URL']['next']?>" class="pagination__link">»</a>
+                        <?php
+                        } else {
+                        ?>
+                        <span class="pagination__link text--disabled">»</span>
+                        <?php
+                        }
+                        ?>
                     </li>
                 </ul>
             </div>
