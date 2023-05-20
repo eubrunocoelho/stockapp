@@ -23,18 +23,51 @@
             <div class="filter">
                 <div class="filter__search fg--1">
                     <form action="<?=$basePath?>/livros" method="GET">
-                        <input type="text" class="search__input" id="search" name="search" placeholder="Pesquisar...">
+                        <input type="text" class="search__input" id="search" name="search" placeholder="Pesquisar..."<?php
+                        if (
+                            !(empty($URI)) &&
+                            (isset($URI['search']))
+                        ) {
+                            echo ' value="'. $URI['search'] . '"';
+                        }
+                        ?>>
                         <button class="search__btn">
                             <i class="fa-solid fa-magnifying-glass btn__icon"></i>
                         </button>
                     </form>
                 </div>
                 <div class="filter__order-by">
-                    <select class="order-by__select">
-                        <option>Recentes</option>
-                        <option>Unidades</option>
-                        <option>a-Z</option>
-                        <option>z-A</option>
+                    <select class="order-by__select" id="orderBy">
+                        <option value="<?=$orderBy['URL']['recentes']?>"<?php
+                        if (
+                            !($status['orderBy']['units']) &&
+                            !($status['orderBy']['aToZ']) &&
+                            !($status['orderBy']['zToA'])
+                        ) {
+                            echo ' selected';
+                        }
+                        ?>>Recentes</option>
+                        <option value="<?=$orderBy['URL']['units']?>"<?php
+                        if (
+                            ($status['orderBy']['units'])
+                        ) {
+                            echo ' selected';
+                        }
+                        ?>>Unidades</option>
+                        <option value="<?=$orderBy['URL']['aToZ']?>"<?php
+                        if (
+                            ($status['orderBy']['aToZ'])
+                        ) {
+                            echo ' selected';
+                        }
+                        ?>>a-Z</option>
+                        <option value="<?=$orderBy['URL']['zToA']?>"<?php
+                        if (
+                            ($status['orderBy']['zToA'])
+                        ) {
+                            echo ' selected';
+                        }
+                        ?>>z-A</option>
                     </select>
                 </div>
             </div>
@@ -148,6 +181,19 @@
     <?php
     require __DIR__ . '/../partials/footer.php';
     ?>
+    <script>
+        let selectOrderBy = document.querySelector('#orderBy');
+
+        selectOrderBy.addEventListener('change', (e) => {
+            let goToURL = e.currentTarget.value;
+
+            redirect(goToURL);
+        });
+
+        let redirect = (goToURL) => {
+            window.location = goToURL;
+        };
+    </script>
     <?php
     require __DIR__ . '/../partials/scripts.php';
     ?>

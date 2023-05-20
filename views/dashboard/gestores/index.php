@@ -206,7 +206,7 @@
 
         let redirect = (goToURL) => {
             window.location = goToURL;
-        }
+        };
     </script>
     <?php
     require __DIR__ . '/../partials/scripts.php';
