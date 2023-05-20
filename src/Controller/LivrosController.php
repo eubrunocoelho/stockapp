@@ -139,11 +139,29 @@ class LivrosController extends GestorController
                 $totalRegisters = $this->livroDAO->getSearchRegisters($search)[0]['total_registros'];
                 $livros = $this->livroDAO->getSearchAndOrderByUnitsWithPagination($pagination, $search);
             } else $status['orderBy']['units'] = false;
+
+            if ($URI['orderBy'] == 'aToZ') {
+                $status['orderBy']['aToZ'] = true;
+                $status['search'] = true;
+
+                $totalRegisters = $this->livroDAO->getSearchRegisters($search)[0]['total_registros'];
+                $livros = $this->livroDAO->getSearchAndOrderByAToZWithPagination($pagination, $search);
+            } else $status['orderBy']['aToZ'] = false;
+
+            if ($URI['orderBy'] == 'zToA') {
+                $status['orderBy']['zToA'] = true;
+                $status['search'] = true;
+
+                $totalRegisters = $this->livroDAO->getSearchRegisters($search)[0]['total_registros'];
+                $livros = $this->livroDAO->getSearchAndOrderByZToAWithPagination($pagination, $search);
+            } else $status['orderBy']['zToA'] = false;
         }
+
+        $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
 
         // ...
 
-        $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
+        // ...
 
         $pagination['URL']['previous'] = $basePath . '/livros?page=' . $pagination['currentPage'] - 1;
         $pagination['URL']['next'] = $basePath . '/livros?page=' . $pagination['currentPage'] + 1;

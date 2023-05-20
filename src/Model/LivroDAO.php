@@ -84,12 +84,12 @@ class LivroDAO
         } else return [];
     }
 
-    public function getOrderByAToZ($pagiantion)
+    public function getOrderByAToZ($pagination)
     {
         $SQL =
             'SELECT * FROM livro
              ORDER BY titulo ASC
-             LIMIT ' . $pagiantion['start'] . ', ' . $pagiantion['resultLimit'];
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
 
         $stmt = $this->database->prepare($SQL);
         $stmt->execute();
@@ -124,6 +124,44 @@ class LivroDAO
             'SELECT * FROM livro
              WHERE titulo LIKE :titulo
              ORDER BY unidades DESC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':titulo', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getSearchAndOrderByAToZWithPagination($pagination, $search)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             WHERE titulo LIKE :titulo
+             ORDER BY titulo ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':titulo', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getSearchAndOrderByZToAWithPagination($pagination, $search)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             WHERE titulo LIKE :titulo
+             ORDER BY titulo DESC
              LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
 
         $stmt = $this->database->prepare($SQL);
