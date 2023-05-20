@@ -17,7 +17,7 @@
     <main class="main">
         <div class="main-heading container">
             <h1 class="main-heading__title">Editar Livro</h1>
-            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/livros/update/<?=$livro['ID']?>">Editar Livro</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/livros/show/<?=$livro['ID']?>">O Senhor dos Anéis</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/livros">Livros</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
+            <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/livros/update/<?=$livro['ID']?>">Editar Livro</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/livros/show/<?=$livro['ID']?>"><?=$livro['titulo']?></a> / <a class="breadcrumbs__link" href="<?=$basePath?>/livros">Livros</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container mb--30">
             <div class="box">
