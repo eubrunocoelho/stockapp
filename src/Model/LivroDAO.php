@@ -67,6 +67,23 @@ class LivroDAO
         } else return [];
     }
 
+    public function getOrderByAntigosWithPagination($pagination)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function getOrderByUnitsWithPagination($pagination)
     {
         $SQL =
@@ -113,6 +130,25 @@ class LivroDAO
 
         if ($stmt->rowCount() > 0) {
             $result = $stmt->fetchALl(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getSearchAndOrderByAntigosWithPagination($pagination, $search)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             WHERE titulo LIKE :titulo
+             ORDER BY ID ASC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':titulo', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $result;
         } else return [];

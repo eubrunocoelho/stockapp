@@ -96,6 +96,13 @@ class LivrosController extends GestorController
         $livros = $this->livroDAO->getAllWithPagination($pagination);
 
         if (isset($URI['orderBy'])) {
+            if ($URI['orderBy'] == 'antigos') {
+                $status['orderBy']['antigos'] = true;
+
+                $totalRegisters = $this->livroDAO->getTotalRegisters()[0]['total_registros'];
+                $livros = $this->livroDAO->getOrderByAntigosWithPagination($pagination);
+            }
+
             if ($URI['orderBy'] == 'units') {
                 $status['orderBy']['units'] = true;
 
@@ -132,6 +139,14 @@ class LivrosController extends GestorController
         ) {
             $search['data'] = '%' . $URI['search'] . '%';
 
+            if ($URI['orderBy'] == 'antigos') {
+                $status['orderBy']['antigos'] = true;
+                $status['search'] = true;
+
+                $totalRegisters = $this->livroDAO->getSearchRegisters($search)[0]['total_registros'];
+                $livros = $this->livroDAO->getSearchAndOrderByAntigosWithPagination($pagination, $search);
+            } else $status['orderBy']['antigos'] = false;
+
             if ($URI['orderBy'] == 'units') {
                 $status['orderBy']['units'] = true;
                 $status['search'] = true;
@@ -159,14 +174,22 @@ class LivrosController extends GestorController
 
         $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
 
-        // ...
-
+        $status['orderBy']['antigos'] = $status['orderBy']['antigos'] ?? false;
         $status['orderBy']['units'] = $status['orderBy']['units'] ?? false;
         $status['orderBy']['aToZ'] = $status['orderBy']['aToZ'] ?? false;
         $status['orderBy']['zToA'] = $status['orderBy']['zToA'] ?? false;
 
+        if ($status['orderBy']['antigos']) $baseLink['orderBy'] = '&orderBy=antigos';
+        else if (
+            !($status['orderBy']['antigos']) &&
+            !($status['orderBy']['units']) &&
+            !($status['orderBy']['aToZ']) &&
+            !($status['orderBy']['zToA'])
+        ) $baseLink['orderBy'] = null;
+
         if ($status['orderBy']['units']) $baseLink['orderBy'] = '&orderBy=units';
         elseif (
+            !($status['orderBy']['antigos']) &&
             !($status['orderBy']['units']) &&
             !($status['orderBy']['aToZ']) &&
             !($status['orderBy']['zToA'])
@@ -174,6 +197,7 @@ class LivrosController extends GestorController
 
         if ($status['orderBy']['aToZ']) $baseLink['orderBy'] = '&orderBy=aToZ';
         elseif (
+            !($status['orderBy']['antigos']) &&
             !($status['orderBy']['units']) &&
             !($status['orderBy']['aToZ']) &&
             !($status['orderBy']['zToA'])
@@ -181,6 +205,7 @@ class LivrosController extends GestorController
 
         if ($status['orderBy']['zToA']) $baseLink['orderBy'] = '&orderBy=zToA';
         elseif (
+            !($status['orderBy']['antigos']) &&
             !($status['orderBy']['units']) &&
             !($status['orderBy']['aToZ']) &&
             !($status['orderBy']['zToA'])
@@ -192,6 +217,7 @@ class LivrosController extends GestorController
         $baseLink = $baseLink ?? [];
 
         $orderBy['URL']['recentes'] = $basePath . '/livros?' . $baseLink['search'];
+        $orderBy['URL']['antigos'] = $basePath . '/livros?orderBy=antigos' . $baseLink['search'];
         $orderBy['URL']['units'] = $basePath . '/livros?orderBy=units' . $baseLink['search'];
         $orderBy['URL']['aToZ'] = $basePath . '/livros?orderBy=aToZ' . $baseLink['search'];
         $orderBy['URL']['zToA'] = $basePath . '/livros?orderBy=zToA' . $baseLink['search'];
