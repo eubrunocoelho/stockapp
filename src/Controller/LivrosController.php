@@ -161,11 +161,43 @@ class LivrosController extends GestorController
 
         // ...
 
-        // ...
+        $status['orderBy']['units'] = $status['orderBy']['units'] ?? false;
+        $status['orderBy']['aToZ'] = $status['orderBy']['aToZ'] ?? false;
+        $status['orderBy']['zToA'] = $status['orderBy']['zToA'] ?? false;
 
-        $pagination['URL']['previous'] = $basePath . '/livros?page=' . $pagination['currentPage'] - 1;
-        $pagination['URL']['next'] = $basePath . '/livros?page=' . $pagination['currentPage'] + 1;
-        $pagination['URL']['current'] = $basePath . '/livros?page=' . $pagination['currentPage'];
+        if ($status['orderBy']['units']) $baseLink['orderBy'] = '&orderBy=units';
+        elseif (
+            !($status['orderBy']['units']) &&
+            !($status['orderBy']['aToZ']) &&
+            !($status['orderBy']['zToA'])
+        ) $baseLink['orderBy'] = null;
+
+        if ($status['orderBy']['aToZ']) $baseLink['orderBy'] = '&orderBy=aToZ';
+        elseif (
+            !($status['orderBy']['units']) &&
+            !($status['orderBy']['aToZ']) &&
+            !($status['orderBy']['zToA'])
+        ) $baseLink['orderBy'] = null;
+
+        if ($status['orderBy']['zToA']) $baseLink['orderBy'] = '&orderBy=zToA';
+        elseif (
+            !($status['orderBy']['units']) &&
+            !($status['orderBy']['aToZ']) &&
+            !($status['orderBy']['zToA'])
+        ) $baseLink['orderBy'] = null;
+
+        if ($status['search']) $baseLink['search'] = '&search=' . $URI['search'];
+        elseif (!($status['search'])) $baseLink['search'] = null;
+
+        $baseLink = $baseLink ?? [];
+
+        $orderBy['URL']['recentes'] = $basePath . '/livros?' . $baseLink['search'];
+        $orderBy['URL']['units'] = $basePath . '/livros?orderBy=units' . $baseLink['search'];
+        $orderBy['URL']['aToZ'] = $basePath . '/livros?orderBy=aToZ' . $baseLink['search'];
+        $orderBy['URL']['zToA'] = $basePath . '/livros?orderBy=zToA' . $baseLink['search'];
+        $pagination['URL']['previous'] = $basePath . '/livros?page=' . $pagination['currentPage'] - 1 . $baseLink['orderBy'] . $baseLink['search'];
+        $pagination['URL']['next'] = $basePath . '/livros?page=' . $pagination['currentPage'] + 1 . $baseLink['orderBy'] . $baseLink['search'];
+        $pagination['URL']['current'] = $basePath . '/livros.page=' . $pagination['currentPage'] . $baseLink['orderBy'] . $baseLink['search'];
 
         if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
         else $pagination['links']['previous'] = false;
@@ -188,7 +220,10 @@ class LivrosController extends GestorController
             'messages' => $messages,
             'gestor' => $gestor,
             'livros' => $livros,
-            'pagination' => $pagination
+            'orderBy' => $orderBy,
+            'pagination' => $pagination,
+            'status' => $status,
+            'URI' => $URI
         ];
 
         return $this->renderer->render($response, 'dashboard/livros/index.php', $templateVariables);
