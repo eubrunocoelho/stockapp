@@ -37,8 +37,8 @@
                     </form>
                 </div>
                 <div class="filter__order-by">
-                    <select class="order-by__select" id="orderBy">
-                        <option value="<?=$orderBy['URL']['todos']?>"<?php
+                    <select class="order-by__select" id="filterBy">
+                        <option value="<?=$filterBy['URL']['todos']?>"<?php
                         if (
                             !($status['status']['active']) &&
                             !($status['status']['inactive'])
@@ -46,14 +46,14 @@
                             echo ' selected';
                         }
                         ?>>Todos</option>
-                        <option value="<?=$orderBy['URL']['active']?>"<?php
+                        <option value="<?=$filterBy['URL']['active']?>"<?php
                         if (
                             ($status['status']['active'])
                         ) {
                             echo ' selected';
                         }
                         ?>>Ativos</option>
-                        <option value="<?=$orderBy['URL']['inactive']?>"<?php
+                        <option value="<?=$filterBy['URL']['inactive']?>"<?php
                         if (
                             ($status['status']['inactive'])
                         ) {
@@ -196,9 +196,9 @@
     require __DIR__ . '/../partials/footer.php';
     ?>
     <script>
-        let selectOrderBy = document.querySelector('#orderBy');
+        let selectFilterBy = document.querySelector('#filterBy');
 
-        selectOrderBy.addEventListener('change', (e) => {
+        selectFilterBy.addEventListener('change', (e) => {
             let goToURL = e.currentTarget.value;
             
             redirect(goToURL);

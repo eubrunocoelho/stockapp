@@ -148,9 +148,9 @@ class GestoresController extends GestorController
 
         $baseLink = $baseLink ?? [];
 
-        $orderBy['URL']['todos'] = $basePath . '/gestores?' . $baseLink['search'];
-        $orderBy['URL']['active'] = $basePath . '/gestores?status=active' . $baseLink['search'];
-        $orderBy['URL']['inactive'] = $basePath . '/gestores?status=inactive' . $baseLink['search'];
+        $filterBy['URL']['todos'] = $basePath . '/gestores?' . $baseLink['search'];
+        $filterBy['URL']['active'] = $basePath . '/gestores?status=active' . $baseLink['search'];
+        $filterBy['URL']['inactive'] = $basePath . '/gestores?status=inactive' . $baseLink['search'];
         $pagination['URL']['previous'] = $basePath . '/gestores?page=' . $pagination['currentPage'] - 1 . $baseLink['status'] . $baseLink['search'];
         $pagination['URL']['next'] = $basePath . '/gestores?page=' . $pagination['currentPage'] + 1 . $baseLink['status'] . $baseLink['search'];
         $pagination['URL']['current'] = $basePath . '/gestores?page=' . $pagination['currentPage'] . $baseLink['status'] . $baseLink['search'];
@@ -170,7 +170,7 @@ class GestoresController extends GestorController
             'gestor' => $gestor,
             'gestores' => $gestores,
             'authorize' => $authorize,
-            'orderBy' => $orderBy,
+            'filterBy' => $filterBy,
             'pagination' => $pagination,
             'status' => $status,
             'URI' => $URI
