@@ -14,38 +14,6 @@ class LivroDAO
         $this->database = $database;
     }
 
-    public function getAllWithPagination($pagination)
-    {
-        $SQL =
-            'SELECT * FROM livro
-             ORDER BY ID DESC
-             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
-
-        $stmt = $this->database->prepare($SQL);
-        $stmt->execute();
-
-        if ($stmt->rowCount() > 0) {
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            return $result;
-        } else return [];
-    }
-
-    // public function getAll()
-    // {
-    //     $SQL =
-    //         'SELECT * FROM livro';
-
-    //     $stmt = $this->database->prepare($SQL);
-    //     $stmt->execute();
-
-    //     if ($stmt->rowCount() > 0) {
-    //         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    //         return $result;
-    //     } else return [];
-    // }
-
     public function getLivroByID(Livro $livro)
     {
         $SQL =
@@ -63,12 +31,135 @@ class LivroDAO
         } else return [];
     }
 
+    public function getAllWithPagination($pagination)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             ORDER BY ID DESC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getSearchWithPagination($pagination, $search)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             WHERE titulo LIKE :titulo
+             ORDER BY ID DESC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':titulo', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getOrderByUnitsWithPagination($pagination)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             ORDER BY unidades DESC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getOrderByAToZ($pagiantion)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             ORDER BY titulo ASC
+             LIMIT ' . $pagiantion['start'] . ', ' . $pagiantion['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getOrderByZToA($pagination)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             ORDER BY titulo DESC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchALl(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getSearchAndOrderByUnitsWithPagination($pagination, $search)
+    {
+        $SQL =
+            'SELECT * FROM livro
+             WHERE titulo LIKE :titulo
+             ORDER BY unidades DESC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':titulo', $search['data']);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function getTotalRegisters()
     {
         $SQL =
             'SELECT COUNT(ID) AS total_registros FROM livro';
 
         $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getSearchRegisters($search)
+    {
+        $SQL =
+            'SELECT COUNT(ID) AS total_registros FROM livro
+             WHERE titulo LIKE :titulo';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':titulo', $search['data']);
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {

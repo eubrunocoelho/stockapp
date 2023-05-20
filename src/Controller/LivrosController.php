@@ -66,6 +66,8 @@ class LivrosController extends GestorController
 
     public function index(Request $request, Response $response, array $args): Response
     {
+        $URI = (array)$request->getQueryParams();
+
         $basePath = $this->container->get('settings')['api']['path'];
 
         $flash = $this->container->get('flash');
@@ -93,11 +95,59 @@ class LivrosController extends GestorController
         $totalRegisters = $this->livroDAO->getTotalRegisters()[0]['total_registros'];
         $livros = $this->livroDAO->getAllWithPagination($pagination);
 
+        if (isset($URI['orderBy'])) {
+            if ($URI['orderBy'] == 'units') {
+                $status['orderBy']['units'] = true;
+
+                $totalRegisters = $this->livroDAO->getTotalRegisters()[0]['total_registros'];
+                $livros = $this->livroDAO->getOrderByUnitsWithPagination($pagination);
+            } else $status['orderBy']['units'] = false;
+
+            if ($URI['orderBy'] == 'aToZ') {
+                $status['orderBy']['aToZ'] = true;
+
+                $totalRegisters = $this->livroDAO->getTotalRegisters()[0]['total_registros'];
+                $livros = $this->livroDAO->getOrderByAToZ($pagination);
+            } else $status['orderBy']['aToZ'] = false;
+
+            if ($URI['orderBy'] == 'zToA') {
+                $status['orderBy']['zToA'] = true;
+
+                $totalRegisters = $this->livroDAO->getTotalRegisters()[0]['total_registros'];
+                $livros = $this->livroDAO->getOrderByZToA($pagination);
+            } else $status['orderBy']['zToA'] = false;
+        }
+
+        if (isset($URI['search'])) {
+            $status['search'] = true;
+            $search['data'] = '%' . $URI['search'] . '%';
+
+            $totalRegisters = $this->livroDAO->getSearchRegisters($search)[0]['total_registros'];
+            $livros = $this->livroDAO->getSearchWithPagination($pagination, $search);
+        } else $status['search'] = false;
+
+        if (
+            (isset($URI['orderBy'])) &&
+            (isset($URI['search']))
+        ) {
+            $search['data'] = '%' . $URI['search'] . '%';
+
+            if ($URI['orderBy'] == 'units') {
+                $status['orderBy']['units'] = true;
+                $status['search'] = true;
+
+                $totalRegisters = $this->livroDAO->getSearchRegisters($search)[0]['total_registros'];
+                $livros = $this->livroDAO->getSearchAndOrderByUnitsWithPagination($pagination, $search);
+            } else $status['orderBy']['units'] = false;
+        }
+
+        // ...
+
         $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
 
-        $pagination['URL']['previous'] = $basePath . '/gestores?page=' . $pagination['currentPage'] - 1;
-        $pagination['URL']['next'] = $basePath . '/gestores?page=' . $pagination['currentPage'] + 1;
-        $pagination['URL']['current'] = $basePath . '/gestores?page=' . $pagination['currentPage'];
+        $pagination['URL']['previous'] = $basePath . '/livros?page=' . $pagination['currentPage'] - 1;
+        $pagination['URL']['next'] = $basePath . '/livros?page=' . $pagination['currentPage'] + 1;
+        $pagination['URL']['current'] = $basePath . '/livros?page=' . $pagination['currentPage'];
 
         if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
         else $pagination['links']['previous'] = false;

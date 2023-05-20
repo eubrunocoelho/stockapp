@@ -22,8 +22,8 @@
         <section class="section container mb--30">
             <div class="filter">
                 <div class="filter__search fg--1">
-                    <form action="#">
-                        <input type="text" class="search__input" placeholder="Pesquisar...">
+                    <form action="<?=$basePath?>/livros" method="GET">
+                        <input type="text" class="search__input" id="search" name="search" placeholder="Pesquisar...">
                         <button class="search__btn">
                             <i class="fa-solid fa-magnifying-glass btn__icon"></i>
                         </button>
@@ -31,10 +31,10 @@
                 </div>
                 <div class="filter__order-by">
                     <select class="order-by__select">
-                        <option>a-Z</option>
                         <option>Recentes</option>
-                        <option>Entradas</option>
-                        <option>Saídas</option>
+                        <option>Unidades</option>
+                        <option>a-Z</option>
+                        <option>z-A</option>
                     </select>
                 </div>
             </div>
