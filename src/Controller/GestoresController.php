@@ -201,7 +201,7 @@ class GestoresController extends GestorController
                 ->withHeader('Location', $url)
                 ->withStatus(302);
         }
-        
+
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
@@ -692,7 +692,7 @@ class GestoresController extends GestorController
                         'status' => $dataRequest['status'] ?? null,
                         'img_profile' => $dataRequest['img_profile'] ?? null
                     ];
-                    
+
                     $this->gestor->setNome($dataWrite['nome']);
                     $this->gestor->setEmail($dataWrite['email']);
                     $this->gestor->setCpf($dataWrite['cpf']);
@@ -736,6 +736,85 @@ class GestoresController extends GestorController
         ];
 
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
+    }
+
+    public function active(Request $request, Response $response, array $args): Response
+    {
+        $ID = $request->getAttribute('ID');
+
+        $URI = (array)$request->getQueryParams();
+
+        $basePath = $this->container->get('settings')['api']['path'];
+
+        $gestor = parent::getGestor();
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $this->gestor->setID($ID);
+        if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('dashboard.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
+        $authorize = self::authorize('update', $gestor, $gestorProfile);
+
+        if (
+            !($authorize['update']['status'])
+        ) {
+            $this->container->get('flash')
+                ->addMessage('message.warning', 'Você não tem permissão para executar essa ação.');
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('gestores.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        if (($gestorProfile['status'] == 1)) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('gestores.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        if (isset($URI['confirm'])) {
+            if ($URI['confirm'] == 'active') {
+            }          
+        }
+
+        $gestor = parent::applyGestorData($gestor);
+        $gestorProfile = parent::applyGestorData($gestorProfile);
+
+        // dd($gestorProfile, true);
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor,
+            'gestorProfile' => $gestorProfile
+        ];
+
+        return $this->renderer->render($response, 'dashboard/gestores/status/active.php', $templateVariables);
     }
 
     private static function authorize($type, $gestor = [], $gestorProfile = [])

@@ -40,6 +40,7 @@ return function (App $app) {
         $group->post('/register', [GestoresController::class, 'register']);
         $group->get('/update/{ID}', [GestoresController::class, 'update'])->setName('gestores.update');
         $group->post('/update/{ID}', [GestoresController::class, 'update']);
+        $group->get('/status/active/{ID}', [GestoresController::class, 'active'])->setName('gestores.status.active');
     })->add(Unauthenticated::class);
 
     $app->group('/livros', function (RouteCollectorProxy $group) {
