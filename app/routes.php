@@ -10,7 +10,8 @@ use App\Controller\{
     DashboardController,
     GestoresController,
     LivrosController,
-    EntradaSaidaController
+    EntradaSaidaController,
+    GestorController
 };
 
 use App\Middleware\{
@@ -41,6 +42,7 @@ return function (App $app) {
         $group->get('/update/{ID}', [GestoresController::class, 'update'])->setName('gestores.update');
         $group->post('/update/{ID}', [GestoresController::class, 'update']);
         $group->get('/status/active/{ID}', [GestoresController::class, 'active'])->setName('gestores.status.active');
+        $group->get('/status/inactive/{ID}', [GestoresController::class, 'inactive'])->setName('gestores.status.inactive');
     })->add(Unauthenticated::class);
 
     $app->group('/livros', function (RouteCollectorProxy $group) {

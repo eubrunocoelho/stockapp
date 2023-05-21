@@ -848,6 +848,81 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/status/active.php', $templateVariables);
     }
 
+    public function inactive(Request $request, Response $response, array $args): Response
+    {
+        $ID = $request->getAttribute('ID');
+
+        $URI = (array)$request->getQueryParams();
+
+        $basePath = $this->container->get('settings')['api']['path'];
+
+        $gestor = parent::getGestor();
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $this->gestor->setID($ID);
+        if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('dashboard.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
+        $authorize = self::authorize('update', $gestor, $gestorProfile);
+
+        if (
+            !($authorize['update']['status'])
+        ) {
+            $this->container->get('flash')
+                ->addMessage('message.warning', 'Você não tem permissão para executar essa ação.');
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('gestores.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        if (($gestorProfile['status'] == 2)) {
+            $this->container->get('flash')
+                ->addMessage('message.warning', 'Este usuário já esta inativo.');
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('gestores.show', ['ID' => $ID]);
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $gestor = parent::applyGestorData($gestor);
+        $gestorProfile = parent::applyGestorData($gestorProfile);
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor,
+            'gestorProfile' => $gestorProfile
+        ];
+
+        return $this->renderer->render($response, 'dashboard/gestores/status/inactive.php', $templateVariables);
+    }
+
     private static function authorize($type, $gestor = [], $gestorProfile = [])
     {
         if (
