@@ -338,4 +338,20 @@ class GestorDAO
 
         return ($stmt->execute()) ? true : false;
     }
+
+    public function updateStatus(Gestor $gestor)
+    {
+        $SQL =
+            'UPDATE gestor
+             SET
+                 status = :status
+             WHERE
+                 ID = :ID';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID', $gestor->getID());
+        $stmt->bindValue(':status', $gestor->getStatus());
+
+        return ($stmt->execute()) ? true : false;
+    }
 }

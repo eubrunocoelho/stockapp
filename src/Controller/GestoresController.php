@@ -789,9 +789,12 @@ class GestoresController extends GestorController
         }
 
         if (($gestorProfile['status'] == 1)) {
+            $this->container->get('flash')
+                ->addMessage('message.warning', 'Este usuário já esta ativado.');
+
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
-                ->urlFor('gestores.index');
+                ->urlFor('gestores.show', ['ID' => $ID]);
 
             return $response
                 ->withHeader('Location', $url)
@@ -800,13 +803,41 @@ class GestoresController extends GestorController
 
         if (isset($URI['confirm'])) {
             if ($URI['confirm'] == 'active') {
-            }          
+                if (
+                    empty(Session::get('gestor.status.active.ID')) ||
+                    $ID !== Session::get('gestor.status.active.ID')
+                ) {
+                    $url = RouteContext::fromRequest($request)
+                        ->getRouteParser()
+                        ->urlFor('gestores.status.active', ['ID' => $ID]);
+
+                    return $response
+                        ->withHeader('Location', $url)
+                        ->withStatus(302);
+                }
+
+                $this->gestor->setStatus(1);
+                if ($this->gestorDAO->updateStatus($this->gestor)) {
+                    $this->container->get('flash')
+                        ->addMessage('message.success', 'Usuário ativado.');
+
+                    $url = RouteContext::fromRequest($request)
+                        ->getRouteParser()
+                        ->urlFor('gestores.show', ['ID' => $ID]);
+
+                    return $response
+                        ->withHeader('Location', $url)
+                        ->withStatus(302);
+                }
+
+                Session::delete('gestor.status.active.ID');
+            }
         }
 
         $gestor = parent::applyGestorData($gestor);
         $gestorProfile = parent::applyGestorData($gestorProfile);
 
-        // dd($gestorProfile, true);
+        Session::create('gestor.status.active.ID', $ID);
 
         $templateVariables = [
             'basePath' => $basePath,
