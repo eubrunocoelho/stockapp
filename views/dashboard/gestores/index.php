@@ -133,7 +133,21 @@
                             }
                             ?>
                             <td class="table__cell tc--w105"><i class="fa-solid fa-marker text--warning action__icon"></i><a href="<?=$basePath?>/gestores/update/<?=$gestor['ID']?>" class="text--warning">Editar</a></td>
-                            <td class="table__cell tc--w105"><i class="fa-solid fa-user-minus text--danger action__icon"></i><a href="<?=$basePath?>/gestores/update/status/<?=$gestor['ID']?>" class="text--danger">Inativar</a></td>
+                            <?php
+                            if (
+                                $gestor['status'] == 'Inativo'
+                            ) {
+                            ?>
+                            <td class="table__cell tc--w105"><i class="fa-solid fa-user-plus text--success action__icon"></i><a href="<?=$basePath?>/gestores/status/active/<?=$gestor['ID']?>" class="text--success">Ativar</a></td>
+                            <?php
+                            } elseif (
+                                $gestor['status'] == 'Ativo'
+                            ) {
+                            ?>
+                            <td class="table__cell tc--w105"><i class="fa-solid fa-user-minus text--danger action__icon"></i><a href="<?=$basePath?>/gestores/status/inactive/<?=$gestor['ID']?>" class="text--danger">Inativar</a></td>
+                            <?php
+                            }
+                            ?>
                         </tr>
                         <?php
                             }

@@ -823,7 +823,7 @@ class GestoresController extends GestorController
 
                     $url = RouteContext::fromRequest($request)
                         ->getRouteParser()
-                        ->urlFor('gestores.show', ['ID' => $ID]);
+                        ->urlFor('gestores.index');
 
                     return $response
                         ->withHeader('Location', $url)
@@ -929,11 +929,11 @@ class GestoresController extends GestorController
                 $this->gestor->setStatus(2);
                 if ($this->gestorDAO->updateStatus($this->gestor)) {
                     $this->container->get('flash')
-                        ->addMessage('message.warning', 'Usuário inativado.');
+                        ->addMessage('message.success', 'Usuário inativado.');
 
                     $url = RouteContext::fromRequest($request)
                         ->getRouteParser()
-                        ->urlFor('gestores.show', ['ID' => $ID]);
+                        ->urlFor('gestores.index');
 
                     return $response
                         ->withHeader('Location', $url)

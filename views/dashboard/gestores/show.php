@@ -98,7 +98,17 @@
                 if ($authorize['update']['status']) {
                 ?>
                 <div class="operation-group mb--20">
-                    <button class="btn bg--danger" onclick="window.location.href='./gerenciar-status-gestor.html';">Inativar</button>
+                    <?php
+                    if ($gestorProfile['status'] == 'Inativo') {
+                    ?>
+                    <button class="btn bg--success" onclick="window.location.href='<?=$basePath?>/gestores/status/active/<?=$gestor['ID']?>';">Ativar</button>
+                    <?php
+                    } elseif ($gestorProfile['status'] == 'Ativo') {
+                    ?>
+                    <button class="btn bg--danger" onclick="window.location.href='<?=$basePath?>/gestores/status/inactive/<?=$gestor['ID']?>';">Inativar</button>
+                    <?php
+                    }
+                    ?>
                 </div>
                 <?php
                 }
