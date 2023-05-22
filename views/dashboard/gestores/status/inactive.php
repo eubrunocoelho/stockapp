@@ -44,7 +44,7 @@
                     </tbody>
                 </table>
                 <div class="operation-group mb--20">
-                    <button class="btn bg--danger" onclick="window.location.href='<?=$basePath?>/gestores/status/inactive/<?=$gestorProfile['ID']?>?confirm=active';">Inativar</button>
+                    <button class="btn bg--danger" onclick="window.location.href='<?=$basePath?>/gestores/status/inactive/<?=$gestorProfile['ID']?>?confirm=inactive';">Inativar</button>
                 </div>
             </div>
         </section>

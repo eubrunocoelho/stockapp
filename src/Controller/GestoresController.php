@@ -790,7 +790,7 @@ class GestoresController extends GestorController
 
         if (($gestorProfile['status'] == 1)) {
             $this->container->get('flash')
-                ->addMessage('message.warning', 'Este usuário já esta ativado.');
+                ->addMessage('message.warning', 'Este usuário já está ativado.');
 
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -900,7 +900,7 @@ class GestoresController extends GestorController
 
         if (($gestorProfile['status'] == 2)) {
             $this->container->get('flash')
-                ->addMessage('message.warning', 'Este usuário já esta inativo.');
+                ->addMessage('message.warning', 'Este usuário já está inativo.');
 
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -911,8 +911,43 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         }
 
+        if (isset($URI['confirm'])) {
+            if ($URI['confirm'] == 'inactive') {
+                if (
+                    empty(Session::get('gestor.status.inactive.ID')) ||
+                    $ID !== Session::get('gestor.status.inactive.ID')
+                ) {
+                    $url = RouteContext::fromRequest($request)
+                        ->getRouteParser()
+                        ->urlFor('gestores.status.inactive', ['ID' => $ID]);
+
+                    return $response
+                        ->withHeader('Location', $url)
+                        ->withStatus(302);
+                }
+
+                $this->gestor->setStatus(2);
+                if ($this->gestorDAO->updateStatus($this->gestor)) {
+                    $this->container->get('flash')
+                        ->addMessage('message.warning', 'Usuário inativado.');
+
+                    $url = RouteContext::fromRequest($request)
+                        ->getRouteParser()
+                        ->urlFor('gestores.show', ['ID' => $ID]);
+
+                    return $response
+                        ->withHeader('Location', $url)
+                        ->withStatus(302);
+                }
+
+                Session::delete('gestor.status.inactive.ID');
+            }
+        }
+
         $gestor = parent::applyGestorData($gestor);
         $gestorProfile = parent::applyGestorData($gestorProfile);
+
+        Session::create('gestor.status.inactive.ID', $ID);
 
         $templateVariables = [
             'basePath' => $basePath,
