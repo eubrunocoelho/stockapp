@@ -839,8 +839,22 @@ class LivrosController extends GestorController
                 $this->livroAutor->setIDLivro($ID);
                 $autoresFromDelete = $this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor);
 
+                // pegar dados livro_autor
+                // verificar se existe registro
                 if ($autoresFromDelete !== []) {
-                    //deleta
+                    // percorrer registros
+                    foreach ($autoresFromDelete as $autorFromDelete) {
+                        $this->livroAutor->setIDLivro($ID);
+                        $this->livroAutor->setIDAutor($autorFromDelete['ID_autor']);
+                        // verificar se existe registros referentes ao mesmo autor
+                        $livroAutor = $this->livroAutorDAO->getLivroAutorByOtherIDLivroAndByIDAutor($this->livroAutor);
+                        // se não existir registros deleta o autor
+
+                        if ($livroAutor === []) {
+                            $this->autor->setID($autoresFromDelete['ID_autor']);
+                            $this->autorDAO->deleteAutorByID($this->autor);
+                        }
+                    }
                 }
             }
         }
