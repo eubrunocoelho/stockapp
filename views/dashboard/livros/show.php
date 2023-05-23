@@ -52,7 +52,7 @@
                 <table class="table mb--20">
                     <tbody>
                         <tr class="table__tr">
-                            <th class="table__cell tc--w210">Nome</th>
+                            <th class="table__cell tc--w210">Título</th>
                             <td class="table__cell fg--1"><?=$livro['titulo']?></td>
                         </tr>
                         <tr class="table__tr">
@@ -105,7 +105,7 @@
                 </div>
                 <div class="operation-group mb--20">
                     <button class="btn bg--warning" onclick="window.location.href='<?=$basePath?>/livros/update/<?=$livro['ID']?>';">Editar</button>
-                    <button class="btn bg--danger" onclick="window.location.href='./deletar-livro.html'">Deletar</button>
+                    <button class="btn bg--danger" onclick="window.location.href='<?=$basePath?>/livros/delete/<?=$livro['ID']?>'">Deletar</button>
                 </div>
                 <div class="operation-group">
                     <button class="btn bg--success" onclick="window.location.href='./registrar-entrada.html';">Registrar Entrada</button>

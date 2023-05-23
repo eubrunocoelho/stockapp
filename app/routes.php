@@ -56,5 +56,6 @@ return function (App $app) {
         $group->post('/entrada/{ID}', [EntradaSaidaController::class, 'entrada']);
         $group->get('/saida/{ID}', [EntradaSaidaCOntroller::class, 'saida'])->setName('livros.saida');
         $group->post('/saida/{ID}', [EntradaSaidaController::class, 'saida']);
+        $group->get('/delete/{ID}', [LivrosController::class, 'delete'])->setName('livros.delete');
     })->add(Unauthenticated::class);
 };

@@ -280,16 +280,6 @@ class LivrosController extends GestorController
         }
 
         $this->livro->setID($ID);
-        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
-
-        $this->livroAutor->setIDLivro($ID);
-        $autor['items'] = $this->livroAutorDAO->getAutorByIDLivro($this->livroAutor);
-        $livro['autor'] = self::autoresOrEditorasToString($autor['items']);
-
-        $this->livroEditora->setIDLivro($ID);
-        $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
-        $livro['editora'] = self::autoresOrEditorasToString($editora['items']);
-
         if ($this->livroDAO->getLivroByID($this->livro) === []) {
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
@@ -299,6 +289,16 @@ class LivrosController extends GestorController
                 ->withHeader('Location', $url)
                 ->withStatus(302);
         }
+
+        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
+
+        $this->livroAutor->setIDLivro($ID);
+        $autor['items'] = $this->livroAutorDAO->getAutorByIDLivro($this->livroAutor);
+        $livro['autor'] = self::autoresOrEditorasToString($autor['items']);
+
+        $this->livroEditora->setIDLivro($ID);
+        $editora['items'] = $this->livroEditoraDAO->getEditoraByIDLivro($this->livroEditora);
+        $livro['editora'] = self::autoresOrEditorasToString($editora['items']);
 
         $templateVariables = [
             'basePath' => $basePath,
@@ -787,6 +787,49 @@ class LivrosController extends GestorController
         ];
 
         return $this->renderer->render($response, 'dashboard/livros/update.php', $templateVariables);
+    }
+
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        $ID = $request->getAttribute('ID');
+
+        $URI = (array)$request->getQueryParams();
+
+        $basePath = $this->container->get('settings')['api']['path'];
+
+        $gestor = parent::getGestor();
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $this->livro->setID($ID);
+        if ($this->livroDAO->getLivroByID($this->livro) === []) {
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('livros.index');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor,
+            'livro' => $livro
+        ];
+
+        return $this->renderer->render($response, 'dashboard/livros/delete.php', $templateVariables);
     }
 
     private static function validateAutorOrEditoraName($value, $regexRule)
