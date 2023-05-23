@@ -113,7 +113,7 @@
                     <thead>
                         <tr class="table__tr">
                             <th class="table__cell tc--w50">ID</th>
-                            <th class="table__cell fg--1">Nome</th>
+                            <th class="table__cell fg--1">Título</th>
                             <th class="table__cell tc--w210">Unidades</th>
                             <th class="table__cell tc--w210">Editora</th>
                             <th class="table__cell tc--w210" colspan="2">Ações</th>

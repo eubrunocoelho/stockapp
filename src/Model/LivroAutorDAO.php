@@ -105,8 +105,7 @@ class LivroAutorDAO
 
         $stmt = $this->database->prepare($SQL);
         $stmt->bindValue(':ID_livro', $livroAutor->getIDLivro());
-        $stmt->execute();
 
-        return ($stmt->rowCount() > 0) ? true : false;
+        return ($stmt->execute()) ? true : false;
     }
 }

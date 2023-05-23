@@ -16,7 +16,7 @@
     ?>
     <main class="main">
         <div class="main-heading container">
-            <h1 class="main-heading__title">Ativar</h1>
+            <h1 class="main-heading__title">Deletar</h1>
             <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/livros/delete/<?=$livro['ID']?>">Deletar</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/livros/show/<?=$livro['ID']?>"><?=$livro['titulo']?></a> / <a class="breadcrumbs__link" href="<?=$basePath?>/livros">Livros</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container">
@@ -30,7 +30,7 @@
                 <table class="table mb--20">
                     <tbody>
                         <tr class="table__tr">
-                            <th class="table__cell tc--w210">Titulo</th>
+                            <th class="table__cell tc--w210">Título</th>
                             <td class="table__cell fg--1"><?=$livro['titulo']?></td>
                         </tr>
                         <tr class="table__tr">

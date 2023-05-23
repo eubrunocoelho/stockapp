@@ -333,4 +333,18 @@ class LivroDAO
 
         return ($stmt->execute()) ? true : false;
     }
+
+    public function deleteLivroByID(Livro $livro)
+    {
+        $SQL =
+            'DELETE FROM 
+                 livro
+             WHERE
+                 ID = :ID';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID', $livro->getID());
+
+        return ($stmt->execute()) ? true : false;
+    }
 }

@@ -27,7 +27,7 @@
                 <table class="table">
                     <tbody>
                         <tr class="table__tr">
-                            <th class="table__cell tc--w210">Nome</th>
+                            <th class="table__cell tc--w210">Título</th>
                             <td class="table__cell fg--1"><?=$livro['titulo']?></td>
                         </tr>
                         <tr class="table__tr">

@@ -40,4 +40,18 @@ class EntradaDAO
 
         return ($stmt->rowCount() > 0) ? true : false;
     }
+
+    public function deleteEntradaByIDLivro(Entrada $entrada)
+    {
+        $SQL =
+            'DELETE FROM
+                 entrada
+             WHERE
+                 ID_livro = :ID_livro';
+        
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID_livro', $entrada->getIDLivro());
+
+        return ($stmt->execute()) ? true : false;
+    }
 }

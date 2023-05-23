@@ -29,7 +29,11 @@ use App\{
     Model\LivroAutor,
     Model\LivroAutorDAO,
     Model\LivroEditora,
-    Model\LivroEditoraDAO
+    Model\LivroEditoraDAO,
+    Model\Entrada,
+    Model\EntradaDAO,
+    Model\Saida,
+    Model\SaidaDAO
 };
 
 use PDO;
@@ -40,7 +44,7 @@ class LivrosController extends GestorController
         $app, $container, $database, $renderer, $validator;
 
     private
-        $livro, $livroDAO, $autor, $autorDAO, $editora, $editoraDAO, $livroAutor, $livroAutorDAO, $livroEditora, $livroEditoraDAO;
+        $livro, $livroDAO, $autor, $autorDAO, $editora, $editoraDAO, $livroAutor, $livroAutorDAO, $livroEditora, $livroEditoraDAO, $saida, $saidaDAO, $entrada, $entradaDAO;
 
     public function __construct(App $app)
     {
@@ -60,6 +64,10 @@ class LivrosController extends GestorController
         $this->livroAutorDAO = new LivroAutorDAO($this->database);
         $this->livroEditora = new LivroEditora();
         $this->livroEditoraDAO = new LivroEditoraDAO($this->database);
+        $this->entrada = new Entrada();
+        $this->entradaDAO = new EntradaDAO($this->database);
+        $this->saida = new Saida();
+        $this->saidaDAO = new SaidaDAO($this->database);
 
         parent::__construct($this->app);
     }
@@ -839,22 +847,67 @@ class LivrosController extends GestorController
                 $this->livroAutor->setIDLivro($ID);
                 $autoresFromDelete = $this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor);
 
-                // pegar dados livro_autor
-                // verificar se existe registro
+                $this->livroEditora->setIDLivro($ID);
+                $editorasFromDelete = $this->livroEditoraDAO->getLivroEditoraByIDLivro($this->livroEditora);
+
                 if ($autoresFromDelete !== []) {
-                    // percorrer registros
+                    $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
+
                     foreach ($autoresFromDelete as $autorFromDelete) {
                         $this->livroAutor->setIDLivro($ID);
                         $this->livroAutor->setIDAutor($autorFromDelete['ID_autor']);
-                        // verificar se existe registros referentes ao mesmo autor
                         $livroAutor = $this->livroAutorDAO->getLivroAutorByOtherIDLivroAndByIDAutor($this->livroAutor);
-                        // se não existir registros deleta o autor
 
                         if ($livroAutor === []) {
-                            $this->autor->setID($autoresFromDelete['ID_autor']);
+                            $this->autor->setID($autorFromDelete['ID_autor']);
                             $this->autorDAO->deleteAutorByID($this->autor);
                         }
                     }
+                }
+
+                if ($editorasFromDelete !== []) {
+                    $this->livroEditoraDAO->deleteLivroEditoraByIDLivro($this->livroEditora);
+
+                    foreach ($editorasFromDelete as $editoraFromDelete) {
+                        $this->livroEditora->setIDLivro($ID);
+                        $this->livroEditora->setIDEditora($editoraFromDelete['ID_editora']);
+                        $livroEditora = $this->livroEditoraDAO->getLivroEditoraByOtherIDLivroAndByIDEditora($this->livroEditora);
+
+                        if ($livroEditora === []) {
+                            $this->editora->setID($editoraFromDelete['ID_editora']);
+                            if ($this->editoraDAO->deleteEditoraByID($this->editora)) {
+                                $this->container->get('flash')
+                                    ->addMessage('message.success', 'Livro deletado com sucesso!');
+
+                                $url = RouteContext::fromRequest($request)
+                                    ->getRouteParser()
+                                    ->urlFor('livros.index');
+
+                                return $response
+                                    ->withHeader('Location', $url)
+                                    ->withStatus(302);
+                            }
+                        }
+                    }
+                }
+
+                $this->entrada->setIDLivro($ID);
+                $this->entradaDAO->deleteEntradaByIDLivro($this->entrada);
+
+                $this->saida->setIDLivro($ID);
+                $this->saidaDAO->deleteSaidaByIDLivro($this->saida);
+
+                if ($this->livroDAO->deleteLivroByID($this->livro)) {
+                    $this->container->get('flash')
+                        ->addMessage('message.success', 'Livro deletado com sucesso!');
+
+                    $url = RouteContext::fromRequest($request)
+                        ->getRouteParser()
+                        ->urlFor('livros.index');
+
+                    return $response
+                        ->withHeader('Location', $url)
+                        ->withStatus(302);
                 }
             }
         }

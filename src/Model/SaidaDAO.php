@@ -40,4 +40,18 @@ class SaidaDAO
 
         return ($stmt->rowCount() > 0) ? true : false;
     }
+
+    public function deleteSaidaByIDLivro(Saida $saida)
+    {
+        $SQL =
+            'DELETE FROM
+                 saida
+             WHERE
+                 ID_livro = :ID_livro';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->bindValue(':ID_livro', $saida->getIDLivro());
+
+        return ($stmt->execute()) ? true : false;
+    }
 }
