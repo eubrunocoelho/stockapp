@@ -108,8 +108,8 @@
                     <button class="btn bg--danger" onclick="window.location.href='<?=$basePath?>/livros/delete/<?=$livro['ID']?>'">Deletar</button>
                 </div>
                 <div class="operation-group">
-                    <button class="btn bg--success" onclick="window.location.href='./registrar-entrada.html';">Registrar Entrada</button>
-                    <button class="btn bg--warning" onclick="window.location.href='./registrar-saida.html';">Registrar Saída</button>
+                    <button class="btn bg--success" onclick="window.location.href='<?=$basePath?>/livros/entrada/<?=$livro['ID']?>';">Registrar Entrada</button>
+                    <button class="btn bg--warning" onclick="window.location.href='<?=$basePath?>/livros/saida/<?=$livro['ID']?>';">Registrar Saída</button>
                 </div>
             </div>
         </section>

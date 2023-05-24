@@ -58,4 +58,8 @@ return function (App $app) {
         $group->post('/saida/{ID}', [EntradaSaidaController::class, 'saida']);
         $group->get('/delete/{ID}', [LivrosController::class, 'delete'])->setName('livros.delete');
     })->add(Unauthenticated::class);
+
+    $app->group('/historico', function (RouteCollectorProxy $group) {
+        $group->get('', [EntradaSaidaController::class, 'index'])->setName('historico.index');
+    });
 };

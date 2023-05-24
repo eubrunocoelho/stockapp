@@ -31,7 +31,7 @@
         <ul class="side-navigation__menu-list">
             <li class="side-navigation__menu-item">
                 <span class="menu-item__icon-box"><i class="fa-solid fa-clock-rotate-left menu-item__icon"></i></span>
-                <a href="./historico.html" class="side-navigation__menu-link">Histórico de Entrada/Saída</a>
+                <a href="<?=$basePath?>/historico" class="side-navigation__menu-link">Histórico de Entrada/Saída</a>
             </li>
         </ul>
     </nav>

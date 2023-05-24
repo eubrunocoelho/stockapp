@@ -55,6 +55,57 @@ class EntradaSaidaController extends GestorController
         parent::__construct($this->app);
     }
 
+    public function index(Request $request, Response $response, array $args): Response
+    {
+        $URI = (array)$request->getQueryParams();
+
+        $basePath = $this->container->get('settings')['api']['path'];
+
+        $gestor = parent::getGestor();
+        $gestor = parent::applyGestorData($gestor);
+
+        if ($gestor === []) {
+            Session::destroy();
+
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        $URI['list'] = $URI['list'] ?? 'entrada';
+
+        $pagination['currentPage'] = $URI['page'] ?? 1;
+        $pagination['resultLimit'] = 3;
+        $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
+
+        if (isset($URI['list'])) {
+            if ($URI['list'] == 'entrada') {
+                $status['listBy']['entrada'] = true;
+
+                $list['title'] = 'Histórico de Entrada';
+                $list['table']['thead']['unidades'] = 'Unidades (Entrada)';
+
+                $totalRegisters = $this->entradaDAO->getEntradaRegisters()[0]['total_registros'];
+                $historico = $this->entradaDAO->getEntradaWithPagination($pagination);
+            }
+        }
+
+        $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
+
+        $templateVariables = [
+            'basePath' => $basePath,
+            'gestor' => $gestor,
+            'list' => $list,
+            'historico' => $historico
+        ];
+
+        return $this->renderer->render($response, 'dashboard/historico/index.php', $templateVariables);
+    }
+
     public function entrada(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');

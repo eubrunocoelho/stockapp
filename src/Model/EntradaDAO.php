@@ -14,6 +14,38 @@ class EntradaDAO
         $this->database = $database;
     }
 
+    public function getEntradaWithPagination($pagination)
+    {
+        $SQL = 
+            'SELECT * FROM entrada
+             ORDER BY ID DESC
+             LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getEntradaRegisters()
+    {
+        $SQL =
+            'SELECT COUNT(ID) AS total_registros FROM entrada';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function register(Entrada $entrada)
     {
         $SQL =
@@ -48,7 +80,7 @@ class EntradaDAO
                  entrada
              WHERE
                  ID_livro = :ID_livro';
-        
+
         $stmt = $this->database->prepare($SQL);
         $stmt->bindValue(':ID_livro', $entrada->getIDLivro());
 
