@@ -16,9 +16,10 @@ class EntradaDAO
 
     public function getEntradaWithPagination($pagination)
     {
-        $SQL = 
-            'SELECT * FROM entrada
-             ORDER BY ID DESC
+        $SQL =
+            'SELECT entrada.ID, entrada.ID_livro, livro.titulo, entrada.quantidade, entrada.registrado_em
+             FROM entrada
+             INNER JOIN livro ON entrada.ID_livro = livro.ID
              LIMIT ' . $pagination['start'] . ', ' . $pagination['resultLimit'];
 
         $stmt = $this->database->prepare($SQL);

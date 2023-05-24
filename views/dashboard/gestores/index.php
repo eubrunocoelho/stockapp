@@ -1,6 +1,3 @@
-<?php
-    dd($list);
-?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

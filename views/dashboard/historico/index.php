@@ -1,6 +1,3 @@
-<?php
-dd($historico);
-?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -25,9 +22,21 @@ dd($historico);
         <section class="section container mb--30">
             <div class="filter">
                 <div class="filter__order-by">
-                    <select class="order-by__select">
-                        <option>Entrada</option>
-                        <option>Saída</option>
+                    <select class="order-by__select" id="listBy">
+                        <option value="<?=$listBy['URL']['entrada']?>"<?php
+                        if (
+                            ($status['listBy']['entrada'])
+                        ) {
+                            echo ' selected';
+                        }
+                        ?>>Entrada</option>
+                        <option value="<?=$listBy['URL']['saida']?>"<?php
+                        if (
+                            ($status['listBy']['saida'])
+                        ) {
+                            echo ' selected';
+                        }
+                        ?>>Saída</option>
                     </select>
                 </div>
             </div>
@@ -35,14 +44,14 @@ dd($historico);
         <section class="section container mb--20">
             <div class="box">
                 <div class="box-heading">
-                    <h1 class="box-heading__title"><?=$list['title']?></h1>
+                    <h1 class="box-heading__title"><?=$index['title']?></h1>
                 </div>
                 <table class="table">
                     <thead>
                         <tr class="table__tr">
                             <th class="table__cell tc--w50">ID</th>
-                            <th class="table__cell fg--1">Nome</th>
-                            <th class="table__cell tc--w210"><?=$list['table']['thead']['unidades']?></th>
+                            <th class="table__cell fg--1">Título</th>
+                            <th class="table__cell tc--w210"><?=$index['table']['thead']['unidades']?></th>
                             <th class="table__cell tc--w210">Data</th>
                         </tr>
                     </thead>
@@ -55,12 +64,12 @@ dd($historico);
                             foreach ($historico as $historico) {
                         ?>
                         <tr class="table__tr">
-                            <td class="table__cell tc--w50">920</td>
+                            <td class="table__cell tc--w50"><?=$historico['ID']?></td>
                             <td class="table__cell fg--1">
-                                <a href="./livro.html">Senhor dos Anéis</a>
+                                <a href="<?=$basePath?>/livros/show/<?=$historico['ID_livro']?>"><?=$historico['titulo']?></a>
                             </td>
-                            <td class="table__cell tc--w210">2</td>
-                            <td class="table__cell tc--w210">05/03/2023 ás 15:16:01</td>
+                            <td class="table__cell tc--w210"><?=$historico['quantidade']?></td>
+                            <td class="table__cell tc--w210"><?=$historico['registrado_em']?></td>
                         </tr>
                         <?php
                             }
@@ -74,22 +83,37 @@ dd($historico);
             <div class="pagination">
                 <ul class="pagination__list">
                     <li class="pagination__item">
+                        <?php
+                        if (
+                            $pagination['links']['previous']
+                        ) {
+                        ?>
+                        <a href="<?=$pagination['URL']['previous']?>" class="pagination__link">«</a>
+                        <?php
+                        } else {
+                        ?>
                         <span class="pagination__link text--disabled">«</span>
+                        <?php
+                        }
+                        ?>
                     </li>
                     <li class="pagination__item">
-                        <a href="./historico.html" class="pagination__link border--active">1</a>
+                        <a href="<?=$pagination['URL']['current']?>" class="pagination__link border--active"><?=$pagination['currentPage']?></a>
                     </li>
                     <li class="pagination__item">
-                        <a href="./historico.html" class="pagination__link">2</a>
-                    </li>
-                    <li class="pagination__item">
-                        <span class="pagination__link text--disabled">...</span>
-                    </li> 
-                    <li class="pagination__item">
-                        <a href="./historico.html" class="pagination__link">10.102</a>
-                    </li>
-                    <li class="pagination__item">
-                        <a href="./historico.html" class="pagination__link">»</a>
+                        <?php
+                        if (
+                            $pagination['links']['next']
+                        ) {
+                        ?>
+                        <a href="<?=$pagination['URL']['next']?>" class="pagination__link">»</a>
+                        <?php
+                        } else {
+                        ?>
+                        <span class="pagination__link text--disabled">»</span>
+                        <?php
+                        }
+                        ?>
                     </li>
                 </ul>
             </div>
@@ -98,6 +122,19 @@ dd($historico);
     <?php
     require __DIR__ . '/../partials/footer.php';
     ?>
+    <script>
+        let selectListBy = document.querySelector('#listBy');
+
+        selectListBy.addEventListener('change', (e) => {
+            let goToURL = e.currentTarget.value;
+
+            redirect(goToURL);
+        });
+
+        let redirect = (goToURL) => {
+            window.location = goToURL;
+        };
+    </script>
     <?php
     require __DIR__ . '/../partials/scripts.php';
     ?>

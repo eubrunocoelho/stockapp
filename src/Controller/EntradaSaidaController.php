@@ -58,6 +58,7 @@ class EntradaSaidaController extends GestorController
     public function index(Request $request, Response $response, array $args): Response
     {
         $URI = (array)$request->getQueryParams();
+        $URI['list'] = $URI['list'] ?? 'entrada';
 
         $basePath = $this->container->get('settings')['api']['path'];
 
@@ -76,8 +77,6 @@ class EntradaSaidaController extends GestorController
                 ->withStatus(302);
         }
 
-        $URI['list'] = $URI['list'] ?? 'entrada';
-
         $pagination['currentPage'] = $URI['page'] ?? 1;
         $pagination['resultLimit'] = 3;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
@@ -86,21 +85,63 @@ class EntradaSaidaController extends GestorController
             if ($URI['list'] == 'entrada') {
                 $status['listBy']['entrada'] = true;
 
-                $list['title'] = 'Histórico de Entrada';
-                $list['table']['thead']['unidades'] = 'Unidades (Entrada)';
+                $index['title'] = 'Histórico de Entradas';
+                $index['table']['thead']['unidades'] = 'Unidades (Entrada)';
 
                 $totalRegisters = $this->entradaDAO->getEntradaRegisters()[0]['total_registros'];
                 $historico = $this->entradaDAO->getEntradaWithPagination($pagination);
-            }
+            } else $status['listBy']['entrada'] = false;
+
+            if ($URI['list'] == 'saida') {
+                $status['listBy']['saida'] = true;
+
+                $index['title'] = 'Histórico de Saídas';
+                $index['table']['thead']['unidades'] = 'Unidades (Saída)';
+
+                $totalRegisters = $this->saidaDAO->getSaidaRegisters()[0]['total_registros'];
+                $historico = $this->saidaDAO->getSaidaWithPagination($pagination);
+            } else $status['listBy']['saida'] = false;
         }
 
         $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
 
+        $status['listBy']['entrada'] = $status['listBy']['entrada'] ?? false;
+        $status['listBy']['saida'] = $status['listBy']['saida'] ?? false;
+
+        if ($status['listBy']['entrada']) $baseLink['listBy'] = '&list=entrada';
+        elseif (
+            !($status['listBy']['entrada']) &&
+            !($status['listBy']['saida'])
+        ) $baseLink = null;
+
+        if ($status['listBy']['saida']) $baseLink['listBy'] = '&list=saida';
+        elseif (
+            !($status['listBy']['entrada']) &&
+            !($status['listBy']['saida'])
+        ) $baseLink = null;
+
+        $baseLink = $baseLink ?? [];
+
+        $listBy['URL']['entrada'] = $basePath . '/historico?list=entrada';
+        $listBy['URL']['saida'] = $basePath . '/historico?list=saida';
+        $pagination['URL']['previous'] = $basePath . '/historico?page=' . $pagination['currentPage'] - 1 . $baseLink['listBy'];
+        $pagination['URL']['next'] = $basePath . '/historico?page=' . $pagination['currentPage'] + 1 . $baseLink['listBy'];
+        $pagination['URL']['current'] = $basePath . '/historico?page=' . $pagination['currentPage'] . $baseLink['listBy'];
+
+        if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
+        else $pagination['links']['previous'] = false;
+
+        if (!($pagination['currentPage'] == $pagination['totalPages'])) $pagination['links']['next'] = true;
+        else $pagination['links']['next'] = false;
+
         $templateVariables = [
             'basePath' => $basePath,
             'gestor' => $gestor,
-            'list' => $list,
-            'historico' => $historico
+            'index' => $index,
+            'historico' => $historico,
+            'listBy' => $listBy,
+            'pagination' => $pagination,
+            'status' => $status
         ];
 
         return $this->renderer->render($response, 'dashboard/historico/index.php', $templateVariables);
