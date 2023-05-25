@@ -875,18 +875,7 @@ class LivrosController extends GestorController
 
                         if ($livroEditora === []) {
                             $this->editora->setID($editoraFromDelete['ID_editora']);
-                            if ($this->editoraDAO->deleteEditoraByID($this->editora)) {
-                                $this->container->get('flash')
-                                    ->addMessage('message.success', 'Livro deletado com sucesso!');
-
-                                $url = RouteContext::fromRequest($request)
-                                    ->getRouteParser()
-                                    ->urlFor('livros.index');
-
-                                return $response
-                                    ->withHeader('Location', $url)
-                                    ->withStatus(302);
-                            }
+                            $this->editoraDAO->deleteEditoraByID($this->editora);
                         }
                     }
                 }

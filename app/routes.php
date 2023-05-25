@@ -10,8 +10,7 @@ use App\Controller\{
     DashboardController,
     GestoresController,
     LivrosController,
-    EntradaSaidaController,
-    GestorController
+    OperacionalController
 };
 
 use App\Middleware\{
@@ -52,14 +51,14 @@ return function (App $app) {
         $group->post('/register', [LivrosController::class, 'register']);
         $group->get('/update/{ID}', [LivrosController::class, 'update'])->setName('livros.update');
         $group->post('/update/{ID}', [LivrosController::class, 'update']);
-        $group->get('/entrada/{ID}', [EntradaSaidaController::class, 'entrada'])->setName('livros.entrada');
-        $group->post('/entrada/{ID}', [EntradaSaidaController::class, 'entrada']);
-        $group->get('/saida/{ID}', [EntradaSaidaCOntroller::class, 'saida'])->setName('livros.saida');
-        $group->post('/saida/{ID}', [EntradaSaidaController::class, 'saida']);
+        $group->get('/entrada/{ID}', [OperacionalController::class, 'entrada'])->setName('livros.entrada');
+        $group->post('/entrada/{ID}', [OperacionalController::class, 'entrada']);
+        $group->get('/saida/{ID}', [OperacionalController::class, 'saida'])->setName('livros.saida');
+        $group->post('/saida/{ID}', [OperacionalController::class, 'saida']);
         $group->get('/delete/{ID}', [LivrosController::class, 'delete'])->setName('livros.delete');
     })->add(Unauthenticated::class);
 
     $app->group('/historico', function (RouteCollectorProxy $group) {
-        $group->get('', [EntradaSaidaController::class, 'index'])->setName('historico.index');
+        $group->get('', [OperacionalController::class, 'index'])->setName('historico.index');
     });
 };
