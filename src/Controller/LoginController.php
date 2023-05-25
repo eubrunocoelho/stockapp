@@ -45,9 +45,10 @@ class LoginController
         $this->gestorDAO = new GestorDAO($this->database);
     }
 
+    // OK
     public function login(Request $request, Response $response, array $args): Response
     {
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         if ($request->getMethod() == 'POST') {
             $formRequest = (array)$request->getParsedBody();
@@ -63,8 +64,11 @@ class LoginController
                 ]
             ];
 
-            if (!empty($formRequest)) {
-                $this->validator->setFields(['email', 'senha']);
+            if (!(empty($formRequest))) {
+                $this->validator->setFields([
+                    'email',
+                    'senha'
+                ]);
                 $this->validator->setData($formRequest);
                 $this->validator->setRules($rules);
                 $this->validator->validation();
@@ -73,10 +77,10 @@ class LoginController
                     $this->gestor->setEmail($formRequest['email']);
                     $this->gestor->setSenha($formRequest['senha']);
 
-                    if (($gestor = $this->gestorDAO->checkGestorByCredentials($this->gestor)) !== []) {
-                        $gestor = $gestor[0];
-
-                        Session::create('gestorID', $gestor['ID']);
+                    if (
+                        ($gestor = $this->gestorDAO->checkGestorByCredentials($this->gestor)) !== []
+                    ) {
+                        Session::create('gestorID', $gestor[0]['ID']);
                         Session::create('authenticated', true);
 
                         $url = RouteContext::fromRequest($request)

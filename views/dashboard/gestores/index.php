@@ -40,8 +40,7 @@
                     <select class="order-by__select" id="filterBy">
                         <option value="<?=$filterBy['URL']['todos']?>"<?php
                         if (
-                            !($status['status']['active']) &&
-                            !($status['status']['inactive'])
+                            ($status['status']['todos'])
                         ) {
                             echo ' selected';
                         }
@@ -106,7 +105,7 @@
                     <tbody>
                         <?php
                         if (
-                            isset($gestores) &&
+                            (isset($gestores)) &&
                             !(empty($gestores))
                         ) {
                             foreach ($gestores as $gestor) {
@@ -119,13 +118,13 @@
                             <td class="table__cell tc--w210"><?=$gestor['cargo']?></td>
                             <?php
                             if (
-                                $gestor['status'] == 'Ativo'
+                                ($gestor['status'] == 'Ativo')
                             ) {
                             ?>
                             <td class="table__cell tc--w210 text--success"><?=$gestor['status']?></td>
                             <?php
                             } elseif (
-                                $gestor['status'] == 'Inativo'
+                                ($gestor['status'] == 'Inativo')
                             ) {
                             ?>
                             <td class="table__cell tc--w210 text--danger"><?=$gestor['status']?></td>
@@ -135,13 +134,13 @@
                             <td class="table__cell tc--w105"><i class="fa-solid fa-marker text--warning action__icon"></i><a href="<?=$basePath?>/gestores/update/<?=$gestor['ID']?>" class="text--warning">Editar</a></td>
                             <?php
                             if (
-                                $gestor['status'] == 'Inativo'
+                                ($gestor['status'] == 'Inativo')
                             ) {
                             ?>
                             <td class="table__cell tc--w105"><i class="fa-solid fa-user-plus text--success action__icon"></i><a href="<?=$basePath?>/gestores/status/active/<?=$gestor['ID']?>" class="text--success">Ativar</a></td>
                             <?php
                             } elseif (
-                                $gestor['status'] == 'Ativo'
+                                ($gestor['status'] == 'Ativo')
                             ) {
                             ?>
                             <td class="table__cell tc--w105"><i class="fa-solid fa-user-minus text--danger action__icon"></i><a href="<?=$basePath?>/gestores/status/inactive/<?=$gestor['ID']?>" class="text--danger">Inativar</a></td>
@@ -157,7 +156,7 @@
                 </table>
                 <?php
                 if (
-                    $authorize['register'] === true
+                    ($authorize['register'] === true)
                 ) {
                 ?>
                 <button class="btn" onclick="window.location.href='<?=$basePath?>/gestores/register'">Cadastrar</button>
@@ -172,7 +171,7 @@
                     <li class="pagination__item">
                         <?php
                         if (
-                            $pagination['links']['previous']
+                            ($pagination['links']['previous'])
                         ) {
                         ?>
                         <a href="<?=$pagination['URL']['previous']?>" class="pagination__link">«</a>
@@ -190,7 +189,7 @@
                     <li class="pagination__item">
                         <?php
                         if (
-                            $pagination['links']['next']
+                            ($pagination['links']['next'])
                         ) {
                         ?>
                         <a href="<?=$pagination['URL']['next']?>" class="pagination__link">»</a>

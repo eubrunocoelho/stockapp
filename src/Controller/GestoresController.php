@@ -15,14 +15,14 @@ use Slim\{
 
 use App\{
     Helper\Session,
-    Validator\Validator
+    Validator\Validator,
+    Helper\DataFilter
 };
 
 use App\{
     Model\Gestor,
     Model\GestorDAO
 };
-
 use PDO;
 
 class GestoresController extends GestorController
@@ -47,11 +47,13 @@ class GestoresController extends GestorController
         parent::__construct($this->app);
     }
 
+    // OK
     public function index(Request $request, Response $response, array $args): Response
     {
         $URI = (array)$request->getQueryParams();
+        $URI['status'] = $URI['status'] ?? 'todos';
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
@@ -76,10 +78,14 @@ class GestoresController extends GestorController
         $pagination['resultLimit'] = 3;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
 
-        $totalRegisters = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
-        $gestores = $this->gestorDAO->getAllWithPagination($pagination);
-
         if (isset($URI['status'])) {
+            if ($URI['status'] == 'todos') {
+                $status['status']['todos'] = true;
+
+                $totalRegisters = $this->gestorDAO->getTotalRegisters()[0]['total_registros'];
+                $gestores = $this->gestorDAO->getAllWithPagination($pagination);
+            } else $status['status']['todos'] = false;
+
             if ($URI['status'] == 'active') {
                 $status['status']['active'] = true;
 
@@ -109,6 +115,14 @@ class GestoresController extends GestorController
         ) {
             $search['data'] = '%' . $URI['search'] . '%';
 
+            if ($URI['status'] == 'todos') {
+                $status['status']['todos'] = true;
+                $status['search'] = true;
+
+                $totalRegisters = $this->gestorDAO->getSearchRegisters($search)[0]['total_registros'];
+                $gestores = $this->gestorDAO->getSearchWithPagination($pagination, $search);
+            } else $status['status']['todos'] = false;
+
             if ($URI['status'] == 'active') {
                 $status['status']['active'] = true;
                 $status['search'] = true;
@@ -128,19 +142,29 @@ class GestoresController extends GestorController
 
         $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
 
+        $status['status']['todos'] = $status['status']['todos'] ?? false;
         $status['status']['active'] = $status['status']['active'] ?? false;
         $status['status']['inactive'] = $status['status']['inactive'] ?? false;
 
+        if ($status['status']['todos']) $baseLink['status'] = '&status=todos';
+        elseif (
+            !($status['status']['todos']) &&
+            !($status['status']['active']) &&
+            !($status['status']['inactive'])
+        ) $baseLink['status'] = null;
+
         if ($status['status']['active']) $baseLink['status'] = '&status=active';
         elseif (
+            !($status['status']['todos']) &&
             !($status['status']['active']) &&
             !($status['status']['inactive'])
         ) $baseLink['status'] = null;
 
         if ($status['status']['inactive']) $baseLink['status'] = '&status=inactive';
         elseif (
-            !($status['status']['inactive']) &&
-            !($status['status']['active'])
+            !($status['status']['todos']) &&
+            !($status['status']['active']) &&
+            !($status['status']['inactive'])
         ) $baseLink['status'] = null;
 
         if ($status['search']) $baseLink['search'] = '&search=' . $URI['search'];
@@ -148,7 +172,7 @@ class GestoresController extends GestorController
 
         $baseLink = $baseLink ?? [];
 
-        $filterBy['URL']['todos'] = $basePath . '/gestores?' . $baseLink['search'];
+        $filterBy['URL']['todos'] = $basePath . '/gestores?status=todos' . $baseLink['search'];
         $filterBy['URL']['active'] = $basePath . '/gestores?status=active' . $baseLink['search'];
         $filterBy['URL']['inactive'] = $basePath . '/gestores?status=inactive' . $baseLink['search'];
         $pagination['URL']['previous'] = $basePath . '/gestores?page=' . $pagination['currentPage'] - 1 . $baseLink['status'] . $baseLink['search'];
@@ -179,17 +203,18 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);
     }
 
+    // OK
     public function show(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
 
-        // \o/
         $gestor = parent::getGestor();
+
         if ($gestor === []) {
             Session::destroy();
 
@@ -202,6 +227,7 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         }
 
+        // ...
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
@@ -230,14 +256,14 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/show.php', $templateVariables);
     }
 
+    // OK
     public function register(Request $request, Response $response, array $args): Response
     {
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath =  '/' . $this->container->get('settings')['api']['path'];
         $uploadDirectory =
             $this->container->get('settings')['api']['uploadDirectory'] . '/img/profile';
 
         $gestor = parent::getGestor();
-        $authorize = self::authorize('register', $gestor);
 
         if ($gestor === []) {
             Session::destroy();
@@ -336,7 +362,7 @@ class GestoresController extends GestorController
                 ]
             ];
 
-            if (!empty($formRequest)) {
+            if (!(empty($formRequest))) {
                 $fields = [
                     'nome',
                     'email',
@@ -368,13 +394,13 @@ class GestoresController extends GestorController
                                 'image/jpeg',
                                 'image/png'
                             ],
-                            'maxSize' => 2097152 //2097152
+                            'maxSize' => 2097152
                         ];
 
-                        if (!self::validateMediaType($uploadedFile, $uploadRules))
+                        if (!(self::validateMediaType($uploadedFile, $uploadRules)))
                             $errors = (array)'O formato de arquivo para imagem de "Foto de Perfil" não é compatível.';
 
-                        if (!self::validateFileSize($uploadedFile, $uploadRules))
+                        if (!(self::validateFileSize($uploadedFile, $uploadRules)))
                             $errors = (array)'O tamanho de arquivo para imagem de "Foto de Perfil" excede o permitido.';
 
                         if (
@@ -389,8 +415,8 @@ class GestoresController extends GestorController
                     $uploadedFile = $uploadedFile ?? null;
                     $uploadFileName = $uploadFileName ?? null;
 
-                    if (($uploadFileName !== null)) {
-                        if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
+                    if ($uploadFileName !== null) {
+                        if (!(is_dir($uploadDirectory))) mkdir($uploadDirectory, 0777, true);
 
                         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
                             self::moveUploadedFile($uploadDirectory, $uploadedFile, $uploadFileName);
@@ -398,16 +424,16 @@ class GestoresController extends GestorController
                     }
 
                     $dataWrite = [
-                        'nome' => $formRequest['nome'] ?? null,
-                        'email' => $formRequest['email'] ?? null,
-                        'cpf' => $formRequest['cpf'] ?? null,
-                        'senha' => $formRequest['senha'] ?? null,
-                        'telefone' => $formRequest['telefone'] ?? null,
-                        'endereco' => $formRequest['endereco'] ?? null,
-                        'cargo' => $formRequest['cargo'] ?? null,
-                        'genero' => $formRequest['genero'] ?? null,
-                        'status' => $formRequest['status'] ?? null,
-                        'img_profile' => $uploadFileName ?? null
+                        'nome' => DataFilter::isString($formRequest['nome']) ?? null,
+                        'email' => DataFilter::isString($formRequest['email']) ?? null,
+                        'cpf' => DataFilter::isString($formRequest['cpf']) ?? null,
+                        'senha' => DataFilter::isString($formRequest['senha']) ?? null,
+                        'telefone' => DataFilter::isString($formRequest['telefone']) ?? null,
+                        'endereco' => DataFilter::isString($formRequest['endereco']) ?? null,
+                        'cargo' => DataFilter::isInteger($formRequest['cargo']) ?? null,
+                        'genero' => DataFilter::isInteger($formRequest['genero']) ?? null,
+                        'status' => DataFilter::isInteger($formRequest['status']) ?? null,
+                        'img_profile' => DataFilter::isString($uploadFileName) ?? null
                     ];
 
                     $this->gestor->setNome($dataWrite['nome']);
@@ -451,11 +477,12 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/register.php', $templateVariables);
     }
 
+    // OK
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
         $uploadDirectory =
             $this->container->get('settings')['api']['uploadDirectory'] . '/img/profile';
 
@@ -473,6 +500,7 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         }
 
+        // ...
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
@@ -487,9 +515,7 @@ class GestoresController extends GestorController
         $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
         $authorize = self::authorize('update', $gestor, $gestorProfile);
 
-        if (
-            !($authorize['update']['profile'])
-        ) {
+        if (!($authorize['update']['profile'])) {
             $this->container->get('flash')
                 ->addMessage('message.warning', 'Você não tem permissão para executar essa ação.');
 
@@ -582,7 +608,7 @@ class GestoresController extends GestorController
                     'regex' => $regex['status']
                 ];
 
-            if (!empty($formRequest)) {
+            if (!(empty($formRequest))) {
                 $fields = [
                     'nome',
                     'email',
@@ -616,13 +642,13 @@ class GestoresController extends GestorController
                                 'image/jpeg',
                                 'image/png'
                             ],
-                            'maxSize' => 2097152 //2097152
+                            'maxSize' => 2097152
                         ];
 
-                        if (!self::validateMediaType($uploadedFile, $uploadRules))
+                        if (!(self::validateMediaType($uploadedFile, $uploadRules)))
                             $errors = (array)'O formato de arquivo para imagem de "Foto de Perfil" não é compatível.';
 
-                        if (!self::validateFileSize($uploadedFile, $uploadRules))
+                        if (!(self::validateFileSize($uploadedFile, $uploadRules)))
                             $errors = (array)'O tamanho de arquivo para imagem de "Foto de Perfil" excede o permitido.';
 
                         if (
@@ -638,7 +664,7 @@ class GestoresController extends GestorController
                     $uploadedFile = $uploadedFile ?? null;
                     $uploadFileName = $uploadFileName ?? null;
 
-                    if (($uploadFileName !== null)) {
+                    if ($uploadFileName !== null) {
                         if (
                             ($currentFileName !== null) &&
                             ($currentFileName !== '')
@@ -648,7 +674,7 @@ class GestoresController extends GestorController
                             if (file_exists($path)) unlink($path);
                         }
 
-                        if (!is_dir($uploadDirectory)) mkdir($uploadDirectory, 0777, true);
+                        if (!(is_dir($uploadDirectory))) mkdir($uploadDirectory, 0777, true);
 
                         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
                             self::moveUploadedFile($uploadDirectory, $uploadedFile, $uploadFileName);
@@ -660,22 +686,22 @@ class GestoresController extends GestorController
                     $uploadStatus = $uploadStatus ?? false;
 
                     $dataRequest = [
-                        'nome' => $formRequest['nome'] ?? null,
-                        'email' => $formRequest['email'] ?? null,
-                        'cpf' => $formRequest['cpf'] ?? null,
-                        'telefone' => $formRequest['telefone'] ?? null,
-                        'endereco' => $formRequest['endereco'] ?? null,
-                        'genero' => $formRequest['genero'] ?? null
+                        'nome' => DataFilter::isString($formRequest['nome']) ?? null,
+                        'email' => DataFilter::isString($formRequest['email']) ?? null,
+                        'cpf' => DataFilter::isString($formRequest['cpf']) ?? null,
+                        'telefone' => DataFilter::isString($formRequest['telefone']) ?? null,
+                        'endereco' => DataFilter::isString($formRequest['endereco']) ?? null,
+                        'genero' => DataFilter::isInteger($formRequest['genero']) ?? null
                     ];
 
                     if ($authorize['update']['cargo'])
-                        $dataRequest['cargo'] = $formRequest['cargo'] ?? null;
+                        $dataRequest['cargo'] = DataFilter::isInteger($formRequest['cargo']) ?? null;
 
                     if ($authorize['update']['status'])
-                        $dataRequest['status'] = $formRequest['status'] ?? null;
+                        $dataRequest['status'] = DataFilter::isInteger($formRequest['status']) ?? null;
 
                     if ($uploadStatus)
-                        $dataRequest['img_profile'] = $uploadFileName ?? null;
+                        $dataRequest['img_profile'] = DataFilter::isString($uploadFileName) ?? null;
 
                     $dataRequest['cargo'] = $dataRequest['cargo'] ?? $gestorProfile['cargo'];
                     $dataRequest['status'] = $dataRequest['status'] ?? $gestorProfile['status'];
@@ -709,7 +735,7 @@ class GestoresController extends GestorController
 
                         $url = RouteContext::fromRequest($request)
                             ->getRouteParser()
-                            ->urlFor('gestores.show', ['ID' => $ID]);
+                            ->urlFor('gestores.show', ['ID' => $gestorProfile['ID']]);
 
                         return $response
                             ->withHeader('Location', $url)
@@ -737,6 +763,8 @@ class GestoresController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
     }
+
+    // ... (working)
 
     public function active(Request $request, Response $response, array $args): Response
     {

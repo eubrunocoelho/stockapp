@@ -19,7 +19,7 @@
                 <h1 class="login-heading__title">StockApp</h1>
                 <p class="login-heading__description">Entrar</p>
             </div>
-            <form class="form" action="./login" method="POST">
+            <form class="form" action="<?=$basePath?>/login" method="POST">
                 <div class="form__group">
                     <label class="form__label" for="user">E-mail:</label>
                     <input type="text" class="form__input" id="email" name="email" placeholder="E-mail"<?php
@@ -48,8 +48,8 @@
             </form>
             <?php
             if (
-                isset($errors) &&
-                !empty($errors)
+                (isset($errors)) &&
+                !(empty($errors))
             ) {
                 foreach ($errors as $error) {
             ?>

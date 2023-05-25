@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <?php
-    require __DIR__ . '/../partials/head.php';
-    ?>
+<?php
+require __DIR__ . '/../partials/head.php';
+?>
 </head>
 <body>
     <div class="window-overlay">
@@ -85,6 +85,10 @@
                             <td class="table__cell fg--1"><?=$gestorProfile['endereco']?></td>
                         </tr>
                         <tr class="table__tr">
+                            <th class="table__cell tc--w210">Cargo</th>
+                            <td class="table__cell fg--1"><?=$gestorProfile['cargo']?></td>
+                        </tr>
+                        <tr class="table__tr">
                             <th class="table__cell tc--w210">Gênero</th>
                             <td class="table__cell fg--1"><?=$gestorProfile['genero']?></td>
                         </tr>
@@ -95,15 +99,21 @@
                     </tbody>
                 </table>
                 <?php
-                if ($authorize['update']['status']) {
+                if (
+                    ($authorize['update']['status'])
+                ) {
                 ?>
                 <div class="operation-group mb--20">
                     <?php
-                    if ($gestorProfile['status'] == 'Inativo') {
+                    if (
+                        ($gestorProfile['status'] == 'Inativo')
+                    ) {
                     ?>
                     <button class="btn bg--success" onclick="window.location.href='<?=$basePath?>/gestores/status/active/<?=$gestor['ID']?>';">Ativar</button>
                     <?php
-                    } elseif ($gestorProfile['status'] == 'Ativo') {
+                    } elseif (
+                        ($gestorProfile['status'] == 'Ativo')
+                    ) {
                     ?>
                     <button class="btn bg--danger" onclick="window.location.href='<?=$basePath?>/gestores/status/inactive/<?=$gestor['ID']?>';">Inativar</button>
                     <?php
@@ -114,7 +124,9 @@
                 }
                 ?>
                 <?php
-                if ($authorize['update']['profile']) {
+                if (
+                    ($authorize['update']['profile'])
+                ) {
                 ?>
                 <div class="operation-group">
                     <button class="btn bg--warning" onclick="window.location.href='<?=$basePath?>/gestores/update/<?=$gestorProfile['ID']?>';">Editar informações</button>
