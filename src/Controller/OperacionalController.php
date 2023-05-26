@@ -132,7 +132,10 @@ class OperacionalController extends GestorController
         if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
         else $pagination['links']['previous'] = false;
 
-        if (!($pagination['currentPage'] == $pagination['totalPages'])) $pagination['links']['next'] = true;
+        if (
+            !($pagination['currentPage'] == $pagination['totalPages']) &&
+            ($pagination['totalPages'] != 0)
+        ) $pagination['links']['next'] = true;
         else $pagination['links']['next'] = false;
 
         $templateVariables = [

@@ -71,7 +71,7 @@ class LivrosController extends GestorController
 
         parent::__construct($this->app);
     }
-    
+
     public function index(Request $request, Response $response, array $args): Response
     {
         $URI = (array)$request->getQueryParams();
@@ -263,7 +263,10 @@ class LivrosController extends GestorController
         if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
         else $pagination['links']['previous'] = false;
 
-        if (!($pagination['currentPage'] == $pagination['totalPages'])) $pagination['links']['next'] = true;
+        if (
+            !($pagination['currentPage'] == $pagination['totalPages']) &&
+            ($pagination['totalPages'] != 0)
+        ) $pagination['links']['next'] = true;
         else $pagination['links']['next'] = false;
 
         foreach ($livros as $key => $value) {
@@ -289,7 +292,7 @@ class LivrosController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/livros/index.php', $templateVariables);
     }
-    
+
     public function show(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
@@ -344,7 +347,7 @@ class LivrosController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/livros/show.php', $templateVariables);
     }
-    
+
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath = '/' . $this->container->get('settings')['api']['path'];
@@ -546,7 +549,7 @@ class LivrosController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/livros/register.php', $templateVariables);
     }
-    
+
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
@@ -708,7 +711,7 @@ class LivrosController extends GestorController
                         'edicao' => DataFilter::isInteger($formRequest['edicao']) ?? null,
                         'idioma' => DataFilter::isString($formRequest['idioma']) ?? null,
                         'paginas' => DataFilter::isInteger($formRequest['paginas']) ?? null,
-                        'descricao' => DataFilter::isString( $formRequest['descricao']) ?? null
+                        'descricao' => DataFilter::isString($formRequest['descricao']) ?? null
                     ];
 
                     $this->livro->setTitutlo($dataWrite['titulo']);
@@ -825,7 +828,7 @@ class LivrosController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/livros/update.php', $templateVariables);
     }
-    
+
     public function delete(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
