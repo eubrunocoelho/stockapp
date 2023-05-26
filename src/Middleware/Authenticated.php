@@ -21,8 +21,8 @@ class Authenticated
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
         if (
-            Session::exists('authenticated') &&
-            Session::exists('gestorID')
+            (Session::exists('authenticated')) &&
+            (Session::exists('gestorID'))
         ) {
             if (
                 Session::get('authenticated')

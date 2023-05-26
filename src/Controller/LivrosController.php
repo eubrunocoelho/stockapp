@@ -347,7 +347,7 @@ class LivrosController extends GestorController
         return $this->renderer->render($response, 'dashboard/livros/show.php', $templateVariables);
     }
 
-    //...
+    // OK
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath = '/' . $this->container->get('settings')['api']['path'];
