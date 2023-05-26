@@ -15,6 +15,7 @@ use Slim\{
 
 use App\{
     Helper\Session,
+    Helper\DataFilter,
     Validator\Validator
 };
 
@@ -55,13 +56,12 @@ class OperacionalController extends GestorController
         parent::__construct($this->app);
     }
 
-    //...
     public function index(Request $request, Response $response, array $args): Response
     {
         $URI = (array)$request->getQueryParams();
-        $URI['list'] = $URI['list'] ?? 'entrada';
+        $URI['listBy'] = $URI['listBy'] ?? 'entrada';
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
@@ -82,8 +82,8 @@ class OperacionalController extends GestorController
         $pagination['resultLimit'] = 3;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
 
-        if (isset($URI['list'])) {
-            if ($URI['list'] == 'entrada') {
+        if (isset($URI['listBy'])) {
+            if ($URI['listBy'] == 'entrada') {
                 $status['listBy']['entrada'] = true;
 
                 $index['title'] = 'Histórico de Entradas';
@@ -93,7 +93,7 @@ class OperacionalController extends GestorController
                 $historico = $this->entradaDAO->getEntradaWithPagination($pagination);
             } else $status['listBy']['entrada'] = false;
 
-            if ($URI['list'] == 'saida') {
+            if ($URI['listBy'] == 'saida') {
                 $status['listBy']['saida'] = true;
 
                 $index['title'] = 'Histórico de Saídas';
@@ -109,13 +109,13 @@ class OperacionalController extends GestorController
         $status['listBy']['entrada'] = $status['listBy']['entrada'] ?? false;
         $status['listBy']['saida'] = $status['listBy']['saida'] ?? false;
 
-        if ($status['listBy']['entrada']) $baseLink['listBy'] = '&list=entrada';
+        if ($status['listBy']['entrada']) $baseLink['listBy'] = '&listBy=entrada';
         elseif (
             !($status['listBy']['entrada']) &&
             !($status['listBy']['saida'])
         ) $baseLink = null;
 
-        if ($status['listBy']['saida']) $baseLink['listBy'] = '&list=saida';
+        if ($status['listBy']['saida']) $baseLink['listBy'] = '&listBy=saida';
         elseif (
             !($status['listBy']['entrada']) &&
             !($status['listBy']['saida'])
@@ -123,8 +123,8 @@ class OperacionalController extends GestorController
 
         $baseLink = $baseLink ?? [];
 
-        $listBy['URL']['entrada'] = $basePath . '/historico?list=entrada';
-        $listBy['URL']['saida'] = $basePath . '/historico?list=saida';
+        $listBy['URL']['entrada'] = $basePath . '/historico?listBy=entrada';
+        $listBy['URL']['saida'] = $basePath . '/historico?listBy=saida';
         $pagination['URL']['previous'] = $basePath . '/historico?page=' . $pagination['currentPage'] - 1 . $baseLink['listBy'];
         $pagination['URL']['next'] = $basePath . '/historico?page=' . $pagination['currentPage'] + 1 . $baseLink['listBy'];
         $pagination['URL']['current'] = $basePath . '/historico?page=' . $pagination['currentPage'] . $baseLink['listBy'];
@@ -152,7 +152,7 @@ class OperacionalController extends GestorController
     {
         $ID = $request->getAttribute('ID');
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
@@ -204,7 +204,7 @@ class OperacionalController extends GestorController
                 ]
             ];
 
-            if (!empty($formRequest)) {
+            if (!(empty($formRequest))) {
                 $fields = [
                     'unidades'
                 ];
@@ -228,14 +228,16 @@ class OperacionalController extends GestorController
                 }
 
                 if ($this->validator->passed()) {
-                    $totalUnidades = ($livro['unidades'] + $formRequest['unidades']);
+                    $totalUnidades = (DataFilter::isInteger($livro['unidades']) +
+                        DataFilter::isInteger($formRequest['unidades'])
+                    );
 
                     $this->livro->setUnidades($totalUnidades);
                     if ($this->livroDAO->updateUnidades($this->livro)) {
                         $dataWrite = [
                             'ID_livro' => $livro['ID'] ?? null,
                             'ID_gestor' => $gestor['ID'] ?? null,
-                            'quantidade' => $formRequest['unidades'] ?? null,
+                            'quantidade' => DataFilter::isInteger($formRequest['unidades']) ?? null,
                             'registrado_em' => date('Y-m-d H:i:s') ?? null
                         ];
 
@@ -282,7 +284,7 @@ class OperacionalController extends GestorController
     {
         $ID = $request->getAttribute('ID');
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
@@ -361,14 +363,16 @@ class OperacionalController extends GestorController
                 }
 
                 if ($this->validator->passed()) {
-                    $totalUnidades = ($livro['unidades'] - $formRequest['unidades']);
+                    $totalUnidades = (DataFilter::isInteger($livro['unidades']) -
+                        DataFilter::isInteger($formRequest['unidades'])
+                    );
 
                     $this->livro->setUnidades($totalUnidades);
                     if ($this->livroDAO->updateUnidades($this->livro)) {
                         $dataWrite = [
                             'ID_livro' => $livro['ID'] ?? null,
                             'ID_gestor' => $gestor['ID'] ?? null,
-                            'quantidade' => $formRequest['unidades'] ?? null,
+                            'quantidade' => DataFilter::isInteger($formRequest['unidades']) ?? null,
                             'registrado_em' => date('Y-m-d H:i:s') ?? null
                         ];
 

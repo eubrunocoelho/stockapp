@@ -9,8 +9,8 @@ use Psr\{
 
 use Slim\{
     App,
+    Routing\RouteContext,
     Views\PhpRenderer,
-    Routing\RouteContext
 };
 
 use App\{

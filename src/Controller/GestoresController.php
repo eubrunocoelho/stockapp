@@ -15,8 +15,8 @@ use Slim\{
 
 use App\{
     Helper\Session,
-    Validator\Validator,
-    Helper\DataFilter
+    Helper\DataFilter,
+    Validator\Validator
 };
 
 use App\{
@@ -224,7 +224,7 @@ class GestoresController extends GestorController
                 ->withHeader('Location', $url)
                 ->withStatus(302);
         }
-        
+
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
@@ -835,6 +835,8 @@ class GestoresController extends GestorController
                         ->withStatus(302);
                 }
 
+                Session::delete('gestor.status.inactive.ID');
+
                 $this->gestor->setStatus(1);
                 if ($this->gestorDAO->updateStatus($this->gestor)) {
                     $this->container->get('flash')
@@ -848,8 +850,6 @@ class GestoresController extends GestorController
                         ->withHeader('Location', $url)
                         ->withStatus(302);
                 }
-
-                Session::delete('gestor.status.active.ID');
             }
         }
 
@@ -944,6 +944,8 @@ class GestoresController extends GestorController
                         ->withStatus(302);
                 }
 
+                Session::delete('gestor.status.inactive.ID');
+
                 $this->gestor->setStatus(2);
                 if ($this->gestorDAO->updateStatus($this->gestor)) {
                     $this->container->get('flash')
@@ -957,8 +959,6 @@ class GestoresController extends GestorController
                         ->withHeader('Location', $url)
                         ->withStatus(302);
                 }
-
-                Session::delete('gestor.status.inactive.ID');
             }
         }
 

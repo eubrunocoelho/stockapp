@@ -16,7 +16,7 @@
     ?>
     <main class="main">
         <div class="main-heading container">
-            <h1 class="main-heading__title">Histórico de Entrada/Saída</h1>
+            <h1 class="main-heading__title">Histórico de Entradas/Saídas</h1>
             <span class="main-heading__breadcrumbs"><a class="breadcrumbs__link" href="<?=$basePath?>/historico">Histórico</a> / <a class="breadcrumbs__link" href="<?=$basePath?>/dashboard">Dashboard</a></span>
         </div>
         <section class="section container mb--30">

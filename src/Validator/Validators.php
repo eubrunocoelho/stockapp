@@ -72,7 +72,7 @@ abstract class Validators
         $stmt->bindValue(':value', $value);
         $stmt->execute();
 
-        return (!$stmt->rowCount() > 0) ? true : false;
+        return (!($stmt->rowCount() > 0)) ? true : false;
     }
 
     protected function uniqueForUpdate($value, $rules)
@@ -88,6 +88,6 @@ abstract class Validators
         $stmt->bindValue(':value', $value);
         $stmt->execute();
 
-        return (!$stmt->rowCount() > 0) ? true : false;
+        return (!($stmt->rowCount() > 0)) ? true : false;
     }
 }

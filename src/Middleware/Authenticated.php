@@ -2,10 +2,6 @@
 
 namespace App\Middleware;
 
-use App\{
-    Helper\Session
-};
-
 use Psr\{
     Http\Message\ServerRequestInterface as Request,
     Http\Server\RequestHandlerInterface as RequestHandler
@@ -14,6 +10,10 @@ use Psr\{
 use Slim\{
     Psr7\Response,
     Routing\RouteContext
+};
+
+use App\{
+    Helper\Session
 };
 
 class Authenticated

@@ -864,17 +864,19 @@ class LivrosController extends GestorController
         if (isset($URI['confirm'])) {
             if ($URI['confirm'] == 'delete') {
                 if (
-                    empty(Session::get('livro.delete.ID')) &&
-                    $ID  !== Session::get('livro.delete.ID')
+                    (empty(Session::get('livro.delete.ID'))) &&
+                    ($ID  !== Session::get('livro.delete.ID'))
                 ) {
                     $url = RouteContext::fromRequest($request)
                         ->getRouteParser()
-                        ->urlFor('livros.delete', ['ID' => $ID]);
+                        ->urlFor('livros.delete', ['ID' => $ID]); // o.Õ
 
                     return $response
                         ->withHeader('Location', $url)
                         ->withStatus(302);
                 }
+
+                Session::delete('gestor.status.inactive.ID');
 
                 $this->livroAutor->setIDLivro($livro['ID']);
                 $autoresFromDelete = $this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor);
