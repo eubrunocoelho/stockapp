@@ -47,7 +47,6 @@ class GestoresController extends GestorController
         parent::__construct($this->app);
     }
 
-    // OK
     public function index(Request $request, Response $response, array $args): Response
     {
         $URI = (array)$request->getQueryParams();
@@ -203,7 +202,6 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/index.php', $templateVariables);
     }
 
-    // OK
     public function show(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
@@ -256,7 +254,6 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/show.php', $templateVariables);
     }
 
-    // OK
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath =  '/' . $this->container->get('settings')['api']['path'];
@@ -477,7 +474,6 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/register.php', $templateVariables);
     }
 
-    // OK
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
@@ -500,7 +496,6 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         }
 
-        // ...
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)
@@ -764,17 +759,16 @@ class GestoresController extends GestorController
         return $this->renderer->render($response, 'dashboard/gestores/update.php', $templateVariables);
     }
 
-    // ... (working)
-
     public function active(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
 
         $URI = (array)$request->getQueryParams();
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $gestor = parent::getGestor();
+
         if ($gestor === []) {
             Session::destroy();
 
@@ -801,9 +795,7 @@ class GestoresController extends GestorController
         $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
         $authorize = self::authorize('update', $gestor, $gestorProfile);
 
-        if (
-            !($authorize['update']['status'])
-        ) {
+        if (!($authorize['update']['status'])) {
             $this->container->get('flash')
                 ->addMessage('message.warning', 'Você não tem permissão para executar essa ação.');
 
@@ -816,13 +808,13 @@ class GestoresController extends GestorController
                 ->withStatus(302);
         }
 
-        if (($gestorProfile['status'] == 1)) {
+        if ($gestorProfile['status'] == 1) {
             $this->container->get('flash')
                 ->addMessage('message.warning', 'Este usuário já está ativado.');
 
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
-                ->urlFor('gestores.show', ['ID' => $ID]);
+                ->urlFor('gestores.index');
 
             return $response
                 ->withHeader('Location', $url)
@@ -832,12 +824,12 @@ class GestoresController extends GestorController
         if (isset($URI['confirm'])) {
             if ($URI['confirm'] == 'active') {
                 if (
-                    empty(Session::get('gestor.status.active.ID')) ||
-                    $ID !== Session::get('gestor.status.active.ID')
+                    (empty(Session::get('gestor.status.active.ID'))) ||
+                    ($ID !== Session::get('gestor.status.active.ID'))
                 ) {
                     $url = RouteContext::fromRequest($request)
                         ->getRouteParser()
-                        ->urlFor('gestores.status.active', ['ID' => $ID]);
+                        ->urlFor('gestores.status.active', ['ID' => $ID]); // o.Õ
 
                     return $response
                         ->withHeader('Location', $url)
@@ -882,9 +874,10 @@ class GestoresController extends GestorController
 
         $URI = (array)$request->getQueryParams();
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $gestor = parent::getGestor();
+
         if ($gestor === []) {
             Session::destroy();
 
@@ -911,9 +904,7 @@ class GestoresController extends GestorController
         $gestorProfile = $this->gestorDAO->getGestorByID($this->gestor)[0];
         $authorize = self::authorize('update', $gestor, $gestorProfile);
 
-        if (
-            !($authorize['update']['status'])
-        ) {
+        if (!($authorize['update']['status'])) {
             $this->container->get('flash')
                 ->addMessage('message.warning', 'Você não tem permissão para executar essa ação.');
 
@@ -932,7 +923,7 @@ class GestoresController extends GestorController
 
             $url = RouteContext::fromRequest($request)
                 ->getRouteParser()
-                ->urlFor('gestores.show', ['ID' => $ID]);
+                ->urlFor('gestores.index');
 
             return $response
                 ->withHeader('Location', $url)
@@ -942,12 +933,12 @@ class GestoresController extends GestorController
         if (isset($URI['confirm'])) {
             if ($URI['confirm'] == 'inactive') {
                 if (
-                    empty(Session::get('gestor.status.inactive.ID')) ||
-                    $ID !== Session::get('gestor.status.inactive.ID')
+                    (empty(Session::get('gestor.status.inactive.ID'))) ||
+                    ($ID !== Session::get('gestor.status.inactive.ID'))
                 ) {
                     $url = RouteContext::fromRequest($request)
                         ->getRouteParser()
-                        ->urlFor('gestores.status.inactive', ['ID' => $ID]);
+                        ->urlFor('gestores.status.inactive', ['ID' => $ID]); // o.Õ
 
                     return $response
                         ->withHeader('Location', $url)
@@ -998,7 +989,7 @@ class GestoresController extends GestorController
 
             $userAdminProfileAdmin = ($status['active'] == 1) && ($status['profile'] == 1) && ($gestor['ID'] != $gestorProfile['ID']);
             $userAdminProfileGestor = ($status['active'] == 1) && ($status['profile'] == 2) && ($gestor['ID'] != $gestorProfile['ID']);
-            $userGestorOtherProfile = ($status['active'] == 2) && ($gestor['ID'] != $gestorProfile['ID']);
+            $userGestorProfileOther = ($status['active'] == 2) && ($gestor['ID'] != $gestorProfile['ID']);
             $currentProfile = ($gestor['ID'] == $gestorProfile['ID']);
 
             if ($userAdminProfileAdmin) {
@@ -1013,7 +1004,7 @@ class GestoresController extends GestorController
                 $authorize['update']['status'] = true;
             }
 
-            if ($userGestorOtherProfile) {
+            if ($userGestorProfileOther) {
                 $authorize['update']['profile'] = false;
                 $authorize['update']['cargo'] = false;
                 $authorize['update']['status'] = false;
@@ -1043,7 +1034,7 @@ class GestoresController extends GestorController
     {
         $fileMediaType = $uploadedFile->getClientMediaType();
 
-        if (!in_array($fileMediaType, $uploadRules['mimeTypes']))
+        if (!(in_array($fileMediaType, $uploadRules['mimeTypes'])))
             return false;
 
         return true;

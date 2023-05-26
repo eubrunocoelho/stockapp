@@ -6,7 +6,7 @@ class DataFilter
 {
     public static function isString($data)
     {
-        if ($data != '') $data = strval($data);
+        if ($data != '') $data = strval(trim($data));
         elseif ($data == '') $data = null;
 
         return $data;
@@ -14,7 +14,7 @@ class DataFilter
 
     public static function isInteger($data)
     {
-        if ($data != '') $data = intval($data);
+        if ($data != '') $data = intval(trim($data));
         elseif ($data == '') $data = null;
 
         return $data;

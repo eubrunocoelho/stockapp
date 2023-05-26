@@ -32,7 +32,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Nome: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="nome" name="nome" placeholder="Ex.: João da Silva"<?php
+                        <input type="text" class="form__input" id="nome" name="nome" placeholder="Nome Completo"<?php
                         if (
                             !(empty($persistRegisterValues)) &&
                             (isset($persistRegisterValues['nome'])) &&
@@ -44,7 +44,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">E-mail: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="email" name="email" placeholder="Ex.: joao@example.com"<?php
+                        <input type="text" class="form__input" id="email" name="email" placeholder="Endereço de E-mail"<?php
                         if (
                             !(empty($persistRegisterValues)) &&
                             (isset($persistRegisterValues['email'])) &&
@@ -56,7 +56,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">CPF: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="cpf" name="cpf" placeholder="Ex.: 000.000.000-00"<?php
+                        <input type="text" class="form__input" id="cpf" name="cpf" placeholder="CPF"<?php
                         if (
                             !(empty($persistRegisterValues)) &&
                             (isset($persistRegisterValues['cpf'])) &&
@@ -68,7 +68,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Senha: <span class="text--danger">*</span></label>
-                        <input type="password" class="form__input" id="senha" name="senha" placeholder="Ex.: 123456"<?php
+                        <input type="password" class="form__input" id="senha" name="senha" placeholder="Senha"<?php
                         if (
                             !(empty($persistRegisterValues)) &&
                             (isset($persistRegisterValues['senha'])) &&
@@ -80,7 +80,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Telefone:</label>
-                        <input type="text" class="form__input" id="telefone" name="telefone" placeholder="Ex.: (00) 0000-0000"<?php
+                        <input type="text" class="form__input" id="telefone" name="telefone" placeholder="(DDD) Telefone"<?php
                         if (
                             !(empty($persistRegisterValues)) &&
                             (isset($persistRegisterValues['telefone'])) &&
@@ -92,7 +92,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Endereço:</label>
-                        <input type="text" class="form__input" id="endereco" name="endereco" placeholder="Ex.: Rua XV de Dezembro, 666"<?php
+                        <input type="text" class="form__input" id="endereco" name="endereco" placeholder="Endereço"<?php
                         if (
                             !(empty($persistRegisterValues)) &&
                             (isset($persistRegisterValues['endereco'])) &&

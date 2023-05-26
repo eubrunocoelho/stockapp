@@ -78,7 +78,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="nome">Nome: <span class="text--danger">(*)</span></label>
-                        <input type="text" class="form__input" id="nome" name="nome" placeholder="Ex.: João da Silva"<?php
+                        <input type="text" class="form__input" id="nome" name="nome" placeholder="Nome Completo"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['nome'])) &&
@@ -90,7 +90,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="email">E-mail: <span class="text--danger">(*)</span></label>
-                        <input type="text" class="form__input" id="email" name="email" placeholder="Ex.: joao@example.com"<?php
+                        <input type="text" class="form__input" id="email" name="email" placeholder="Endereço de E-mail"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['email'])) &&
@@ -102,7 +102,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="cpf">CPF: <span class="text--danger">(*)</span></label>
-                        <input type="text" class="form__input" id="cpf" name="cpf" placeholder="Ex.: 000.000.000-00"<?php
+                        <input type="text" class="form__input" id="cpf" name="cpf" placeholder="CPF"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['cpf'])) &&
@@ -114,7 +114,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="telefone">Telefone:</label>
-                        <input type="text" class="form__input" id="telefone" name="telefone" placeholder="Ex.: (00) 0000-0000"<?php
+                        <input type="text" class="form__input" id="telefone" name="telefone" placeholder="(DDD) Telefone"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['telefone'])) &&
@@ -126,7 +126,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label" for="endereco">Endereço:</label>
-                        <input type="text" class="form__input" id="endereco" name="endereco" placeholder="Ex.: Rua XV de Dezembro, 666"<?php
+                        <input type="text" class="form__input" id="endereco" name="endereco" placeholder="Endereço"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['endereco'])) &&

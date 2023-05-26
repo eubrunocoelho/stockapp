@@ -109,13 +109,13 @@ require __DIR__ . '/../partials/head.php';
                         ($gestorProfile['status'] == 'Inativo')
                     ) {
                     ?>
-                    <button class="btn bg--success" onclick="window.location.href='<?=$basePath?>/gestores/status/active/<?=$gestor['ID']?>';">Ativar</button>
+                    <button class="btn bg--success" onclick="window.location.href='<?=$basePath?>/gestores/status/active/<?=$gestorProfile['ID']?>';">Ativar</button>
                     <?php
                     } elseif (
                         ($gestorProfile['status'] == 'Ativo')
                     ) {
                     ?>
-                    <button class="btn bg--danger" onclick="window.location.href='<?=$basePath?>/gestores/status/inactive/<?=$gestor['ID']?>';">Inativar</button>
+                    <button class="btn bg--danger" onclick="window.location.href='<?=$basePath?>/gestores/status/inactive/<?=$gestorProfile['ID']?>';">Inativar</button>
                     <?php
                     }
                     ?>
