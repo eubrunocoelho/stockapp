@@ -72,11 +72,13 @@ class LivrosController extends GestorController
         parent::__construct($this->app);
     }
 
+    // OK
     public function index(Request $request, Response $response, array $args): Response
     {
         $URI = (array)$request->getQueryParams();
+        $URI['orderBy'] = $URI['orderBy'] ?? 'recentes';
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
@@ -100,16 +102,20 @@ class LivrosController extends GestorController
         $pagination['resultLimit'] = 3;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
 
-        $totalRegisters = $this->livroDAO->getTotalRegisters()[0]['total_registros'];
-        $livros = $this->livroDAO->getAllWithPagination($pagination);
-
         if (isset($URI['orderBy'])) {
+            if ($URI['orderBy'] == 'recentes') {
+                $status['orderBy']['recentes'] = true;
+
+                $totalRegisters = $this->livroDAO->getTotalRegisters()[0]['total_registros'];
+                $livros = $this->livroDAO->getAllWithPagination($pagination);
+            } else $status['orderBy']['recentes'] = false;
+
             if ($URI['orderBy'] == 'antigos') {
                 $status['orderBy']['antigos'] = true;
 
                 $totalRegisters = $this->livroDAO->getTotalRegisters()[0]['total_registros'];
                 $livros = $this->livroDAO->getOrderByAntigosWithPagination($pagination);
-            }
+            } else $status['orderBy']['antigos'] = false;
 
             if ($URI['orderBy'] == 'units') {
                 $status['orderBy']['units'] = true;
@@ -147,6 +153,14 @@ class LivrosController extends GestorController
         ) {
             $search['data'] = '%' . $URI['search'] . '%';
 
+            if ($URI['orderBy'] == 'recentes') {
+                $status['orderBy']['recentes'] = true;
+                $status['search'] = true;
+
+                $totalRegisters = $this->livroDAO->getSearchRegisters($search)[0]['total_registros'];
+                $livros = $this->livroDAO->getSearchWithPagination($pagination, $search);
+            } else $status['orderBy']['recentes'] = false;
+
             if ($URI['orderBy'] == 'antigos') {
                 $status['orderBy']['antigos'] = true;
                 $status['search'] = true;
@@ -182,13 +196,24 @@ class LivrosController extends GestorController
 
         $pagination['totalPages'] = ceil($totalRegisters / $pagination['resultLimit']);
 
+        $status['orderBy']['recentes'] = $status['orderBy']['recentes'] ?? false;
         $status['orderBy']['antigos'] = $status['orderBy']['antigos'] ?? false;
         $status['orderBy']['units'] = $status['orderBy']['units'] ?? false;
         $status['orderBy']['aToZ'] = $status['orderBy']['aToZ'] ?? false;
         $status['orderBy']['zToA'] = $status['orderBy']['zToA'] ?? false;
 
+        if ($status['orderBy']['recentes']) $baseLink['orderBy'] = '&orderBy=recentes';
+        else if (
+            !($status['orderBy']['recentes']) &&
+            !($status['orderBy']['antigos']) &&
+            !($status['orderBy']['units']) &&
+            !($status['orderBy']['aToZ']) &&
+            !($status['orderBy']['zToA'])
+        ) $baseLink['orderBy'] = null;
+
         if ($status['orderBy']['antigos']) $baseLink['orderBy'] = '&orderBy=antigos';
         else if (
+            !($status['orderBy']['recentes']) &&
             !($status['orderBy']['antigos']) &&
             !($status['orderBy']['units']) &&
             !($status['orderBy']['aToZ']) &&
@@ -197,6 +222,7 @@ class LivrosController extends GestorController
 
         if ($status['orderBy']['units']) $baseLink['orderBy'] = '&orderBy=units';
         elseif (
+            !($status['orderBy']['recentes']) &&
             !($status['orderBy']['antigos']) &&
             !($status['orderBy']['units']) &&
             !($status['orderBy']['aToZ']) &&
@@ -205,6 +231,7 @@ class LivrosController extends GestorController
 
         if ($status['orderBy']['aToZ']) $baseLink['orderBy'] = '&orderBy=aToZ';
         elseif (
+            !($status['orderBy']['recentes']) &&
             !($status['orderBy']['antigos']) &&
             !($status['orderBy']['units']) &&
             !($status['orderBy']['aToZ']) &&
@@ -213,6 +240,7 @@ class LivrosController extends GestorController
 
         if ($status['orderBy']['zToA']) $baseLink['orderBy'] = '&orderBy=zToA';
         elseif (
+            !($status['orderBy']['recentes']) &&
             !($status['orderBy']['antigos']) &&
             !($status['orderBy']['units']) &&
             !($status['orderBy']['aToZ']) &&
@@ -224,14 +252,14 @@ class LivrosController extends GestorController
 
         $baseLink = $baseLink ?? [];
 
-        $orderBy['URL']['recentes'] = $basePath . '/livros?' . $baseLink['search'];
+        $orderBy['URL']['recentes'] = $basePath . '/livros?orderBy=recentes' . $baseLink['search'];
         $orderBy['URL']['antigos'] = $basePath . '/livros?orderBy=antigos' . $baseLink['search'];
         $orderBy['URL']['units'] = $basePath . '/livros?orderBy=units' . $baseLink['search'];
         $orderBy['URL']['aToZ'] = $basePath . '/livros?orderBy=aToZ' . $baseLink['search'];
         $orderBy['URL']['zToA'] = $basePath . '/livros?orderBy=zToA' . $baseLink['search'];
         $pagination['URL']['previous'] = $basePath . '/livros?page=' . $pagination['currentPage'] - 1 . $baseLink['orderBy'] . $baseLink['search'];
         $pagination['URL']['next'] = $basePath . '/livros?page=' . $pagination['currentPage'] + 1 . $baseLink['orderBy'] . $baseLink['search'];
-        $pagination['URL']['current'] = $basePath . '/livros.page=' . $pagination['currentPage'] . $baseLink['orderBy'] . $baseLink['search'];
+        $pagination['URL']['current'] = $basePath . '/livros?page=' . $pagination['currentPage'] . $baseLink['orderBy'] . $baseLink['search'];
 
         if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
         else $pagination['links']['previous'] = false;
@@ -263,11 +291,12 @@ class LivrosController extends GestorController
         return $this->renderer->render($response, 'dashboard/livros/index.php', $templateVariables);
     }
 
+    // OK
     public function show(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $flash = $this->container->get('flash');
         $messages = $flash->getMessages();
@@ -318,9 +347,10 @@ class LivrosController extends GestorController
         return $this->renderer->render($response, 'dashboard/livros/show.php', $templateVariables);
     }
 
+    //...
     public function register(Request $request, Response $response, array $args): Response
     {
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
@@ -397,7 +427,7 @@ class LivrosController extends GestorController
                 ]
             ];
 
-            if (!empty($formRequest)) {
+            if (!(empty($formRequest))) {
                 $fields = [
                     'titulo',
                     'autor',
@@ -440,14 +470,14 @@ class LivrosController extends GestorController
 
                 if ($this->validator->passed()) {
                     $dataWrite = [
-                        'titulo' => $formRequest['titulo'] ?? null,
-                        'formato' => $formRequest['formato'] ?? null,
-                        'ano_publicacao' => $formRequest['ano_publicacao'] ?? null,
-                        'isbn' => $formRequest['isbn'] ?? null,
+                        'titulo' => DataFilter::isString($formRequest['titulo']) ?? null,
+                        'formato' => DataFilter::isString($formRequest['formato']) ?? null,
+                        'ano_publicacao' => DataFilter::isInteger($formRequest['ano_publicacao']) ?? null,
+                        'isbn' => DataFilter::isString($formRequest['isbn']) ?? null,
                         'edicao' => DataFilter::isInteger($formRequest['edicao']) ?? null,
-                        'idioma' => $formRequest['idioma'] ?? null,
+                        'idioma' => DataFilter::isString($formRequest['idioma']) ?? null,
                         'paginas' => DataFilter::isInteger($formRequest['paginas']) ?? null,
-                        'descricao' => $formRequest['descricao'] ?? null,
+                        'descricao' => DataFilter::isString($formRequest['descricao']) ?? null,
                         'registrado_em' => date('Y-m-d H:i:s') ?? null
                     ];
 

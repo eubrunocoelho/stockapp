@@ -40,10 +40,7 @@
                     <select class="order-by__select" id="orderBy">
                         <option value="<?=$orderBy['URL']['recentes']?>"<?php
                         if (
-                            !($status['orderBy']['antigos']) &&
-                            !($status['orderBy']['units']) &&
-                            !($status['orderBy']['aToZ']) &&
-                            !($status['orderBy']['zToA'])
+                            ($status['orderBy']['recentes'])
                         ) {
                             echo ' selected';
                         }

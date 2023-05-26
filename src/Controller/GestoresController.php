@@ -224,8 +224,7 @@ class GestoresController extends GestorController
                 ->withHeader('Location', $url)
                 ->withStatus(302);
         }
-
-        // ...
+        
         $this->gestor->setID($ID);
         if ($this->gestorDAO->getGestorByID($this->gestor) === []) {
             $url = RouteContext::fromRequest($request)

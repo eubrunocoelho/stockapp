@@ -159,7 +159,7 @@
                     ($authorize['register'] === true)
                 ) {
                 ?>
-                <button class="btn" onclick="window.location.href='<?=$basePath?>/gestores/register'">Cadastrar</button>
+                <button class="btn" onclick="window.location.href='<?=$basePath?>/gestores/register'">Cadastrar Gestor</button>
                 <?php
                 }
                 ?>
