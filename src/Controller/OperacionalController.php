@@ -55,6 +55,7 @@ class OperacionalController extends GestorController
         parent::__construct($this->app);
     }
 
+    //...
     public function index(Request $request, Response $response, array $args): Response
     {
         $URI = (array)$request->getQueryParams();

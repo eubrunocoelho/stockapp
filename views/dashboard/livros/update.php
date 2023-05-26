@@ -74,7 +74,7 @@
                 <form class="form" action="<?=$basePath?>/livros/update/<?=$livro['ID']?>" method="POST">
                     <div class="form__group">
                         <label class="form__label">Título: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="titulo" name="titulo" placeholder="Ex.: O Senhor dos Anéis"<?php
+                        <input type="text" class="form__input" id="titulo" name="titulo" placeholder="Título"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['titulo'])) &&
@@ -86,7 +86,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Autor(es): <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="autor" name="autor" placeholder="Ex.: João Augusto, José Antônio"<?php
+                        <input type="text" class="form__input" id="autor" name="autor" placeholder="Autor(es)"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['autor'])) &&
@@ -98,7 +98,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Editora(s): <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="editora" name="editora" placeholder="Ex.: Globo Livros, Companhias das Letras"<?php
+                        <input type="text" class="form__input" id="editora" name="editora" placeholder="Editora(s)"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['editora'])) &&
@@ -110,7 +110,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Formato:</label>
-                        <input type="text" class="form__input" id="formato" name="formato" placeholder="Ex.: PDF"<?php
+                        <input type="text" class="form__input" id="formato" name="formato" placeholder="Formato"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['formato'])) &&
@@ -122,7 +122,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Ano da Publicação:</label>
-                        <input type="text" class="form__input" id="ano_publicacao" name="ano_publicacao" placeholder="Ex.: 2012"<?php
+                        <input type="text" class="form__input" id="ano_publicacao" name="ano_publicacao" placeholder="Ano de Publicação"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['ano_publicacao'])) &&
@@ -134,7 +134,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">ISBN:</label>
-                        <input type="text" class="form__input" id="isbn" name="isbn" placeholder="Ex.: 0000000000000"<?php
+                        <input type="text" class="form__input" id="isbn" name="isbn" placeholder="ISBN"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['isbn'])) &&
@@ -146,7 +146,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Edição:</label>
-                        <input type="text" class="form__input" id="edicao" name="edicao" placeholder="Ex.: 3"<?php
+                        <input type="text" class="form__input" id="edicao" name="edicao" placeholder="Número da Edição"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['edicao'])) &&
@@ -158,7 +158,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Idioma: <span class="text--danger">*</span></label>
-                        <input type="text" class="form__input" id="idioma" name="idioma" placeholder="Ex.: Português"<?php
+                        <input type="text" class="form__input" id="idioma" name="idioma" placeholder="Idioma"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['idioma'])) &&
@@ -170,7 +170,7 @@
                     </div>
                     <div class="form__group">
                         <label class="form__label">Páginas:</label>
-                        <input type="text" class="form__input" id="paginas" name="paginas" placeholder="Ex.: 1200"<?php
+                        <input type="text" class="form__input" id="paginas" name="paginas" placeholder="Número de Páginas"<?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['paginas'])) &&
@@ -182,7 +182,7 @@
                     </div>
                     <div class="form__group ai--start">
                         <label class="form__label pt--12">Descrição:</label>
-                        <textarea class="form__textarea" id="descricao" name="descricao" placeholder="Ex.: A batalha do anel começou na Terra Média..."><?php
+                        <textarea class="form__textarea" id="descricao" name="descricao" placeholder="Descrição"><?php
                         if (
                             !(empty($persistUpdateValues)) &&
                             (isset($persistUpdateValues['descricao'])) &&

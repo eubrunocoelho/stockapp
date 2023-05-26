@@ -71,8 +71,7 @@ class LivrosController extends GestorController
 
         parent::__construct($this->app);
     }
-
-    // OK
+    
     public function index(Request $request, Response $response, array $args): Response
     {
         $URI = (array)$request->getQueryParams();
@@ -290,8 +289,7 @@ class LivrosController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/livros/index.php', $templateVariables);
     }
-
-    // OK
+    
     public function show(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
@@ -346,8 +344,7 @@ class LivrosController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/livros/show.php', $templateVariables);
     }
-
-    // OK
+    
     public function register(Request $request, Response $response, array $args): Response
     {
         $basePath = '/' . $this->container->get('settings')['api']['path'];
@@ -549,12 +546,12 @@ class LivrosController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/livros/register.php', $templateVariables);
     }
-
+    
     public function update(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $gestor = parent::getGestor();
         $gestor = parent::applyGestorData($gestor);
@@ -656,7 +653,7 @@ class LivrosController extends GestorController
                 ]
             ];
 
-            if (!empty($formRequest)) {
+            if (!(empty($formRequest))) {
                 $fields = [
                     'titulo',
                     'autor',
@@ -704,14 +701,14 @@ class LivrosController extends GestorController
 
                 if ($this->validator->passed()) {
                     $dataWrite = [
-                        'titulo' => $formRequest['titulo'] ?? null,
-                        'formato' => $formRequest['formato'] ?? null,
-                        'ano_publicacao' => $formRequest['ano_publicacao'] ?? null,
-                        'isbn' => $formRequest['isbn'] ?? null,
+                        'titulo' => DataFilter::isString($formRequest['titulo']) ?? null,
+                        'formato' => DataFilter::isString($formRequest['formato']) ?? null,
+                        'ano_publicacao' => DataFilter::isInteger($formRequest['ano_publicacao']) ?? null,
+                        'isbn' => DataFilter::isString($formRequest['isbn']) ?? null,
                         'edicao' => DataFilter::isInteger($formRequest['edicao']) ?? null,
-                        'idioma' => $formRequest['idioma'] ?? null,
+                        'idioma' => DataFilter::isString($formRequest['idioma']) ?? null,
                         'paginas' => DataFilter::isInteger($formRequest['paginas']) ?? null,
-                        'descricao' => $formRequest['descricao'] ?? null
+                        'descricao' => DataFilter::isString( $formRequest['descricao']) ?? null
                     ];
 
                     $this->livro->setTitutlo($dataWrite['titulo']);
@@ -735,6 +732,7 @@ class LivrosController extends GestorController
                         foreach ($autoresFromDelete as $autorFromDelete) {
                             $this->livroAutor->setIDLivro($ID);
                             $this->livroAutor->setIDAutor($autorFromDelete['ID_autor']);
+
                             $livroAutor = $this->livroAutorDAO->getLivroAutorByOtherIDLivroAndByIDAutor($this->livroAutor);
 
                             if ($livroAutor === []) {
@@ -764,6 +762,7 @@ class LivrosController extends GestorController
                         foreach ($editorasFromDelete as $editoraFromDelete) {
                             $this->livroEditora->setIDLivro($ID);
                             $this->livroEditora->setIDEditora($editoraFromDelete['ID_editora']);
+
                             $livroEditora = $this->livroEditoraDAO->getLivroEditoraByOtherIDLivroAndByIDEditora($this->livroEditora);
 
                             if ($livroEditora === []) {
@@ -826,16 +825,17 @@ class LivrosController extends GestorController
 
         return $this->renderer->render($response, 'dashboard/livros/update.php', $templateVariables);
     }
-
+    
     public function delete(Request $request, Response $response, array $args): Response
     {
         $ID = $request->getAttribute('ID');
 
         $URI = (array)$request->getQueryParams();
 
-        $basePath = $this->container->get('settings')['api']['path'];
+        $basePath = '/' . $this->container->get('settings')['api']['path'];
 
         $gestor = parent::getGestor();
+
         if ($gestor === []) {
             Session::destroy();
 
@@ -859,6 +859,8 @@ class LivrosController extends GestorController
                 ->withStatus(302);
         }
 
+        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
+
         if (isset($URI['confirm'])) {
             if ($URI['confirm'] == 'delete') {
                 if (
@@ -874,18 +876,19 @@ class LivrosController extends GestorController
                         ->withStatus(302);
                 }
 
-                $this->livroAutor->setIDLivro($ID);
+                $this->livroAutor->setIDLivro($livro['ID']);
                 $autoresFromDelete = $this->livroAutorDAO->getLivroAutorByIDLivro($this->livroAutor);
 
-                $this->livroEditora->setIDLivro($ID);
+                $this->livroEditora->setIDLivro($livro['ID']);
                 $editorasFromDelete = $this->livroEditoraDAO->getLivroEditoraByIDLivro($this->livroEditora);
 
                 if ($autoresFromDelete !== []) {
                     $this->livroAutorDAO->deleteLivroAutorByIDLivro($this->livroAutor);
 
                     foreach ($autoresFromDelete as $autorFromDelete) {
-                        $this->livroAutor->setIDLivro($ID);
+                        $this->livroAutor->setIDLivro($livro['ID']);
                         $this->livroAutor->setIDAutor($autorFromDelete['ID_autor']);
+
                         $livroAutor = $this->livroAutorDAO->getLivroAutorByOtherIDLivroAndByIDAutor($this->livroAutor);
 
                         if ($livroAutor === []) {
@@ -899,8 +902,9 @@ class LivrosController extends GestorController
                     $this->livroEditoraDAO->deleteLivroEditoraByIDLivro($this->livroEditora);
 
                     foreach ($editorasFromDelete as $editoraFromDelete) {
-                        $this->livroEditora->setIDLivro($ID);
+                        $this->livroEditora->setIDLivro($livro['ID']);
                         $this->livroEditora->setIDEditora($editoraFromDelete['ID_editora']);
+
                         $livroEditora = $this->livroEditoraDAO->getLivroEditoraByOtherIDLivroAndByIDEditora($this->livroEditora);
 
                         if ($livroEditora === []) {
@@ -910,10 +914,10 @@ class LivrosController extends GestorController
                     }
                 }
 
-                $this->entrada->setIDLivro($ID);
+                $this->entrada->setIDLivro($livro['ID']);
                 $this->entradaDAO->deleteEntradaByIDLivro($this->entrada);
 
-                $this->saida->setIDLivro($ID);
+                $this->saida->setIDLivro($livro['ID']);
                 $this->saidaDAO->deleteSaidaByIDLivro($this->saida);
 
                 if ($this->livroDAO->deleteLivroByID($this->livro)) {
@@ -930,8 +934,6 @@ class LivrosController extends GestorController
                 }
             }
         }
-
-        $livro = $this->livroDAO->getLivroByID($this->livro)[0];
 
         Session::create('livro.delete.ID', $ID);
 

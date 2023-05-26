@@ -132,7 +132,7 @@
                             <td class="table__cell tc--w210"><?=$livro['unidades']?></td>
                             <td class="table__cell tc--w210"><?=$livro['editora']?></td>
                             <td class="table__cell tc--w105"><i class="fa-solid fa-marker text--warning action__icon"></i><a href="<?=$basePath?>/livros/update/<?=$livro['ID']?>" class="text--warning">Editar</a></td>
-                            <td class="table__cell tc--w105"><i class="fa-solid fa-trash text--danger action__icon"></i><a href="./deletar-livro.html" class="text--danger">Deletar</a></td>
+                            <td class="table__cell tc--w105"><i class="fa-solid fa-trash text--danger action__icon"></i><a href="<?=$basePath?>/livros/delete/<?=$livro['ID']?>" class="text--danger">Deletar</a></td>
                         </tr>
                         <?php
                             }
@@ -149,7 +149,7 @@
                     <li class="pagination__item">
                         <?php
                         if (
-                            $pagination['links']['previous']
+                            ($pagination['links']['previous'])
                         ) {
                         ?>
                         <a href="<?=$pagination['URL']['previous']?>" class="pagination__link">«</a>
@@ -167,7 +167,7 @@
                     <li class="pagination__item">
                         <?php
                         if (
-                            $pagination['links']['next']
+                            ($pagination['links']['next'])
                         ) {
                         ?>
                         <a href="<?=$pagination['URL']['next']?>" class="pagination__link">»</a>
