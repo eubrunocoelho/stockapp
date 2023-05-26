@@ -178,13 +178,13 @@ class GestoresController extends GestorController
         $pagination['URL']['next'] = $basePath . '/gestores?page=' . $pagination['currentPage'] + 1 . $baseLink['status'] . $baseLink['search'];
         $pagination['URL']['current'] = $basePath . '/gestores?page=' . $pagination['currentPage'] . $baseLink['status'] . $baseLink['search'];
 
-        if (
-            !($pagination['currentPage'] == 1) &&
-            ($pagination['totalPages'] != 0)
-        ) $pagination['links']['previous'] = true;
+        if (!($pagination['currentPage'] == 1)) $pagination['links']['previous'] = true;
         else $pagination['links']['previous'] = false;
 
-        if (!($pagination['currentPage'] == $pagination['totalPages'])) $pagination['links']['next'] = true;
+        if (
+            !($pagination['currentPage'] == $pagination['totalPages']) &&
+            ($pagination['totalPages'] != 0)
+        ) $pagination['links']['next'] = true;
         else $pagination['links']['next'] = false;
 
         foreach ($gestores as $key => $value)
