@@ -45,10 +45,18 @@ class LoginController
         $this->gestorDAO = new GestorDAO($this->database);
     }
 
-    // OK
     public function login(Request $request, Response $response, array $args): Response
     {
+        $URI = (array)$request->getQueryParams();
+
         $basePath = '/' . $this->container->get('settings')['api']['path'];
+
+        if (
+            (isset($URI['authorize'])) &&
+            ($URI['authorize'] == 'false')
+        ) $messages = [
+            'message.warning' => 'Este usuário não tem permissão de acesso.'
+        ];
 
         if ($request->getMethod() == 'POST') {
             $formRequest = (array)$request->getParsedBody();
@@ -95,12 +103,14 @@ class LoginController
             }
         }
 
+        $messages = $messages ?? [];
         $formRequest = $formRequest ?? [];
         $persistLoginValues = self::getPersistLoginValues($formRequest);
         $errors = $errors ?? [];
 
         $templateVariables = [
             'basePath' => $basePath,
+            'messages' => $messages,
             'persistLoginValues' => $persistLoginValues,
             'errors' => $errors
         ];

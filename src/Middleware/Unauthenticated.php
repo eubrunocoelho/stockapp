@@ -49,7 +49,7 @@ class Unauthenticated
             (!Session::exists('authenticated'))
         ) {
             Session::destroy();
-            
+
             $response = new Response();
 
             $url = RouteContext::fromRequest($request)
@@ -60,10 +60,10 @@ class Unauthenticated
                 ->withHeader('Location', $url)
                 ->withStatus(302);
         }
-        
+
         $this->gestor->setID(Session::get('gestorID'));
         $gestor = $this->gestorDAO->getGestorByID($this->gestor);
-        
+
         if ($gestor === []) {
             Session::destroy();
 
@@ -75,6 +75,23 @@ class Unauthenticated
 
             return $response
                 ->withHeader('Location', $url)
+                ->withStatus(302);
+        }
+
+        if (
+            ($gestor !== []) &&
+            ($gestor[0]['status'] === 2)
+        ) {
+            Session::destroy();
+
+            $response = new Response();
+            
+            $url = RouteContext::fromRequest($request)
+                ->getRouteParser()
+                ->urlFor('login');
+
+            return $response
+                ->withHeader('Location', $url . '?authorize=false')
                 ->withStatus(302);
         }
 

@@ -15,6 +15,18 @@
 <body>
     <main class="main container">
         <section class="login">
+            <?php
+            if (
+                !(empty($messages)) &&
+                (array_key_exists('message.warning', $messages))
+            ) {
+            ?>
+            <div class="alert-box alert--warning mt--20">
+                <p class="alert-box__text"><?=$messages['message.warning']?></p>
+            </div>
+            <?php
+            }
+            ?>
             <div class="login-heading">
                 <h1 class="login-heading__title">StockApp</h1>
                 <p class="login-heading__description">Entrar</p>

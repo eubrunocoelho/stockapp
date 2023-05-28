@@ -19,7 +19,7 @@ $containerBuilder->addDefinitions(__DIR__ . '/app/dependencies.php');
 $container = $containerBuilder->build();
 
 $app = $container->get(App::class);
-$app->setBasePath('/stockapp');
+$app->setBasePath('/' . $container->get('settings')['api']['path']);
 
 (require __DIR__ . '/app/routes.php')($app);
 (require __DIR__ . '/app/middleware.php')($app);

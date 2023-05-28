@@ -100,7 +100,8 @@
 }
 
 .fg--1 {
-    flex-grow: 1 !important;
+    /* quick-fix */
+    flex: 1 !important;
 }
 
 .pt--12 {

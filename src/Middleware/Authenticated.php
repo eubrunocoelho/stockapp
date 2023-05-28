@@ -24,9 +24,7 @@ class Authenticated
             (Session::exists('authenticated')) &&
             (Session::exists('gestorID'))
         ) {
-            if (
-                Session::get('authenticated')
-            ) {
+            if (Session::get('authenticated')) {
                 $response = new Response();
 
                 $url = RouteContext::fromRequest($request)
