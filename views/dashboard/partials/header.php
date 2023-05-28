@@ -7,7 +7,24 @@
             <a href="<?=$basePath?>/dashboard" class="header-navigation__logo">StockApp</a>
         </div>
         <div class="header-navigation__user-area">
-            <div class="user-area__ellipse" id="clickUserMenu"></div>
+            <div class="user-area__ellipse" id="clickUserMenu">
+                <?php
+                if (
+                    (
+                        ($gestor['img_url'] == '') ||
+                        ($gestor['img_url'] == null)
+                    )
+                ) {
+                ?>
+                <img src="<?=$basePath?>/uploads/img/profile/default.jpg" class="user-area__img">
+                <?php
+                } else {
+                ?>
+                <img src="<?=$basePath?>/uploads/img/profile/<?=$gestor['img_url']?>" class="user-area__img">
+                <?php
+                }
+                ?>
+            </div>
             <div class="user-area__dropdown-menu d--none" id="userMenu">
                 <div class="dropdown-menu__heading">
                     <h6 class="dropdown-menu__title"><?=$gestor['nome']?></h6>

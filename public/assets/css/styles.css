@@ -375,7 +375,13 @@ body {
 }
 
 .user-area__ellipse {
-    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    height: 40px;
+    width: 40px;
+}
+
+.user-area__img {
     border-radius: 50%;
     cursor: pointer;
     height: 40px;
@@ -770,7 +776,12 @@ body {
 
 .profile__avatar {
     background: var(--disabled-color);
-    border: 1px solid var(--border-default-color);
+    border-radius: var(--border-default-radius);
+    height: 62px;
+    width: 62px;
+}
+
+.profile__img {
     border-radius: var(--border-default-radius);
     height: 62px;
     width: 62px;

@@ -49,7 +49,24 @@ require __DIR__ . '/../partials/head.php';
                     <h1 class="box-heading__title"><?=$gestorProfile['nome']?></h1>
                 </div>
                 <div class="profile mb--20">
-                    <div class="profile__avatar"></div>
+                    <div class="profile__avatar">
+                        <?php
+                        if (
+                            (
+                                ($gestorProfile['img_url'] == '') ||
+                                ($gestorProfile['img_url'] == null)
+                            )
+                        ) {
+                        ?>
+                        <img src="<?=$basePath?>/uploads/img/profile/default.jpg" class="profile__img">
+                        <?php
+                        } else {
+                        ?>
+                        <img src="<?=$basePath?>/uploads/img/profile/<?=$gestorProfile['img_url']?>" class="profile__img">
+                        <?php
+                        }
+                        ?>
+                    </div>
                     <div class="profile__description">
                         <h1 class="description__name"><?=$gestorProfile['nome']?></h1>
                         <span class="description__email"><?=$gestorProfile['email']?></span>
