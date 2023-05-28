@@ -47,6 +47,21 @@ class EntradaDAO
         } else return [];
     }
 
+    public function getTotalEntradaQuantidade()
+    {
+        $SQL =
+            'SELECT SUM(quantidade) AS total_quantidade FROM entrada';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function register(Entrada $entrada)
     {
         $SQL =

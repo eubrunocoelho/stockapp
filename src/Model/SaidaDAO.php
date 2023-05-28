@@ -47,6 +47,21 @@ class SaidaDAO
         } else return [];
     }
 
+    public function getTotalSaidaQuantidade()
+    {
+        $SQL =
+            'SELECT SUM(quantidade) AS total_quantidade FROM saida';
+
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
     public function register(Saida $saida)
     {
         $SQL =

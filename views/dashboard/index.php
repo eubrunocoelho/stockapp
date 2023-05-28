@@ -24,7 +24,7 @@
                 <div class="card">
                     <div class="card__summary">
                         <span class="summary__description">Livros</span>
-                        <span class="summary__number">41.597</span>
+                        <span class="summary__number"><?=$totalLivros?></span>
                     </div>
                     <div class="card__ellipse">
                         <i class="fa-solid fa-layer-group ellipse__icon"></i>
@@ -33,7 +33,7 @@
                 <div class="card">
                     <div class="card__summary">
                         <span class="summary__description">Entradas</span>
-                        <span class="summary__number">102.441</span>
+                        <span class="summary__number"><?=$totalEntradas?></span>
                     </div>
                     <div class="card__ellipse">
                         <i class="fa-solid fa-arrow-down-short-wide ellipse__icon"></i>
@@ -42,7 +42,7 @@
                 <div class="card">
                     <div class="card__summary">
                         <span class="summary__description">Saídas</span>
-                        <span class="summary__number">27.123</span>
+                        <span class="summary__number"><?=$totalSaidas?></span>
                     </div>
                     <div class="card__ellipse">
                         <i class="fa-solid fa-arrow-up-short-wide ellipse__icon"></i>
@@ -64,76 +64,24 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php
+                        if (
+                            isset($livros) &&
+                            !(empty($livros))
+                        ) {
+                            foreach ($livros as $livro) {
+                        ?>
                         <tr class="table__tr">
                             <td class="table__cell fg--1">
-                                <a href="./livro.html">O Senhor dos Anéis</a>
+                                <a href="<?=$basePath?>/livros/show/<?=$livro['ID']?>"><?=$livro['titulo']?></a>
                             </td>
-                            <td class="table__cell tc--w210">Allen & Unwin</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 14:58:01</td>
+                            <td class="table__cell tc--w210"><?=$livro['editora']?>/td>
+                            <td class="table__cell tc--w210"><?=$livro['registrado_em']?></td>
                         </tr>
-                        <tr class="table__tr">
-                            <td class="table__cell fg--1">
-                                <a href="./livro.html">365 Dias de Inteligência</a>
-                            </td>
-                            <td class="table__cell tc--w210">Dreamsellers</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 10:08:22</td>
-                        </tr>
-                        <tr class="table__tr">
-                            <td class="table__cell fg--1">
-                                <a href="./livro.html">A Mandíbula de Caim</a>
-                            </td>
-                            <td class="table__cell tc--w210">Intrínseca</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 09:05:59</td>
-                        </tr>
-                        <tr class="table__tr">
-                            <td class="table__cell fg--1">
-                                <a href="./livro.html">Antes Que o Café Esfrie</a>
-                            </td>
-                            <td class="table__cell tc--w210">Editora Valentina</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 09:01:28</td>
-                        </tr>
-                        <tr class="table__tr">
-                            <td class="table__cell fg--1">
-                                <a href="./livro.html">O Senhor dos Anéis</a>
-                            </td>
-                            <td class="table__cell tc--w210">Allen & Unwin</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 14:58:01</td>
-                        </tr>
-                        <tr class="table__tr">
-                            <td class="table__cell fg--1">
-                                <a href="./livro.html">365 Dias de Inteligência</a>
-                            </td>
-                            <td class="table__cell tc--w210">Dreamsellers</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 10:08:22</td>
-                        </tr>
-                        <tr class="table__tr">
-                            <td class="table__cell fg--1">
-                                <a href="./livro.html">A Mandíbula de Caim</a>
-                            </td>
-                            <td class="table__cell tc--w210">Intrínseca</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 09:05:59</td>
-                        </tr>
-                        <tr class="table__tr">
-                            <td class="table__cell fg--1">
-                                <a href="./livro.html">Antes Que o Café Esfrie</a>
-                            </td>
-                            <td class="table__cell tc--w210">Editora Valentina</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 09:01:28</td>
-                        </tr>
-                        <tr class="table__tr">
-                            <td class="table__cell fg--1">
-                                <a href="./livro.html">O Senhor dos Anéis</a>
-                            </td>
-                            <td class="table__cell tc--w210">Allen & Unwin</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 14:58:01</td>
-                        </tr>
-                        <tr class="table__tr">
-                            <td class="table__cell fg--1">
-                                <a href="./livro.html">365 Dias de Inteligência</a>
-                            </td>
-                            <td class="table__cell tc--w210">Dreamsellers</td>
-                            <td class="table__cell tc--w210">03/03/2023 ás 10:08:22</td>
-                        </tr>
+                        <?php
+                            }
+                        }
+                        ?>
                     </tbody>
                 </table>
             </div>

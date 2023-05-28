@@ -24,7 +24,24 @@ class LivroDAO
         $stmt->bindValue(':ID', $livro->getID());
         $stmt->execute();
 
-        if ($stmt->rowCount() == 1) {
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        } else return [];
+    }
+
+    public function getRecentes()
+    {
+        $SQL =
+            'SELECT * FROM livro
+             ORDER BY ID DESC
+             LIMIT 1, 10';
+        
+        $stmt = $this->database->prepare($SQL);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $result;
