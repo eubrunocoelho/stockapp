@@ -75,7 +75,7 @@ class GestoresController extends GestorController
         }
 
         $pagination['currentPage'] = $URI['page'] ?? 1;
-        $pagination['resultLimit'] = 3;
+        $pagination['resultLimit'] = 10;
         $pagination['start'] = ($pagination['resultLimit'] * $pagination['currentPage']) - $pagination['resultLimit'];
 
         if (isset($URI['status'])) {
