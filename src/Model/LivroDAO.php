@@ -36,7 +36,7 @@ class LivroDAO
         $SQL =
             'SELECT * FROM livro
              ORDER BY ID DESC
-             LIMIT 1, 10';
+             LIMIT 0, 10';
         
         $stmt = $this->database->prepare($SQL);
         $stmt->execute();
