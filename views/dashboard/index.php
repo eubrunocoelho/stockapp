@@ -75,7 +75,7 @@
                             <td class="table__cell fg--1">
                                 <a href="<?=$basePath?>/livros/show/<?=$livro['ID']?>"><?=$livro['titulo']?></a>
                             </td>
-                            <td class="table__cell tc--w210"><?=$livro['editora']?>/td>
+                            <td class="table__cell tc--w210"><?=$livro['editora']?></td>
                             <td class="table__cell tc--w210"><?=$livro['registrado_em']?></td>
                         </tr>
                         <?php
