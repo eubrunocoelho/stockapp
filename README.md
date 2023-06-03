@@ -28,6 +28,7 @@ O projeto em si é sistema para gestão de estoque de livros, com um sistema de 
 * PHP 8.2
 * Slim Framework 4
 * MySQL 8.0
+* JavaScript
 * HTML5
 * CSS3
 * Fontawesome 6.3.0
