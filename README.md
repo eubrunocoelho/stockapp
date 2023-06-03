@@ -8,7 +8,7 @@ O projeto em si é sistema para gestão de estoque de livros, com um sistema de 
 ### Dashboard
 * Página inicial do dashboard
 ### Gestores
-* Lista do Gestor
+* Lista de Gestores/Administradores
 * Perfil
 * Cadastrar (Gestor/Administrador)
 * Editar Perfil
