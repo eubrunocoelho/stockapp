@@ -1,5 +1,5 @@
 ## StockApp
-Projeto desenvovido para o **TCC** (Trabalho de Conclusão de Curso) do curso **Técnico de Desenvolvimento de Sistemas** do SENAI.
+Projeto desenvovido para o **TCC** (Trabalho de Conclusão de Curso) do curso **Técnico em Desenvolvimento de Sistemas** do SENAI.
 O projeto em si é sistema para gestão de estoque de livros, com um sistema de usuários e permissões.
 
 ## Sistema
